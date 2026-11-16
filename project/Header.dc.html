@@ -473,16 +473,18 @@ class Component extends DCLogic {
     const collect = (root, acc) => { root.querySelectorAll('*').forEach((el) => { if (el.matches(HEAD_SEL)) acc.push(el); if (el.shadowRoot) collect(el.shadowRoot, acc); }); return acc; };
     this._scanHeads = () => { try { this._heads = collect(document, []); const bars = []; (function f(root) { root.querySelectorAll('*').forEach((el) => { if (el.classList && el.classList.contains('hd-bar')) bars.push(el); if (el.shadowRoot) f(el.shadowRoot); }); })(document); this._bar = bars[0] || null; } catch (e) { this._heads = []; } };
     this._chkStuck = () => { this._sraf = 0; const top = 64; let hit = null; for (const el of this._heads || []) { const r = el.getBoundingClientRect(); if (r.height > 0 && r.bottom > top && Math.abs(r.top - top) < 1.5) { hit = r; break; } } const on = !!hit; if (this._ov) { if (on) { const bar = this._bar && this._bar.getBoundingClientRect(); const ovL = bar ? Math.max(0, bar.left) : 0; this._ov.style.left = ovL + 'px'; this._ov.style.height = Math.round(hit.bottom) + 'px';
-        // белеет только над самой таблицей: границы — по всем ячейкам прилипшего заголовка; поля по бокам остаются серыми, как фон страницы
-        let tl = hit.left, tr = hit.right; for (const el of this._heads || []) { const r = el.getBoundingClientRect(); if (r.height > 0 && Math.abs(r.top - hit.top) < 1.5) { tl = Math.min(tl, r.left); tr = Math.max(tr, r.right); } }
-        const W = 'color-mix(in srgb,var(--bg-base-primary, #fff) 88%,transparent)';
-        this._ov.style.backgroundImage = 'linear-gradient(to bottom,transparent 0,transparent ' + Math.max(0, Math.round(hit.top - 24)) + 'px,' + W + ' ' + Math.round(hit.top) + 'px,' + W + ' 100%)';
-        this._ov.style.backgroundPosition = Math.round(tl - ovL) + 'px 0'; this._ov.style.backgroundSize = Math.round(tr - tl) + 'px 100%'; this._ov.style.backgroundRepeat = 'no-repeat'; } this._ov.style.opacity = on ? '1' : '0'; } if (on !== !!(this.state || {}).stuck) this.setState({ stuck: on }); };
+        // Сверху подложка — ровно фон страницы. Над таблицей плавно переходит в белый к её заголовку.
+        // Ширина белой части — по белой карточке таблицы (ищем вверх от ячейки заголовка), чтобы не было ступенек по краям.
+        let card = null; for (const el of this._heads || []) { const r = el.getBoundingClientRect(); if (r.height > 0 && Math.abs(r.top - hit.top) < 1.5) { let n = el; for (let k = 0; n && k < 12; k++) { n = n.parentElement || (n.getRootNode && n.getRootNode().host) || null; if (!n || !n.getBoundingClientRect) break; const bg = getComputedStyle(n).backgroundColor; const m = /rgba?\(([^)]+)\)/.exec(bg); const a = m ? m[1].split(',').map(Number) : null; if (a && (a.length < 4 || a[3] > 0.9) && a[0] > 250 && a[1] > 250 && a[2] > 250) { card = n.getBoundingClientRect(); break; } } if (card) break; } }
+        const tl = card ? card.left : hit.left, tr = card ? card.right : hit.right;
+        const W = 'var(--bg-base-primary, #fff)';
+        this._ov.style.backgroundImage = 'linear-gradient(to bottom,transparent 0,transparent ' + Math.round(Math.max(0, hit.top - 40)) + 'px,' + W + ' ' + Math.round(hit.top + 8) + 'px,' + W + ' 100%)';
+        this._ov.style.backgroundPosition = Math.round(tl - ovL) + 'px 0'; this._ov.style.backgroundSize = Math.max(0, Math.round(tr - tl)) + 'px 100%'; this._ov.style.backgroundRepeat = 'no-repeat'; } this._ov.style.opacity = on ? '1' : '0'; } if (on !== !!(this.state || {}).stuck) this.setState({ stuck: on }); };
     // Одна общая подложка-блюр на слой выше контента: покрывает шапку и прилипший заголовок таблицы целиком.
     // Градиент: сверху сливается с серым фоном страницы, книзу — белый, как таблица под заголовком
     this._ov = document.createElement('div');
     this._ov.setAttribute('aria-hidden', 'true');
-    this._ov.style.cssText = 'position:fixed;top:0;left:0;right:0;height:64px;z-index:5;pointer-events:none;opacity:0;transition:opacity .25s ease,height .15s ease;background:color-mix(in srgb,var(--bg-base-secondary, #f2f3f5) 90%,transparent);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)';
+    this._ov.style.cssText = 'position:fixed;top:0;left:0;right:0;height:64px;z-index:5;pointer-events:none;opacity:0;transition:opacity .25s ease,height .15s ease;background:var(--bg-base-secondary, #f2f3f5);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)';
     document.body.appendChild(this._ov);
     this._onScrollHd = () => { if (!this._sraf) this._sraf = requestAnimationFrame(this._chkStuck); };
     window.addEventListener('scroll', this._onScrollHd, { passive: true });

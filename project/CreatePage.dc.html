@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Создание задачи</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>.sc-host:has(> .hd-bar){position:sticky;top:0;z-index:30}body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}</style>
+</helmet>
+<div style="display: flex; align-items: stretch; min-height: 100vh; background-color: var(--bg-base-secondary, #f2f3f5); font-family: var(--font-system); color: var(--text-primary)">
+<dc-import name="SideMenu" active="clients" collapsed="{{no}}" create-demo="{{menuOpen}}" hint-size="260px,900px"></dc-import>
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column">
+<dc-import name="Header" back="{{yes}}" back-label="К клиентам" hint-size="100%,64px"></dc-import>
+<dc-import name="CreateTask" kind="{{kind}}" filled="{{filled}}" hint-size="100%,900px"></dc-import>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["Контракт","СВО","СПД","Исходящее письмо","Исходящее письмо с ЭЦП","Запрос клиента"],"default":"Контракт"},"filled":{"editor":"boolean","default":false},"menuOpen":{"editor":"boolean","default":false},"$preview":{"width":1636,"height":952}}'>
+class Component extends DCLogic {
+  renderVals() { const p = this.props; return { yes: true, no: false, kind: p.kind || 'Контракт', filled: !!p.filled, menuOpen: !!p.menuOpen }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+import fs from 'fs';
+const [,, url, out, w='1440', h='900', wait='4000'] = process.argv;
+const list = await (await fetch('http://127.0.0.1:9333/json')).json();
+const ws = new WebSocket(list.find(t => t.type === 'page').webSocketDebuggerUrl);
+let id = 0; const pend = {}; const errs = [];
+ws.onmessage = (m) => { const d = JSON.parse(m.data); if (d.id && pend[d.id]) { pend[d.id](d.result); delete pend[d.id]; } if (d.method === 'Runtime.exceptionThrown') errs.push(d.params.exceptionDetails.exception?.description?.slice(0,200)); };
+await new Promise(r => ws.onopen = r);
+const send = (method, params = {}) => new Promise(r => { const i = ++id; pend[i] = r; ws.send(JSON.stringify({ id: i, method, params })); });
+await send('Runtime.enable'); await send('Page.enable'); await send('Network.enable'); await send('Network.setCacheDisabled', { cacheDisabled: true });
+await send('Emulation.setDeviceMetricsOverride', { width: +w, height: +h, deviceScaleFactor: 1, mobile: false });
+await send('Page.navigate', { url }); await new Promise(r => setTimeout(r, +wait));
+const r = await send('Page.captureScreenshot', { format: 'png' }); fs.writeFileSync(out, Buffer.from(r.data, 'base64'));
+console.log('errors:', errs.length ? errs : 'none'); process.exit(0);

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Создание задачи</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+.ct{box-sizing:border-box;width:100%;padding:16px 40px 48px;display:flex;flex-direction:column;gap:20px;font-family:var(--font-system);color:var(--text-primary)}
+.ct h1{margin:0;font:700 32px/40px var(--font-system);letter-spacing:-.2px}
+.ct-frame{background:var(--bg-base-primary, #fff);border-radius:20px;padding:24px 32px 32px;font-family:Tahoma,Verdana,Segoe UI,sans-serif;font-size:11px;line-height:15px;color:#222;overflow-x:auto}
+.ct-lbl{text-decoration:underline;color:#444;margin-bottom:6px;display:inline-block}
+.ct-client{position:relative;display:flex;align-items:center;gap:6px;border-bottom:1px solid #aaa;max-width:720px;margin-bottom:16px}
+.ct-client[data-err="true"]{border-bottom-color:#d91d0b}
+.ct-client input{flex:1;min-width:0;border:0;outline:0;height:26px;font:11px Tahoma,sans-serif;background:transparent}
+.ct-client input:focus-visible{box-shadow:0 2px 0 var(--status-info, #2a77ef)}
+.ct-ib{appearance:none;border:0;background:transparent;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:#333;border-radius:4px}
+.ct-ib:hover{background:#eee}
+.ct-sug{position:absolute;left:0;right:0;top:100%;z-index:5;background:#fff;border:1px solid #bbb;box-shadow:0 6px 16px rgba(0,0,0,.12);display:flex;flex-direction:column}
+.ct-sug button{appearance:none;border:0;background:transparent;text-align:left;padding:7px 8px;font:11px Tahoma,sans-serif;cursor:pointer}
+.ct-sug button:hover,.ct-sug button[data-first="true"]{background:#eaf1fe}
+.ct-row{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;margin-bottom:16px}
+.ct-in{border-bottom:1px dotted #aaa;padding:0 8px 4px;width:620px;max-width:100%}
+.ct-in small,.ct-date small{display:block;font-size:10px;color:#444}
+.ct-in span{color:#888}
+.ct-date{border-bottom:1px solid #888;padding:0 8px 2px;width:180px}
+.ct-fs{border:1px solid #ddd;border-radius:2px;padding:4px 10px 10px;margin:0 0 20px;min-width:820px}
+.ct-fs legend{font-weight:700;padding:0 4px}
+.ct-tbl{width:100%;border-collapse:collapse;border:1px solid #666;background:#f7f8fa}
+.ct-tbl th{border:1px solid #666;padding:6px 8px;font-weight:700;font-size:10px;line-height:13px;text-align:center;vertical-align:middle}
+.ct-tbl td{border:1px solid #666;height:28px;background:#fff;padding:0}
+.ct-tbl th.add{width:40px;padding:0}
+.ct-tbl td input{border:0;width:100%;height:27px;padding:0 6px;font:11px Tahoma,sans-serif;background:transparent;box-sizing:border-box}
+.ct-tbl td input:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:-2px}
+.ct-add{appearance:none;border:0;background:transparent;width:100%;height:30px;font:400 18px/1 Tahoma,sans-serif;cursor:pointer;color:#222}
+.ct-add:hover{background:#e9ecf1}
+.ct-err{color:#d91d0b;margin:-10px 0 14px}
+.ct-save{appearance:none;border:0;margin:8px 0 0;height:30px;min-width:200px;padding:0 24px;background:#ef3124;color:#fff;font:700 11px/14px Tahoma,sans-serif;border-radius:3px;cursor:pointer}
+.ct-save[aria-busy="true"]{opacity:.7;cursor:progress}
+.ct-save:focus-visible,.ct-ib:focus-visible,.ct-add:focus-visible,.ct-sug button:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.ct-sys{align-self:flex-start;padding:2px 8px;border-radius:6px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 12px/16px var(--font-system);color:var(--text-secondary);margin:-12px 0 -4px}
+@media (max-width: 720px){.ct{padding:16px}}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.ct-ib,
+.ct-sug button,
+.ct-add{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.ct-ib:hover,
+.ct-sug button:hover,
+.ct-add:hover{transition-delay:.3s}
+.ct-ib:hover:active,
+.ct-sug button:hover:active,
+.ct-add:hover:active{transition-delay:0s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<div class="ct">
+<h1>{{title}}</h1>
+<span class="ct-sys" title="Встроенная система">Расчётный конвейер</span>
+<div class="ct-frame" role="form" aria-label="{{title}}">
+<span class="ct-lbl">Клиент</span>
+<div class="ct-client" data-err="{{clientErr}}"><input type="text" aria-label="Клиент" placeholder="Название, ИНН или ПИН" value="{{clientQ}}" onChange="{{setClientQ}}" onKeyDown="{{clientKey}}"><sc-if value="{{hasClient}}" hint-placeholder-val="{{false}}"><button type="button" class="ct-ib" aria-label="Очистить клиента" onClick="{{clearClient}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.4 4.2L12 10.6 5.6 4.2 4.2 5.6l6.4 6.4-6.4 6.4 1.4 1.4 6.4-6.4 6.4 6.4 1.4-1.4-6.4-6.4 6.4-6.4z"/></svg></button></sc-if><span class="ct-ib" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg></span>
+<sc-if value="{{sugOpen}}" hint-placeholder-val="{{false}}"><div class="ct-sug" role="listbox" aria-label="Клиенты"><sc-for list="{{sugs}}" as="sg" hint-placeholder-count="3"><button type="button" role="option" data-first="{{sg.first}}" onClick="{{sg.pick}}">{{sg.label}}</button></sc-for></div></sc-if></div>
+<sc-if value="{{clientErrOn}}" hint-placeholder-val="{{false}}"><div class="ct-err" role="alert">Выберите клиента</div></sc-if>
+<div class="ct-row"><div class="ct-in"><small>ИНН</small><span>{{inn}}</span></div><div class="ct-date"><small>Дата подачи документов</small>{{today}}</div></div>
+<fieldset class="ct-fs"><legend>Сведения о контрагенте</legend><table class="ct-tbl"><thead><tr><th class="add"><button type="button" class="ct-add" aria-label="Добавить контрагента" onClick="{{addCp}}">+</button></th><th>Контрагент</th><th>Страна</th></tr></thead><tbody><sc-for list="{{cps}}" as="cp" hint-placeholder-count="1"><tr><td><button type="button" class="ct-add" style="font-size: 12px" aria-label="Удалить контрагента" onClick="{{cp.del}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zM6 9h12l-1 12H7L6 9z"/></svg></button></td><td><input type="text" aria-label="Контрагент" value="{{cp.name}}" onChange="{{cp.setName}}"></td><td><input type="text" aria-label="Страна" value="{{cp.country}}" onChange="{{cp.setCountry}}"></td></tr></sc-for></tbody></table></fieldset>
+<fieldset class="ct-fs"><legend>Сведения о плательщике/получателе</legend><table class="ct-tbl"><thead><tr><th class="add"><button type="button" class="ct-add" aria-label="Добавить плательщика или получателя" onClick="{{addPr}}">+</button></th><th>Наименование плательщика/получателя</th><th>Тип плательщика/получателя</th><th>Страна плательщика/получателя</th><th>ИНН</th><th>БИК банка</th><th>SWIFT банка</th><th>Страна банка</th><th>Счёт</th></tr></thead><tbody><sc-for list="{{prs}}" as="pr" hint-placeholder-count="0"><tr><td></td><td><input type="text" aria-label="Наименование"></td><td><input type="text" aria-label="Тип"></td><td><input type="text" aria-label="Страна"></td><td><input type="text" aria-label="ИНН"></td><td><input type="text" aria-label="БИК"></td><td><input type="text" aria-label="SWIFT"></td><td><input type="text" aria-label="Страна банка"></td><td><input type="text" aria-label="Счёт"></td></tr></sc-for></tbody></table></fieldset>
+<fieldset class="ct-fs"><legend>Сведения о контракте</legend><table class="ct-tbl"><thead><tr><th>№</th><th>БН</th><th>Дата</th><th>Сумма</th><th>Без суммы</th><th>Валюта</th><th>Дата завершения</th><th>Код вида УНК</th><th>Дата последнего изменения суммы контракта</th><th>Рублёвый эквивалент</th></tr></thead><tbody><tr><td><input type="text" aria-label="Номер контракта" value="{{num}}" onChange="{{setNum}}"></td><td style="text-align: center"><input type="checkbox" aria-label="Без номера" style="width: auto; height: auto"></td><td><input type="text" aria-label="Дата" value="{{date}}" onChange="{{setDate}}"></td><td><input type="text" aria-label="Сумма" value="{{sum}}" onChange="{{setSum}}"></td><td style="text-align: center"><input type="checkbox" aria-label="Без суммы" style="width: auto; height: auto"></td><td><input type="text" aria-label="Валюта" value="{{cur}}" onChange="{{setCur}}"></td><td><input type="text" aria-label="Дата завершения"></td><td><input type="text" aria-label="Код вида УНК"></td><td></td><td></td></tr></tbody></table></fieldset>
+<div style="color: #444; margin-bottom: 6px">Основной счёт для расчётов</div>
+<button type="button" class="ct-save" aria-busy="{{savingStr}}" onClick="{{save}}">{{saveText}}</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["Контракт","СВО","СПД","Исходящее письмо","Исходящее письмо с ЭЦП","Запрос клиента"],"default":"Контракт"},"filled":{"editor":"boolean","default":false},"onSaved":{"editor":null},"$preview":{"width":1376,"height":900}}'>
+const CLIENTS = [['ПАО «Сбербанк России» (закрыт от 010206) Нет в базе ЮЦ (скала)', '7707083893'], ['ООО «Терем» Клиент ВЭД UABBDX', '7702734076'], ['ООО «ВОСТОК ОИЛ» Клиент ВЭД UABBDY', '3328004990'], ['ИП Константинопольский Константин Константинович', '772756377812'], ['ООО «МЕТРОНОМ-МЕХАНИКС»', '7727563778']];
+const TITLES = { 'Контракт': 'Создать контракт', 'СВО': 'Создать СВО', 'СПД': 'Создать СПД', 'Исходящее письмо': 'Создать исходящее письмо', 'Исходящее письмо с ЭЦП': 'Создать исходящее письмо с ЭЦП', 'Запрос клиента': 'Создать запрос клиента' };
+const pad = (n) => (n < 10 ? '0' : '') + n;
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  componentDidMount() { if (this.props.filled) this.setState({ client: CLIENTS[0], clientQ: CLIENTS[0][0], cps: [{ name: 'Пример80', country: 'АВСТРАЛИЯ (036)' }], num: 'Н-3254/962', date: '24.12.2025', sum: '500 000,00', cur: 'CNY' }); }
+  componentWillUnmount() { clearTimeout(this._s); }
+  renderVals() {
+    const s = this.st(); const p = this.props;
+    const kind = p.kind || 'Контракт';
+    const q = (s.clientQ || '').trim().toLowerCase();
+    // единое правило поиска: с 1 символа, сразу, первый результат подсвечен, Enter выбирает его
+    const sugs = q && !s.client ? CLIENTS.filter((c) => (c[0] + ' ' + c[1]).toLowerCase().indexOf(q) >= 0) : [];
+    const pick = (c) => this.setState({ client: c, clientQ: c[0], tried: false });
+    const d = new Date(); const today = pad(d.getDate()) + '.' + pad(d.getMonth() + 1) + '.' + d.getFullYear();
+    const cps = s.cps || [];
+    const setCp = (i, k) => (e) => { const n = (this.st().cps || []).slice(); n[i] = Object.assign({}, n[i], { [k]: (e && e.target && e.target.value) || '' }); this.setState({ cps: n }); };
+    return {
+      title: TITLES[kind] || 'Создать задачу',
+      clientQ: s.clientQ || '', hasClient: !!(s.clientQ || s.client),
+      setClientQ: (e) => this.setState({ clientQ: (e && e.target && e.target.value) || '', client: null }),
+      clearClient: () => this.setState({ clientQ: '', client: null }),
+      clientKey: (e) => { if (e && e.key === 'Enter' && sugs.length) { e.preventDefault(); pick(sugs[0]); } },
+      sugOpen: sugs.length > 0, sugs: sugs.map((c, i) => ({ label: c[0] + ' · ИНН ' + c[1], first: i === 0 ? 'true' : 'false', pick: () => pick(c) })),
+      clientErr: s.tried && !s.client ? 'true' : 'false', clientErrOn: !!s.tried && !s.client,
+      inn: s.client ? s.client[1] : '—', today: today,
+      cps: cps.map((c, i) => ({ name: c.name || '', country: c.country || '', setName: setCp(i, 'name'), setCountry: setCp(i, 'country'), del: () => { const n = cps.slice(); n.splice(i, 1); this.setState({ cps: n }); } })),
+      addCp: () => this.setState({ cps: cps.concat([{ name: '', country: '' }]) }),
+      prs: s.prs || [], addPr: () => this.setState({ prs: (s.prs || []).concat([{}]) }),
+      num: s.num || '', setNum: (e) => this.setState({ num: (e && e.target && e.target.value) || '' }),
+      date: s.date || '', setDate: (e) => this.setState({ date: (e && e.target && e.target.value) || '' }),
+      sum: s.sum || '', setSum: (e) => this.setState({ sum: (e && e.target && e.target.value) || '' }),
+      cur: s.cur || '', setCur: (e) => this.setState({ cur: (e && e.target && e.target.value) || '' }),
+      savingStr: s.saving ? 'true' : 'false', saveText: s.saving ? 'Сохраняем…' : 'Сохранить',
+      save: () => {
+        if (s.saving) return;
+        if (!s.client) { this.setState({ tried: true }); return; }
+        this.setState({ saving: true });
+        clearTimeout(this._s);
+        this._s = setTimeout(() => { this.setState({ saving: false }); if (this.props.onSaved) this.props.onSaved({ kind: kind, client: s.client[0], inn: s.client[1] }); }, 700);
+      }
+    };
+  }
+}
+</script>
+</body>
+</html>

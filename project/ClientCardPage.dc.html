@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Карточка клиента</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>.sc-host:has(> .hd-bar){position:sticky;top:0;z-index:30}body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}</style>
+</helmet>
+<div style="display: flex; align-items: stretch; min-height: 100vh; background-color: var(--bg-base-secondary, #f2f3f5); font-family: var(--font-system); color: var(--text-primary)">
+<dc-import name="SideMenu" active="clients" collapsed="{{yes}}" hint-size="64px,900px"></dc-import>
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column">
+<dc-import name="Header" back="{{yes}}" back-label="К клиентам" hint-size="100%,64px"></dc-import>
+<dc-import name="ClientCard" kind="{{kind}}" dead="{{dead}}" data="{{data}}" header="{{header}}" scenario="{{scenario}}" tab="{{tab}}" view="{{view}}" tab-state="{{tabState}}" op-card="{{opCard}}" op-state="{{opState}}" live-calls="{{liveCalls}}" demo-modal="{{demoModal}}" hint-size="100%,1400px"></dc-import>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["ul","ip","fl"],"default":"ul"},"dead":{"editor":"boolean","default":false},"data":{"editor":"enum","options":["full","min","nodata"],"default":"full"},"header":{"editor":"enum","options":["resident","nonresident","banking-off","other-cat","h2h-blocked"],"default":"resident"},"scenario":{"editor":"enum","options":["normal","skeleton","skeleton-more","error-all","offline","error-client","error-contacts","error-calls"],"default":"normal"},"tab":{"editor":"enum","options":["","tasks","contacts","acc","ops","calls","cats","addr","links"],"default":""},"view":{"editor":"string","default":""},"tabState":{"editor":"enum","options":["","loading","empty","error","offline","forbidden"],"default":""},"opCard":{"editor":"boolean","default":false},"opState":{"editor":"enum","options":["","loading","nodata","error"],"default":""},"liveCalls":{"editor":"enum","options":["on","demo","off"],"default":"on"},"demoModal":{"editor":"enum","options":["","pins","pins-one","pins-none","passport","death","inn","add-contact","add-contact-err","edit-contact","del-contact","contact-menu","cat-menu","cat-err","acc-menu","per-menu","adv","hold","addr","fcontacts","link"],"default":""},"$preview":{"width":1440,"height":1500}}'>
+class Component extends DCLogic {
+  renderVals() { const p = this.props; return { yes: true, kind: p.kind || 'ul', dead: !!p.dead, data: p.data || 'full', header: p.header || 'resident', scenario: p.scenario || 'normal', tab: p.tab || '', view: p.view || '', tabState: p.tabState || '', opCard: !!p.opCard, opState: p.opState || '', liveCalls: p.liveCalls || 'on', demoModal: p.demoModal || '' }; }
+}
+</script>
+</body>
+</html>

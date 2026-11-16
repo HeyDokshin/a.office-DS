@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Клиенты</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>.sc-host:has(> .hd-bar){position:sticky;top:0;z-index:30}body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}</style>
+</helmet>
+<div style="display: flex; align-items: stretch; min-height: 100vh; background-color: var(--bg-base-secondary, #f2f3f5); font-family: var(--font-system); color: var(--text-primary)">
+<dc-import name="SideMenu" active="clients" collapsed="{{menuMini}}" hint-size="64px,900px"></dc-import>
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column">
+<dc-import name="Header" hint-size="100%,64px"></dc-import>
+<dc-import name="ClientSearch" layout="{{layout}}" scenario="{{scenario}}" demo-q="{{demoQ}}" demo-enter="{{demoEnter}}" demo-adv="{{demoAdv}}" demo-menu="{{demoMenu}}" hint-size="100%,836px"></dc-import>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"scenario":{"editor":"enum","options":["mine","mine-empty","loading","offline","load-error","forbidden"],"default":"mine"},"demoQ":{"editor":"string","default":""},"demoEnter":{"editor":"boolean","default":false},"demoAdv":{"editor":"enum","options":["","all","fl","ip","ul","pin"],"default":""},"demoMenu":{"editor":"enum","options":["","column","segment"],"default":""},"layout":{"editor":"enum","options":["classic","v3"],"default":"classic"},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { const p = this.props; return { yes: true, layout: p.layout || 'classic', menuMini: p.layout !== 'v3', scenario: p.scenario || 'mine', demoQ: p.demoQ || '', demoEnter: !!p.demoEnter, demoAdv: p.demoAdv || '', demoMenu: p.demoMenu || '' }; }
+}
+</script>
+</body>
+</html>

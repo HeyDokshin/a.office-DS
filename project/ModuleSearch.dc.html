@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Поиск по модулю</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
+.ms{box-sizing:border-box;width:100%;padding:16px 40px 40px;display:flex;flex-direction:column;gap:20px;font-family:var(--font-system);color:var(--text-primary)}
+.ms-h1{margin:0;font:700 32px/40px var(--font-system);letter-spacing:-.4px}
+.ms-pills{display:flex;flex-wrap:wrap;gap:8px}
+.ms-pill{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:99px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.ms-pill:hover{background:rgba(30,43,68,.14)}
+.ms-pill[aria-pressed="true"]{background:#212124;color:#fff}
+.ms-pill:focus-visible,.ms-tab:focus-visible,.ms-btn:focus-visible,.ms-id:focus-visible,.ms-cl:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.ms-card{position:relative;background:var(--bg-base-primary, #fff);border-radius:24px;padding:16px 24px 24px;min-height:420px}
+.ms-tabs{display:flex;gap:24px;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));margin-bottom:12px}
+.ms-tab{appearance:none;border:0;margin:0;background:transparent;padding:8px 0 10px;font:500 13px/16px var(--font-system);color:var(--text-secondary);cursor:pointer;position:relative}
+.ms-tab[aria-selected="true"]{color:var(--text-primary)}
+.ms-tab[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#ef3124;border-radius:2px}
+.ms-tab[aria-disabled="true"]{cursor:default;opacity:.5}
+/* Форма фильтра — стиль встроенной системы */
+.ms-form{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;max-width:1040px}
+.ms-f{position:relative;display:flex;align-items:center;height:30px;background:#ededed;border-bottom:1px solid #c7c7c7;font:400 11px/14px var(--font-system)}
+.ms-f input,.ms-f select{appearance:none;border:0;margin:0;background:transparent;width:100%;height:100%;padding:0 30px 0 6px;font:400 11px/14px var(--font-system);color:#111;box-sizing:border-box}
+.ms-f input::placeholder{color:#777}
+.ms-f input:focus,.ms-f select:focus{outline:2px solid #2a77ef;outline-offset:-2px;background:#fff}
+.ms-f select{cursor:pointer}
+.ms-f select:invalid{color:#777}
+.ms-f-i{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;color:#555;display:inline-flex}
+.ms-acts{display:flex;gap:12px;margin-top:10px}
+.ms-btn{appearance:none;border:0;margin:0;height:26px;padding:0 14px;border-radius:2px;font:500 11px/14px var(--font-system);cursor:pointer}
+.ms-btn--ghost{background:#ededed;color:#888}
+.ms-btn--ghost:hover{color:#333}
+.ms-btn--red{background:#ef3124;color:#fff;min-width:50px}
+.ms-btn--red[aria-busy="true"]{opacity:.7;cursor:progress}
+/* Результат */
+.ms-bar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:4px 0 12px;font:400 11px/14px var(--font-system)}
+.ms-bbtn{appearance:none;margin:0;height:34px;padding:0 14px;border-radius:4px;border:1px solid #9b9b9b;background:#ededed;font:500 11px/14px var(--font-system);color:#111;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.ms-bbtn--muted{border-color:transparent;color:#999;background:#f2f2f2}
+.ms-bbtn--out{background:#fff;border-color:#333}
+.ms-bbtn[aria-disabled="true"]{color:#aaa;border-color:#ddd;background:#fff;cursor:default}
+.ms-bar select{height:22px;font:400 11px/14px var(--font-system)}
+.ms-scroll{overflow:auto;max-height:520px;border:1px solid #d6d6d6}
+.ms-t{border-collapse:collapse;min-width:100%;font:400 11px/14px var(--font-system);color:#111}
+.ms-t th{position:sticky;top:0;z-index:1;background:#fff;font-weight:700;padding:8px 6px 6px;border:1px solid #d6d6d6;vertical-align:top;text-align:center;white-space:nowrap}
+.ms-t th .ms-thf{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:6px}
+.ms-t th .ms-dd{width:40px;height:22px;border:1px solid #999;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;color:#333}
+.ms-t th input{width:100%;min-width:80px;height:16px;border:1px solid #999;padding:0 4px;box-sizing:border-box;font:400 11px/14px var(--font-system)}
+.ms-t td{padding:8px 6px;border:1px solid #e3e3e3;text-align:center;vertical-align:middle}
+.ms-t tbody tr:nth-child(even){background:#f6f6f6}
+.ms-t tbody tr:hover{background:#eef4ff}
+.ms-id,.ms-cl{appearance:none;border:0;margin:0;padding:0;background:transparent;font:inherit;color:#1a5fd6;text-decoration:underline;cursor:pointer}
+.ms-id[data-seen="true"]{background:#d9d9d9;color:#333}
+.ms-empty{padding:40px 0;text-align:center;color:var(--text-secondary);font:400 14px/20px var(--font-system)}
+/* Оверлей «Открываем задачу» */
+.ms-ov{position:absolute;inset:0;z-index:5;border-radius:24px;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;animation:ms-in .16s ease}
+.ms-ovb{width:min(350px,calc(100% - 32px));padding:28px 24px 24px;border-radius:20px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 20px 24px rgba(0,0,0,.08)}
+.ms-ovb b{font:700 15px/20px var(--font-system);margin-top:8px}
+.ms-ovb span{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.ms-ovb button{appearance:none;border:0;margin:12px 0 0;height:36px;padding:0 18px;border-radius:10px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 13px/16px var(--font-system);cursor:pointer}
+.ms-spin{width:28px;height:28px;border-radius:50%;border:3px solid rgba(15,25,55,.1);border-top-color:#212124;animation:ms-rot .8s linear infinite}
+@keyframes ms-rot{to{transform:rotate(360deg)}}
+@keyframes ms-in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.ms-spin{animation-duration:2s}.ms-ov{animation:none}}
+.ms-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:50;padding:12px 16px;border-radius:14px;background:#1c1c1e;color:#fff;font:500 14px/20px var(--font-system)}
+
+/* Единое правило: любая модалка — шторка справа на всю высоту, выезжает справа (side-in) */
+.ms-ov{position:fixed;inset:0;z-index:60;border-radius:0;background:rgba(0,0,0,.4);display:block;animation:none}
+.ms-ovb{position:fixed;top:8px;right:8px;bottom:8px;left:auto;transform:none;width:min(500px,calc(100vw - 16px));height:auto;max-height:none;border-radius:24px;align-items:center;justify-content:center;animation:sbo-sheet-in .22s ease}
+@media (prefers-reduced-motion: reduce){.ms-ovb{animation:none !important}}
+@keyframes sbo-sheet-in{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.ms-pill,
+.ms-btn--ghost,
+.ms-t tbody tr{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.ms-pill:hover,
+.ms-btn--ghost:hover,
+.ms-t tbody tr:hover{transition-delay:.3s}
+.ms-pill:hover:active,
+.ms-btn--ghost:hover:active,
+.ms-t tbody tr:hover:active{transition-delay:0s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<div class="ms">
+<h1 class="ms-h1">Поиск по валютному контролю</h1>
+<div class="ms-pills" role="group" aria-label="Объект поиска">
+<sc-for list="{{kinds}}" as="k" hint-placeholder-count="5"><button type="button" class="ms-pill" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for>
+</div>
+<section class="ms-card" aria-label="{{kindLabel}}">
+<div class="ms-tabs" role="tablist">
+<button type="button" role="tab" class="ms-tab" aria-selected="{{tabFilterOn}}" onClick="{{toFilter}}">Фильтр</button>
+<button type="button" role="tab" class="ms-tab" aria-selected="{{tabResOn}}" aria-disabled="{{noResYet}}" onClick="{{toRes}}">Результат</button>
+</div>
+
+<sc-if value="{{isFilter}}" hint-placeholder-val="{{true}}">
+<form class="ms-form" onSubmit="{{submit}}">
+<sc-for list="{{fields}}" as="fl" hint-placeholder-count="12"><label class="ms-f">
+<sc-if value="{{fl.isText}}" hint-placeholder-val="{{true}}"><input type="text" placeholder="{{fl.label}}" aria-label="{{fl.label}}" value="{{fl.value}}" onChange="{{fl.set}}"></sc-if>
+<sc-if value="{{fl.isDate}}" hint-placeholder-val="{{false}}"><input type="text" inputmode="numeric" placeholder="{{fl.label}}" aria-label="{{fl.label}}" value="{{fl.value}}" onChange="{{fl.set}}"><span class="ms-f-i" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h2v2h6V2h2v2h3a1 1 0 011 1v15a1 1 0 01-1 1H4a1 1 0 01-1-1V5a1 1 0 011-1h3V2zm12 8H5v9h14v-9z"/></svg></span></sc-if>
+<sc-if value="{{fl.isSelect}}" hint-placeholder-val="{{false}}"><select required aria-label="{{fl.label}}" onChange="{{fl.set}}"><sc-for list="{{fl.opts}}" as="op" hint-placeholder-count="3"><option value="{{op.v}}" selected="{{op.sel}}">{{op.t}}</option></sc-for></select><span class="ms-f-i" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></span></sc-if>
+</label></sc-for>
+</form>
+<div class="ms-acts"><button type="button" class="ms-btn ms-btn--ghost" onClick="{{resetForm}}">Сбросить фильтр</button><button type="button" class="ms-btn ms-btn--red" aria-busy="{{searchingStr}}" onClick="{{submit}}">{{searchLabel}}</button></div>
+</sc-if>
+
+<sc-if value="{{isRes}}" hint-placeholder-val="{{false}}">
+<div class="ms-bar">
+<button type="button" class="ms-bbtn" onClick="{{exportXls}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3h11l5 5v13H4V3zm4.2 6l2.3 3.5L8 16h2l1.5-2.3L13 16h2l-2.5-3.5L15 9h-2l-1.5 2.2L10 9H8.2z"/></svg>Выгрузить в Excel</button>
+<button type="button" class="ms-bbtn ms-bbtn--muted" onClick="{{resetAndFilter}}">Сбросить фильтр</button>
+<span>Страница {{pageNo}} из {{pageCount}}</span>
+<label>На странице: <select aria-label="Строк на странице" onChange="{{setSize}}"><sc-for list="{{sizes}}" as="sz" hint-placeholder-count="3"><option value="{{sz.v}}" selected="{{sz.sel}}">{{sz.v}}</option></sc-for></select></label>
+<button type="button" class="ms-bbtn" aria-disabled="{{noPrev}}" onClick="{{prev}}">← Пред</button>
+<button type="button" class="ms-bbtn ms-bbtn--out" aria-disabled="{{noNext}}" onClick="{{next}}">След →</button>
+<span style="color: #777">Найдено: {{found}}</span>
+</div>
+<div class="ms-scroll">
+<table class="ms-t">
+<thead><tr><sc-for list="{{cols}}" as="c" hint-placeholder-count="10"><th scope="col">{{c.label}}<span class="ms-thf"><sc-if value="{{c.dd}}" hint-placeholder-val="{{false}}"><span class="ms-dd" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></span></sc-if><input type="text" aria-label="{{c.flabel}}" value="{{c.fv}}" onChange="{{c.setF}}"></span></th></sc-for></tr></thead>
+<tbody>
+<sc-for list="{{pageRows}}" as="r" hint-placeholder-count="8"><tr>
+<td><button type="button" class="ms-id" data-seen="{{r.seen}}" onClick="{{r.open}}" title="{{r.openTitle}}">{{r.id}}</button></td>
+<td>{{r.pin}}</td>
+<td><button type="button" class="ms-cl" onClick="{{r.client}}">Полное наименование<br>Орг № {{r.org}}</button></td>
+<td>{{r.unk}}</td>
+<td>{{r.filled}}</td>
+<td>{{r.auth}}</td>
+<td>{{r.status}}</td>
+<td>{{r.dept}}</td>
+<td>{{r.fio}}</td>
+<td>{{r.cnt}}</td>
+</tr></sc-for>
+</tbody>
+</table>
+<sc-if value="{{noRows}}" hint-placeholder-val="{{false}}"><div class="ms-empty">Ничего не нашли — измените фильтр</div></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{opening}}" hint-placeholder-val="{{false}}"><div class="ms-ov" role="dialog" aria-modal="true" aria-label="Открываем задачу"><div class="ms-ovb"><span class="ms-spin" aria-hidden="true"></span><b>Открываем задачу ID {{openingId}}</b><span>Открываем — это может занять до 10 секунд.<br>{{openingNote}}</span><button type="button" onClick="{{cancelOpen}}">Отменить</button></div></div></sc-if>
+</section>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}"><div class="ms-toast" role="status">{{toast}}</div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["unk","unk-close","contract","svo","spd"],"default":"spd"},"tab":{"editor":"enum","options":["filter","result"],"default":"filter"},"onOpenTask":{"editor":null},"$preview":{"width":1376,"height":836}}'>
+const KINDS = [['unk', 'УНК', 'УНК'], ['unk-close', 'УНК для закрытия', 'УНК'], ['contract', 'Контракты', 'ИД контракта'], ['svo', 'СВО', 'ИД СВО'], ['spd', 'СПД', 'ИД СПД'], ['docs', 'Контроль представления документов', 'ИД документа']];
+const DEPTS = ['Полянка ДО', 'Филиал Нижегородский', 'Тверская ДО', 'Филиал Казанский'];
+const FIELDS = [
+  ['pin', 'Пин EQ', 'text'], ['cpr', 'ЦПР', 'text'],
+  ['name', 'Наименование клиента', 'text'], ['inn', 'ИНН клиента', 'text'],
+  ['dFrom', 'Дата заполнения С', 'date'], ['dTo', 'Дата заполнения ПО', 'date'],
+  ['aFrom', 'Дата авторизации или отклонения С', 'date'], ['aTo', 'Дата авторизации или отклонения ПО', 'date'],
+  ['unk', 'УНК', 'text'], ['dept', 'Отделение', 'select'],
+  ['doc', '№ Документа', 'text'], ['status', 'Статус', 'select']
+];
+const SELECTS = { dept: ['Отделение'].concat(DEPTS), status: ['Статус', 'Обработка ВК', 'Авторизован', 'Отклонён'] };
+const PINS = ['UCA0OV', 'UEGQH6', 'UBIUAX', 'UDFKLV', 'UCLX6D', 'UEDE4Z', 'UD0CHU', 'UDK6P9', 'UD03CV'];
+const pad = (n) => String(n).padStart(2, '0');
+const ROWS = Array.from({ length: 137 }, (_, i) => {
+  const d = 1 + (i * 7) % 27, h = (i * 5) % 24, m = (i * 13) % 60, sec = (i * 29) % 60;
+  return {
+    id: String(279452169 - i * 37311 - (i % 3) * 1117),
+    pin: PINS[i % PINS.length],
+    org: String(68869 - i * 211).slice(-5),
+    inn: String(7702734076 + i * 1311),
+    unk: '2607' + String(2871 - i * 17).padStart(4, '0') + '/1326/00' + pad(i % 19) + '/' + (1 + i % 6) + '/1',
+    filled: pad(d) + '.07.2026 ' + pad(h) + ':' + pad(m) + ':' + pad(sec),
+    auth: i % 4 === 3 ? pad(d) + '.07.2026 ' + pad((h + 3) % 24) + ':' + pad(m) : '',
+    status: i % 4 === 3 ? 'Авторизован' : 'Обработка ВК',
+    dept: DEPTS[i % DEPTS.length],
+    fio: 'Глухих Оксана Николаевна',
+    cnt: 1 + (i % 3 === 0 ? 1 : 0),
+    inQueue: i % 3 !== 2
+  };
+});
+const COLS = [['id', '', true], ['pin', 'ПИН EQ', true], ['client', 'Клиент', false], ['unk', 'УНК', true], ['filled', 'Дата заполнения', false], ['auth', 'Дата авторизации', false], ['status', 'Статус', true], ['dept', 'Отделение', true], ['fio', 'ФИО ВК', true], ['cnt', 'Количество строк в справке', true]];
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  componentWillUnmount() { clearTimeout(this._o); clearTimeout(this._s); clearTimeout(this._t); }
+  toast(msg) { clearTimeout(this._t); this.setState({ toast: msg }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
+  renderVals() {
+    const s = this.st();
+    const kind = s.kind || this.props.kind || 'spd';
+    const kd = KINDS.find((k) => k[0] === kind) || KINDS[4];
+    const form = s.form || {};
+    const applied = s.applied || (this.props.tab === 'result' ? {} : null);
+    const tab = s.tab || this.props.tab || 'filter';
+    const colF = s.colF || {};
+    const size = s.size || 50;
+    const has = (v) => v != null && String(v).trim() !== '';
+    const lc = (v) => String(v || '').toLowerCase();
+    let rows = ROWS;
+    if (applied) {
+      rows = rows.filter((r) =>
+        (!has(applied.pin) || lc(r.pin).includes(lc(applied.pin).trim())) &&
+        (!has(applied.name) || lc('Полное наименование Орг № ' + r.org).includes(lc(applied.name).trim())) &&
+        (!has(applied.inn) || r.inn.includes(String(applied.inn).trim())) &&
+        (!has(applied.unk) || r.unk.includes(String(applied.unk).trim())) &&
+        (!has(applied.doc) || r.id.includes(String(applied.doc).trim())) &&
+        (!has(applied.dept) || applied.dept === 'Отделение' || r.dept === applied.dept) &&
+        (!has(applied.status) || applied.status === 'Статус' || r.status === applied.status));
+    }
+    rows = rows.filter((r) => COLS.every((c) => !has(colF[c[0]]) || lc(c[0] === 'client' ? 'Полное наименование Орг № ' + r.org : r[c[0]]).includes(lc(colF[c[0]]).trim())));
+    const pageCount = Math.max(1, Math.ceil(rows.length / size));
+    const page = Math.min(s.page || 0, pageCount - 1);
+    const seen = s.seen || {};
+    const startOpen = (r) => {
+      if (s.opening) return;
+      this.setState({ opening: { id: r.id, inQueue: r.inQueue }, seen: Object.assign({}, seen, { [r.id]: true }) });
+      clearTimeout(this._o);
+      this._o = setTimeout(() => {
+        this.setState({ opening: null });
+        if (this.props.onOpenTask) this.props.onOpenTask(r.id, r.inQueue, kd[1]);
+        else this.toast(r.inQueue ? 'Задача есть в очереди — открываем окно задачи с шапкой' : 'Задачи нет в очереди — открываем только окно задачи');
+      }, 1600);
+    };
+    const submit = (e) => {
+      if (e && e.preventDefault) e.preventDefault();
+      if (s.searching) return;
+      this.setState({ searching: true });
+      clearTimeout(this._s);
+      this._s = setTimeout(() => this.setState({ searching: false, applied: Object.assign({}, this.st().form || {}), tab: 'result', page: 0 }), 700);
+    };
+    return {
+      kinds: KINDS.map((k) => ({ label: k[1], on: k[0] === kind ? 'true' : 'false', pick: () => this.setState({ kind: k[0], page: 0 }) })),
+      kindLabel: 'Поиск: ' + kd[1],
+      isFilter: tab === 'filter',
+      isRes: tab === 'result',
+      tabFilterOn: tab === 'filter' ? 'true' : 'false',
+      tabResOn: tab === 'result' ? 'true' : 'false',
+      noResYet: applied ? 'false' : 'true',
+      toFilter: () => this.setState({ tab: 'filter' }),
+      toRes: () => { if (applied) this.setState({ tab: 'result' }); },
+      fields: FIELDS.map((f) => ({
+        label: f[1], value: form[f[0]] || '', isText: f[2] === 'text', isDate: f[2] === 'date', isSelect: f[2] === 'select',
+        opts: (SELECTS[f[0]] || []).map((o, i) => ({ v: i ? o : '', t: o, sel: (form[f[0]] || '') === (i ? o : '') })),
+        set: (e) => { const n = Object.assign({}, this.st().form || {}); n[f[0]] = (e && e.target && e.target.value) || ''; this.setState({ form: n }); }
+      })),
+      submit: submit,
+      searchingStr: s.searching ? 'true' : 'false',
+      searchLabel: s.searching ? 'Ищем…' : 'Поиск',
+      resetForm: () => this.setState({ form: {} }),
+      resetAndFilter: () => this.setState({ form: {}, applied: {}, colF: {}, page: 0 }),
+      exportXls: () => this.toast('Выгружаем ' + rows.length + ' строк в Excel…'),
+      pageNo: page + 1,
+      pageCount: pageCount,
+      found: rows.length,
+      sizes: [10, 20, 50].map((v) => ({ v: v, sel: v === size })),
+      setSize: (e) => this.setState({ size: Number(e.target.value) || 50, page: 0 }),
+      noPrev: page === 0 ? 'true' : 'false',
+      noNext: page >= pageCount - 1 ? 'true' : 'false',
+      prev: () => { if (page > 0) this.setState({ page: page - 1 }); },
+      next: () => { if (page < pageCount - 1) this.setState({ page: page + 1 }); },
+      cols: COLS.map((c) => ({ label: c[0] === 'id' ? kd[2] : c[1], dd: c[2], fv: colF[c[0]] || '', flabel: 'Фильтр по столбцу ' + (c[0] === 'id' ? kd[2] : c[1]), setF: (e) => { const n = Object.assign({}, this.st().colF || {}); n[c[0]] = (e && e.target && e.target.value) || ''; this.setState({ colF: n, page: 0 }); } })),
+      pageRows: rows.slice(page * size, page * size + size).map((r) => Object.assign({}, r, {
+        seen: seen[r.id] ? 'true' : 'false',
+        openTitle: r.inQueue ? 'Задача есть в очереди' : 'Задачи нет в очереди',
+        open: () => startOpen(r),
+        client: () => this.toast('Открываем карточку клиента: Орг № ' + r.org)
+      })),
+      noRows: rows.length === 0,
+      opening: !!s.opening,
+      openingId: s.opening ? s.opening.id : '',
+      openingNote: s.opening && s.opening.inQueue ? 'Задача есть в очереди — откроем окно задачи' : 'Задачи нет в очереди — откроем только окно задачи',
+      cancelOpen: () => { clearTimeout(this._o); this.setState({ opening: null }); },
+      hasToast: !!s.toast,
+      toast: s.toast || ''
+    };
+  }
+}
+</script>
+</body>
+</html>

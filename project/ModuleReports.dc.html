@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Отчёты ВК</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
+.ms{box-sizing:border-box;width:100%;padding:16px 40px 40px;display:flex;flex-direction:column;gap:20px;font-family:var(--font-system);color:var(--text-primary)}
+.ms-h1{margin:0;font:700 32px/40px var(--font-system);letter-spacing:-.4px}
+.ms-pills{display:flex;flex-wrap:wrap;gap:8px}
+.ms-pill{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:99px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.ms-pill:hover{background:rgba(30,43,68,.14)}
+.ms-pill[aria-pressed="true"]{background:#212124;color:#fff}
+.ms-pill:focus-visible,.ms-tab:focus-visible,.ms-btn:focus-visible,.ms-id:focus-visible,.ms-cl:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.ms-card{position:relative;background:var(--bg-base-primary, #fff);border-radius:24px;padding:16px 24px 24px;min-height:420px}
+.ms-tabs{display:flex;gap:24px;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));margin-bottom:12px}
+.ms-tab{appearance:none;border:0;margin:0;background:transparent;padding:8px 0 10px;font:500 13px/16px var(--font-system);color:var(--text-secondary);cursor:pointer;position:relative}
+.ms-tab[aria-selected="true"]{color:var(--text-primary)}
+.ms-tab[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;background:#ef3124;border-radius:2px}
+.ms-tab[aria-disabled="true"]{cursor:default;opacity:.5}
+/* Форма фильтра — стиль встроенной системы */
+.ms-form{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;max-width:1040px}
+.ms-f{position:relative;display:flex;align-items:center;height:30px;background:#ededed;border-bottom:1px solid #c7c7c7;font:400 11px/14px var(--font-system)}
+.ms-f input,.ms-f select{appearance:none;border:0;margin:0;background:transparent;width:100%;height:100%;padding:0 30px 0 6px;font:400 11px/14px var(--font-system);color:#111;box-sizing:border-box}
+.ms-f input::placeholder{color:#777}
+.ms-f input:focus,.ms-f select:focus{outline:2px solid #2a77ef;outline-offset:-2px;background:#fff}
+.ms-f select{cursor:pointer}
+.ms-f select:invalid{color:#777}
+.ms-f-i{position:absolute;right:8px;top:50%;transform:translateY(-50%);pointer-events:none;color:#555;display:inline-flex}
+.ms-acts{display:flex;gap:12px;margin-top:10px}
+.ms-btn{appearance:none;border:0;margin:0;height:26px;padding:0 14px;border-radius:2px;font:500 11px/14px var(--font-system);cursor:pointer}
+.ms-btn--ghost{background:#ededed;color:#888}
+.ms-btn--ghost:hover{color:#333}
+.ms-btn--red{background:#ef3124;color:#fff;min-width:50px}
+.ms-btn--red[aria-busy="true"]{opacity:.7;cursor:progress}
+/* Результат */
+.ms-bar{display:flex;align-items:center;flex-wrap:wrap;gap:12px;margin:4px 0 12px;font:400 11px/14px var(--font-system)}
+.ms-bbtn{appearance:none;margin:0;height:34px;padding:0 14px;border-radius:4px;border:1px solid #9b9b9b;background:#ededed;font:500 11px/14px var(--font-system);color:#111;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+.ms-bbtn--muted{border-color:transparent;color:#999;background:#f2f2f2}
+.ms-bbtn--out{background:#fff;border-color:#333}
+.ms-bbtn[aria-disabled="true"]{color:#aaa;border-color:#ddd;background:#fff;cursor:default}
+.ms-bar select{height:22px;font:400 11px/14px var(--font-system)}
+.ms-scroll{overflow:auto;max-height:520px;border:1px solid #d6d6d6}
+.ms-t{border-collapse:collapse;min-width:100%;font:400 11px/14px var(--font-system);color:#111}
+.ms-t th{position:sticky;top:0;z-index:1;background:#fff;font-weight:700;padding:8px 6px 6px;border:1px solid #d6d6d6;vertical-align:top;text-align:center;white-space:nowrap}
+.ms-t th .ms-thf{display:flex;flex-direction:column;align-items:center;gap:6px;margin-top:6px}
+.ms-t th .ms-dd{width:40px;height:22px;border:1px solid #999;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;color:#333}
+.ms-t th input{width:100%;min-width:80px;height:16px;border:1px solid #999;padding:0 4px;box-sizing:border-box;font:400 11px/14px var(--font-system)}
+.ms-t td{padding:8px 6px;border:1px solid #e3e3e3;text-align:center;vertical-align:middle}
+.ms-t tbody tr:nth-child(even){background:#f6f6f6}
+.ms-t tbody tr:hover{background:#eef4ff}
+.ms-id,.ms-cl{appearance:none;border:0;margin:0;padding:0;background:transparent;font:inherit;color:#1a5fd6;text-decoration:underline;cursor:pointer}
+.ms-id[data-seen="true"]{background:#d9d9d9;color:#333}
+.ms-empty{padding:40px 0;text-align:center;color:var(--text-secondary);font:400 14px/20px var(--font-system)}
+/* Оверлей «Открываем задачу» */
+.ms-ov{position:absolute;inset:0;z-index:5;border-radius:24px;background:rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;animation:ms-in .16s ease}
+.ms-ovb{width:min(350px,calc(100% - 32px));padding:28px 24px 24px;border-radius:20px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;box-shadow:0 20px 24px rgba(0,0,0,.08)}
+.ms-ovb b{font:700 15px/20px var(--font-system);margin-top:8px}
+.ms-ovb span{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.ms-ovb button{appearance:none;border:0;margin:12px 0 0;height:36px;padding:0 18px;border-radius:10px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 13px/16px var(--font-system);cursor:pointer}
+.ms-spin{width:28px;height:28px;border-radius:50%;border:3px solid rgba(15,25,55,.1);border-top-color:#212124;animation:ms-rot .8s linear infinite}
+@keyframes ms-rot{to{transform:rotate(360deg)}}
+@keyframes ms-in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.ms-spin{animation-duration:2s}.ms-ov{animation:none}}
+.ms-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:50;padding:12px 16px;border-radius:14px;background:#1c1c1e;color:#fff;font:500 14px/20px var(--font-system)}
+
+/* Единое правило: любая модалка — шторка справа на всю высоту, выезжает справа (side-in) */
+.ms-ov{position:fixed;inset:0;z-index:60;border-radius:0;background:rgba(0,0,0,.4);display:block;animation:none}
+.ms-ovb{position:fixed;top:8px;right:8px;bottom:8px;left:auto;transform:none;width:min(500px,calc(100vw - 16px));height:auto;max-height:none;border-radius:24px;align-items:center;justify-content:center;animation:sbo-sheet-in .22s ease}
+@media (prefers-reduced-motion: reduce){.ms-ovb{animation:none !important}}
+@keyframes sbo-sheet-in{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
+
+/* Отчёты: загрузка файлов */
+.mr-drops{display:flex;flex-direction:column;gap:20px;padding:20px 24px 8px}
+.mr-drop{display:flex;align-items:center;gap:20px;font:400 13px/18px var(--font-system);color:#444}
+.mr-zone{appearance:none;margin:0;width:260px;height:150px;border:1px dashed #b8bcc3;border-radius:6px;background:#fafafa;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#b0b4bb;cursor:pointer;font:400 12px/16px var(--font-system)}
+.mr-zone span{color:#444}
+.mr-zone[data-on="true"]{border-style:solid;border-color:#0cc44d;color:#0cc44d;background:#f3fbf6}
+.mr-zone:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.mr-res{padding:24px;font:400 13px/18px var(--font-system);color:#444}
+.mr-res table{border-collapse:collapse;width:100%;font:400 12px/16px var(--font-system)}
+.mr-res th,.mr-res td{border:1px solid #d6d6d6;padding:8px;text-align:left}
+.mr-res th{background:#fff;font-weight:700}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.ms-pill,
+.ms-btn--ghost,
+.ms-t tbody tr{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.ms-pill:hover,
+.ms-btn--ghost:hover,
+.ms-t tbody tr:hover{transition-delay:.3s}
+.ms-pill:hover:active,
+.ms-btn--ghost:hover:active,
+.ms-t tbody tr:hover:active{transition-delay:0s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<div class="ms">
+<h1 class="ms-h1">Отчёты</h1>
+<div class="ms-pills" role="group" aria-label="Отчёт">
+<sc-for list="{{kinds}}" as="k" hint-placeholder-count="3"><button type="button" class="ms-pill" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for>
+</div>
+<section class="ms-card" aria-label="{{kindLabel}}">
+<sc-if value="{{isDates}}" hint-placeholder-val="{{true}}">
+<div class="ms-tabs" role="tablist">
+<button type="button" role="tab" class="ms-tab" aria-selected="{{tabFilterOn}}" onClick="{{toFilter}}">Фильтр</button>
+<button type="button" role="tab" class="ms-tab" aria-selected="{{tabResOn}}" aria-disabled="{{noResYet}}" onClick="{{toRes}}">Результат</button>
+</div>
+<sc-if value="{{isFilter}}" hint-placeholder-val="{{true}}">
+<form class="ms-form" onSubmit="{{submit}}">
+<sc-for list="{{fields}}" as="fl" hint-placeholder-count="2"><label class="ms-f"><input type="date" aria-label="{{fl.label}}" title="{{fl.label}}" value="{{fl.value}}" onChange="{{fl.set}}"></label></sc-for>
+</form>
+<sc-if value="{{errOn}}" hint-placeholder-val="{{false}}"><div style="padding: 0 24px; color: #d91d0b; font: 400 13px/18px var(--font-system)" role="alert">{{err}}</div></sc-if>
+<div class="ms-acts"><button type="button" class="ms-btn ms-btn--ghost" onClick="{{resetForm}}">Сбросить фильтр</button><button type="button" class="ms-btn ms-btn--red" aria-busy="{{busyStr}}" onClick="{{submit}}">{{searchLabel}}</button></div>
+</sc-if>
+<sc-if value="{{isRes}}" hint-placeholder-val="{{false}}"><div class="mr-res"><div style="margin-bottom: 12px">Период: {{period}} · Найдено: {{found}}</div><table><thead><tr><sc-for list="{{cols}}" as="c" hint-placeholder-count="4"><th scope="col">{{c}}</th></sc-for></tr></thead><tbody><sc-for list="{{rows}}" as="r" hint-placeholder-count="5"><tr><sc-for list="{{r}}" as="v" hint-placeholder-count="4"><td>{{v}}</td></sc-for></tr></sc-for></tbody></table><div class="ms-acts" style="padding-left: 0"><button type="button" class="ms-btn ms-btn--ghost" onClick="{{exportXls}}">Выгрузить в Excel</button></div></div></sc-if>
+</sc-if>
+<sc-if value="{{isScans}}" hint-placeholder-val="{{false}}">
+<div class="mr-drops">
+<sc-for list="{{drops}}" as="d" hint-placeholder-count="2"><div class="mr-drop"><button type="button" class="mr-zone" data-on="{{d.on}}" aria-label="{{d.aria}}" onClick="{{d.pick}}"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 01-.6-7.96A5.5 5.5 0 0117 8.5a3.8 3.8 0 01.5 7.5M12 12v8m0 0l-3-3m3 3l3-3"/></svg><span>{{d.title}}</span></button><span>{{d.state}}</span></div></sc-for>
+</div>
+<div class="ms-acts"><button type="button" class="ms-btn ms-btn--ghost" aria-disabled="{{formOff}}" onClick="{{form}}">{{formLabel}}</button></div>
+</sc-if>
+</section>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}"><div class="ms-toast" role="status">{{toast}}</div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["unk","cfa","scans"],"default":"unk"},"demo":{"editor":"enum","options":["","result","files"],"default":""},"$preview":{"width":1376,"height":900}}'>
+const KINDS = [['unk', 'Отчёт о выгрузке УНК в ТБСВК'], ['cfa', 'Отчёт оператора по ЦФА'], ['scans', 'Скан-копии СПД']];
+const COLS = { unk: ['Дата выгрузки', 'УНК', 'Клиент', 'Статус в ТБСВК'], cfa: ['Дата', 'Оператор', 'Операций', 'Сумма, ₽'] };
+const pad = (n) => (n < 10 ? '0' : '') + n;
+const ru = (iso) => { const m = String(iso || '').split('-'); return m.length === 3 ? m[2] + '.' + m[1] + '.' + m[0] : ''; };
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  componentDidMount() { const d = this.props.demo; if (d === 'result') this.setState({ from: '2026-11-01', to: '2026-11-15', tab: 'res', done: true }); if (d === 'files') this.setState({ files: { list: 'Перечень_СПД.xlsx', docs: 'Подтверждающие_документы.zip' } }); }
+  componentWillUnmount() { clearTimeout(this._s); clearTimeout(this._t); }
+  toast(m) { if (window.__sboToast) { window.__sboToast(m); return; } clearTimeout(this._t); this.setState({ toast: m }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
+  renderVals() {
+    const s = this.st(); const kind = s.kind || this.props.kind || 'unk';
+    const tab = s.tab || 'filter'; const files = s.files || {};
+    const rows = kind === 'cfa'
+      ? [1, 2, 3, 4, 5, 6].map((i) => [pad(i + 2) + '.11.2026', ['Тисанко О. С.', 'Набоков Д. Ы.', 'Шеремет О. С.'][i % 3], String(12 + i * 3), (1234567 * i).toLocaleString('ru-RU') + ',00'])
+      : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => [pad(i + 1) + '.11.2026', '2607' + (2871 - i * 17) + '/1326/00' + pad(i) + '/1/1', ['ООО «Терем»', 'ООО «ВОСТОК ОИЛ»', 'ИП Иванов И. И.'][i % 3], i % 4 === 3 ? 'Ошибка выгрузки' : 'Выгружен']);
+    const both = files.list && files.docs;
+    return {
+      kinds: KINDS.map((k) => ({ label: k[1], on: k[0] === kind ? 'true' : 'false', pick: () => this.setState({ kind: k[0], tab: 'filter', done: false, err: '' }) })),
+      kindLabel: (KINDS.find((k) => k[0] === kind) || KINDS[0])[1],
+      isDates: kind !== 'scans', isScans: kind === 'scans',
+      tabFilterOn: tab === 'filter' ? 'true' : 'false', tabResOn: tab === 'res' ? 'true' : 'false', noResYet: s.done ? 'false' : 'true',
+      toFilter: () => this.setState({ tab: 'filter' }), toRes: () => { if (s.done) this.setState({ tab: 'res' }); },
+      isFilter: tab === 'filter', isRes: tab === 'res' && !!s.done,
+      fields: [['from', 'Дата начала'], ['to', 'Дата окончания']].map((f) => ({ label: f[1], value: s[f[0]] || '', set: (e) => this.setState({ [f[0]]: (e && e.target && e.target.value) || '', err: '' }) })),
+      errOn: !!s.err, err: s.err || '',
+      resetForm: () => this.setState({ from: '', to: '', err: '', done: false }),
+      busyStr: s.busy ? 'true' : 'false', searchLabel: s.busy ? 'Ищем…' : 'Поиск',
+      submit: (e) => { if (e && e.preventDefault) e.preventDefault(); if (s.busy) return; if (!s.from || !s.to) { this.setState({ err: 'Укажите дату начала и дату окончания' }); return; } if (s.from > s.to) { this.setState({ err: 'Дата начала позже даты окончания' }); return; } this.setState({ busy: true }); clearTimeout(this._s); this._s = setTimeout(() => this.setState({ busy: false, done: true, tab: 'res' }), 700); },
+      period: ru(s.from) + ' — ' + ru(s.to), found: rows.length, cols: COLS[kind] || COLS.unk, rows: rows,
+      exportXls: () => this.toast('Отчёт выгружается в Excel'),
+      drops: [['list', 'Перечень с загруженными ПД', 'Перечень_СПД.xlsx'], ['docs', 'Список подтверждающих документов', 'Подтверждающие_документы.zip']].map((d) => ({ title: d[1], on: files[d[0]] ? 'true' : 'false', state: files[d[0]] ? 'Выбран файл: ' + files[d[0]] : 'Выбрать файл (файл не выбран)', aria: d[1] + (files[d[0]] ? ' — заменить файл' : ' — выбрать файл'), pick: () => this.setState({ files: Object.assign({}, files, { [d[0]]: files[d[0]] ? '' : d[2] }) }) })),
+      formOff: both ? 'false' : 'true', formLabel: s.forming ? 'Формируем…' : 'Сформировать',
+      form: () => { if (!both || s.forming) return; this.setState({ forming: true }); clearTimeout(this._s); this._s = setTimeout(() => { this.setState({ forming: false, files: {} }); this.toast('Скан-копии СПД сформированы'); }, 800); },
+      hasToast: !!s.toast, toast: s.toast || ''
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1588 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Окно задачи</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--bg-base-alt-primary)}
+.tk{font-family:var(--font-system);color:var(--text-primary);box-sizing:border-box;width:100%;display:flex;flex-direction:column;min-height:calc(100vh - 92px)}
+.tk *{box-sizing:border-box}
+/* Карточка задачи */
+.tk-card{flex:1 1 auto;display:flex;flex-direction:column;border-radius:32px 32px 0 0;background:color-mix(in srgb,var(--color-neutral-translucent-100) 100%,var(--bg-base-alt-primary));border:1px solid var(--color-neutral-translucent-200);border-bottom:0;overflow:hidden}
+.tk-top{display:flex;gap:24px;align-items:flex-start;justify-content:space-between;padding:20px 24px 20px}
+.tk-head{display:flex;gap:20px;align-items:flex-start;min-width:0}
+.tk-tile{width:56px;height:56px;flex:0 0 auto;border-radius:16px;background:var(--neutral-translucent-200, var(--color-neutral-translucent-200, rgba(30, 43, 68, 0.08)));display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary)}
+.tk-hbody{min-width:0;display:flex;flex-direction:column;gap:6px}
+.tk-title{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.tk-title .tk-name{font:700 20px/26px var(--font-system);letter-spacing:-.01em;color:var(--text-primary)}
+.tk-title .tk-dir{font:400 16px/22px var(--font-system);color:var(--text-secondary)}
+.tk-tags{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tk-st{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:99px;font:700 12px/16px var(--font-system);letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.tk-st[data-tone="purple"]{background:var(--decorative-muted-purple);color:var(--decorative-text-purple)}
+.tk-st[data-tone="orange"]{background:var(--decorative-muted-orange);color:var(--decorative-text-orange)}
+.tk-st[data-tone="blue"]{background:var(--decorative-muted-blue);color:var(--decorative-text-blue)}
+.tk-st[data-tone="green"]{background:var(--decorative-muted-green);color:var(--decorative-text-green)}
+.tk-st[data-tone="red"]{background:var(--decorative-muted-red);color:var(--decorative-text-red)}
+.tk-st[data-tone="magenta"]{background:var(--decorative-muted-magenta);color:var(--decorative-text-magenta)}
+.tk-st[data-tone="grey"]{background:var(--color-neutral-translucent-200);color:var(--text-secondary)}
+.tk-flag{width:24px;height:24px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;background:var(--color-neutral-translucent-200);color:var(--graphic-primary)}
+.tk-flag[data-k="flame"]{background:var(--status-muted-negative);color:var(--status-negative)}
+.tk-chip{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:99px;background:var(--color-neutral-translucent-200);font:500 13px/16px var(--font-system);white-space:nowrap}
+.tk-chip i{font-style:normal;color:var(--text-secondary);font-weight:400;margin-left:4px}
+.tk-acts{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:0 24px 20px}
+.tk-btn{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:12px;display:inline-flex;align-items:center;gap:8px;font:500 15px/20px var(--font-system);cursor:pointer;white-space:nowrap;background:var(--color-neutral-translucent-200);color:var(--text-primary);transition:background-color .12s ease,opacity .12s ease}
+.tk-btn:hover{background:var(--color-neutral-translucent-300)}
+.tk-btn--primary{background:var(--graphic-primary);color:var(--text-primary-inverted,#fff)}
+.tk-btn--primary:hover{background:var(--graphic-primary);opacity:.86}
+.tk-ibtn{appearance:none;border:0;margin:0;width:40px;height:40px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:var(--color-neutral-translucent-200);color:var(--graphic-primary);position:relative}
+.tk-ibtn:hover{background:var(--color-neutral-translucent-300)}
+.tk-btn:focus-visible,.tk-ibtn:focus-visible,.tk-link:focus-visible,.tk-seg button:focus-visible,.tk-ptab:focus-visible,.tk-lt:focus-visible,.tk-lbtn:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.tk-meta{display:inline-flex;align-items:center;gap:8px;font:400 15px/20px var(--font-system);color:var(--text-secondary);margin-left:4px}
+.tk-link{appearance:none;border:0;background:transparent;padding:0;margin:0;font:500 15px/20px var(--font-system);color:var(--text-link);cursor:pointer}
+.tk-link:hover{color:var(--text-primary)}
+.tk-seg{display:inline-flex;gap:4px;padding:4px;border-radius:99px;background:var(--color-neutral-translucent-200);flex:0 0 auto}
+.tk-seg button{appearance:none;border:0;margin:0;width:44px;height:40px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:var(--graphic-primary);cursor:pointer}
+.tk-seg button[aria-pressed="true"]{background:var(--bg-base-primary);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tk-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:30;min-width:240px;padding:8px;border-radius:16px;background:var(--bg-base-primary);box-shadow:var(--shadow-m);border:1px solid var(--color-neutral-translucent-200);display:flex;flex-direction:column}
+.tk-menu button{appearance:none;border:0;background:transparent;margin:0;padding:10px 12px;border-radius:10px;text-align:left;font:400 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.tk-menu button:hover{background:var(--color-neutral-translucent-100)}
+.tk-wrap{position:relative;display:inline-flex}
+/* Панель «Окно задачи» */
+/* Полный экран: окно поверх меню и шапки, без карточки задачи */
+.tk-card[data-full="true"]{position:fixed;inset:0;z-index:900;border:0;border-radius:0;background:var(--bg-base-primary);overflow:auto;animation:tk-fade .16s ease}
+.tk-card[data-full="true"] .tk-panel{border-radius:0;min-height:100%}
+.tk-card[data-full="true"] .tk-pbar{position:sticky;top:0;z-index:2;background:var(--bg-base-primary)}
+.tk-panel{flex:1 1 auto;display:flex;flex-direction:column;background:var(--bg-base-primary);border-radius:24px 24px 0 0;min-height:480px}
+.tk-pbar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;height:48px;padding:0 4px 0 24px;border-bottom:1px solid var(--border-secondary, var(--color-neutral-translucent-200))}
+.tk-ptabs{display:inline-flex;gap:24px;justify-self:start;height:48px}
+.tk-ptab{appearance:none;border:0;background:transparent;margin:0;height:48px;padding:0;display:inline-flex;align-items:center;font:400 16px/20px var(--font-system);color:var(--text-secondary);cursor:pointer}
+.tk-ptab:hover{color:var(--text-primary)}
+.tk-ptab[aria-selected="true"]{color:var(--text-primary);font-weight:500;box-shadow:inset 0 -2px 0 var(--accent-primary)}
+.tk-timer{display:inline-flex;align-items:center;gap:8px;font:400 16px/20px var(--font-system);color:var(--text-primary);white-space:nowrap}
+.tk-timer .sep{color:var(--text-secondary)}
+.tk-timer .sla{color:var(--text-secondary)}
+.tk-timer .bad{color:var(--text-primary)}
+.tk-ptools{display:flex;justify-content:flex-end;align-items:center;gap:8px}
+.tk-tbtn{appearance:none;border:0;margin:0;width:32px;height:32px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;background:transparent;color:var(--graphic-primary);cursor:pointer}
+.tk-tbtn:hover{background:var(--color-neutral-translucent-100)}
+.tk-tbtn--fill{background:var(--color-neutral-translucent-200)}
+/* «Во весь экран»: кнопка с текстом по макету */
+.tk-fsbtn{appearance:none;border:0;margin:0;height:40px;padding:0 16px 0 12px;border-radius:99px;display:inline-flex;align-items:center;gap:8px;background:var(--color-neutral-translucent-200);color:var(--text-primary);font:400 16px/20px var(--font-system);white-space:nowrap;cursor:pointer}
+.tk-fsbtn:hover{background:var(--color-neutral-translucent-300)}
+.tk-fsbtn:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.tk-fsbtn svg{color:var(--graphic-primary);flex:0 0 auto}
+.tk-ptools{gap:12px}
+.tk-rfbtn{width:40px;height:40px}
+.tk-tbtn:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.tk-spin{animation:tk-spin .6s ease}
+@keyframes tk-spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.tk-spin{animation:none}}
+/* Старая форма (встроенная система) */
+.lg{padding:20px 32px 40px;font-family:Tahoma,Verdana,Segoe UI,sans-serif;font-size:11px;line-height:15px;color:#222;overflow-x:auto}
+.lg-info b{font-weight:700}
+.lg-btns{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0 32px}
+.lg-btn{appearance:none;margin:0;height:34px;padding:0 16px;background:#fff;border:1px solid #888;border-radius:6px;font:500 11px/14px Tahoma,Verdana,sans-serif;color:#222;cursor:pointer;box-shadow:0 1px 0 rgba(0,0,0,.08)}
+.lg-btn:hover{background:#f3f3f3}
+.lg-h{font:700 21px/26px var(--font-system);margin:0 0 12px}
+.lg-tabs{display:flex;flex-wrap:wrap;gap:24px;border-bottom:1px solid #ccc;margin-bottom:16px}
+.lg-tab{appearance:none;border:0;background:transparent;margin:0 0 -1px;padding:0 0 8px;font:500 13px/18px var(--font-system);color:#777;cursor:pointer;border-bottom:2px solid transparent}
+.lg-tab[aria-selected="true"]{color:#222;border-bottom-color:var(--accent-primary)}
+.lg-lbl{text-decoration:underline;color:#444;margin-bottom:12px;display:inline-block}
+.lg-field{border-bottom:1px solid #aaa;padding:2px 0 8px;max-width:620px;margin-bottom:16px}
+.lg-row{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-end;margin-bottom:16px}
+.lg-in{border-bottom:1px dotted #aaa;padding:0 8px 4px;width:620px;max-width:100%}
+.lg-in small,.lg-date small{display:block;font-size:10px;color:#444}
+.lg-in span{color:#888}
+.lg-date{border-bottom:1px solid #888;padding:0 8px 2px;width:180px;display:flex;justify-content:space-between;align-items:flex-end}
+.lg-fs{border:1px solid #ddd;border-radius:2px;padding:4px 10px 10px;margin:0 0 20px;min-width:820px}
+.lg-fs legend{font-weight:700;padding:0 4px}
+.lg-tbl{width:100%;border-collapse:collapse;border:1px solid #666;background:#f7f8fa}
+.lg-tbl th{border:1px solid #666;padding:6px 8px;font-weight:700;font-size:10px;line-height:13px;text-align:center;vertical-align:middle}
+.lg-tbl td{border:1px solid #666;height:28px;background:#fff}
+.lg-tbl th.add{width:40px;font-size:18px;font-weight:400}
+.lg-empty{padding:40px 0;color:#777;font:400 14px/20px var(--font-system)}
+/* Клиент */
+.tk-client{padding:24px 32px 40px;display:flex;flex-direction:column;gap:20px;max-width:760px}
+.tk-kv{display:grid;grid-template-columns:200px 1fr;gap:12px 24px;font:400 15px/20px var(--font-system)}
+.tk-kv dt{color:var(--text-secondary)}
+.tk-kv dd{margin:0}
+/* Детали */
+.tk-scrim{position:fixed;inset:0;z-index:910;background:rgba(0,0,0,.24);border:0;padding:0;margin:0;cursor:default;animation:tk-fade .16s ease}
+.tk-sheet{position:fixed;top:8px;right:8px;bottom:8px;z-index:911;width:min(440px,calc(100vw - 16px));background:var(--bg-base-primary);border-radius:24px;box-shadow:var(--shadow-m);display:flex;flex-direction:column;animation:tk-in .2s ease}
+@keyframes tk-in{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+@keyframes tk-fade{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.tk-sheet,.tk-scrim{animation:none}}
+.tk-sh{display:flex;align-items:center;justify-content:space-between;padding:20px 20px 12px 24px}
+.tk-sh h2{margin:0;font:600 20px/26px var(--font-system)}
+.tk-sb{flex:1 1 auto;overflow:auto;padding:4px 24px 24px;display:flex;flex-direction:column;gap:20px}
+.tk-sb .tk-kv{grid-template-columns:150px 1fr;font-size:14px}
+.tk-sgt{font:500 12px/16px var(--font-system);letter-spacing:.08em;text-transform:uppercase;color:var(--text-secondary);margin-bottom:-8px}
+.tk-holdtxt{font:400 13px/16px var(--font-system);color:var(--text-secondary);margin-right:4px}
+.tk-ibtn[data-on="true"]{background:var(--status-positive);color:#fff}
+.tk-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--accent-primary);color:#fff;font:700 11px/18px var(--font-system);text-align:center}
+.tk-call{display:inline-flex;align-items:center;gap:10px;height:40px;padding:0 6px 0 14px;border-radius:12px;background:var(--status-muted-positive);color:var(--text-positive);font:500 15px/20px var(--font-system)}
+.tk-call b{font-variant-numeric:tabular-nums;color:var(--text-primary)}
+.tk-call button{appearance:none;border:0;margin:0;height:28px;padding:0 12px;border-radius:8px;background:var(--status-negative);color:#fff;font:500 13px/16px var(--font-system);cursor:pointer}
+.tk-passed{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px;border-radius:12px;background:var(--status-muted-info);color:var(--text-primary);font:400 15px/20px var(--font-system)}
+.lg-saved{align-self:center;color:#2a7d2a;font:500 12px/16px var(--font-system)}
+.lg-tbl th.add{padding:0}
+.lg-add{appearance:none;border:0;background:transparent;width:100%;height:30px;font:400 18px/1 Tahoma,sans-serif;cursor:pointer;color:#222}
+.lg-add:hover{background:#e9ecf1}
+.lg-tbl td input{border:0;width:100%;height:27px;padding:0 6px;font:11px Tahoma,sans-serif;background:transparent;box-sizing:border-box}
+.lg-tbl td input:focus{outline:2px solid var(--status-info);outline-offset:-2px}
+/* Диалоги */
+.tk-mback{position:fixed;inset:0;z-index:920;background:rgba(0,0,0,.32);border:0;margin:0;padding:0;cursor:default;animation:tk-fade .16s ease}
+.tk-dlg{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:921;width:min(520px,calc(100vw - 32px));max-height:calc(100vh - 48px);display:flex;flex-direction:column;background:var(--bg-base-primary);border-radius:24px;box-shadow:var(--shadow-m);animation:tk-fade .16s ease}
+.tk-dh{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;padding:24px 24px 8px}
+.tk-dh h2{margin:0;font:700 22px/28px var(--font-system)}
+.tk-db{flex:1 1 auto;overflow:auto;padding:8px 24px 16px;display:flex;flex-direction:column;gap:12px}
+.tk-df{display:flex;gap:12px;padding:16px 24px 24px}
+.tk-df .tk-btn{height:48px;flex:1 1 0;justify-content:center;border-radius:14px}
+.tk-btn[aria-disabled="true"]{opacity:.4;cursor:not-allowed}
+.tk-opt{display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:12px;cursor:pointer;font:400 15px/20px var(--font-system);appearance:none;border:0;background:transparent;text-align:left;width:100%;color:var(--text-primary)}
+.tk-opt:hover{background:var(--color-neutral-translucent-100)}
+.tk-opt:focus-visible{outline:2px solid var(--status-info);outline-offset:-2px}
+.tk-radio{width:20px;height:20px;flex:0 0 auto;border-radius:99px;border:2px solid var(--color-neutral-translucent-400, #999);box-sizing:border-box;margin-top:0}
+.tk-opt[aria-checked="true"] .tk-radio{border:6px solid var(--graphic-primary)}
+.tk-opt small{display:block;color:var(--text-secondary);font-size:13px;line-height:18px}
+.tk-ta{width:100%;min-height:88px;resize:vertical;border:1px solid var(--color-neutral-translucent-300);border-radius:12px;padding:10px 12px;font:400 15px/20px var(--font-system);color:var(--text-primary);background:var(--bg-base-primary);box-sizing:border-box}
+.tk-ta:focus,.tk-sin:focus{outline:2px solid var(--status-info);outline-offset:1px}
+.tk-ta[aria-invalid="true"]{border-color:var(--status-negative)}
+.tk-err{color:var(--text-negative,var(--status-negative));font:400 13px/18px var(--font-system)}
+.tk-sin{width:100%;height:44px;border:0;border-radius:12px;background:var(--color-neutral-translucent-100);padding:0 14px;font:400 15px/20px var(--font-system);color:var(--text-primary);box-sizing:border-box}
+.tk-dot{display:inline-block;width:8px;height:8px;border-radius:99px;margin-right:6px;vertical-align:1px}
+.tk-note{padding:12px 14px;border-radius:12px;background:var(--color-neutral-translucent-100);font:400 14px/20px var(--font-system)}
+.tk-note small{display:block;color:var(--text-secondary);font-size:12px;margin-bottom:2px}
+.tk-hist{display:flex;flex-direction:column;gap:0;margin:0;padding:0;list-style:none}
+.tk-hist li{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:10px 0;border-bottom:1px solid var(--color-neutral-translucent-200);font:400 14px/20px var(--font-system)}
+.tk-hist li span{color:var(--text-secondary);font-variant-numeric:tabular-nums}
+.tk-head{flex:1 1 auto}
+.tk-title--one{flex-wrap:nowrap;min-width:0}
+.tk-cname{display:block;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-transform:none}
+.tk-hbody{flex:1 1 auto}
+.tk-req{flex:1 1 360px;min-width:0;display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-left:8px;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.tk-sb > *{flex-shrink:0}
+.tk-req-i{display:inline-flex;align-items:center;gap:8px}
+.tk-cp{appearance:none;border:0;background:transparent;margin:0;padding:0;font:inherit;color:var(--text-primary);cursor:copy;border-radius:4px}
+.tk-cp:hover{text-decoration:underline dotted;text-underline-offset:3px}
+.tk-cp:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.tk-sheet--wide{width:min(500px,calc(100vw - 16px));top:0;right:0;bottom:0;border-radius:24px 0 0 24px}
+.tk-sh-big{font:700 28px/34px var(--font-system) !important}
+.tk-pseg{display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;border-radius:14px;background:var(--color-neutral-translucent-100)}
+.tk-pseg button{appearance:none;border:0;margin:0;height:36px;border-radius:10px;background:transparent;font:400 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.tk-pseg button[aria-selected="true"]{background:var(--bg-base-primary);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tk-pseg button:focus-visible{outline:2px solid var(--status-info);outline-offset:-2px}
+.tk-cnt{display:inline-flex;min-width:20px;height:20px;padding:0 6px;border-radius:99px;background:var(--color-neutral-translucent-200);font:500 12px/20px var(--font-system);justify-content:center}
+.tk-search{display:flex;align-items:center;gap:8px;height:44px;padding:0 14px;border-radius:12px;background:var(--color-neutral-translucent-100);color:var(--graphic-secondary)}
+.tk-search input{flex:1 1 auto;min-width:0;border:0;outline:0;background:transparent;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.tk-search:focus-within{outline:2px solid var(--status-info);outline-offset:1px}
+.tk-cg{padding:4px 0 16px;border-bottom:1px solid var(--color-neutral-translucent-200)}
+.tk-cg-role{font:400 13px/18px var(--font-system);color:var(--text-secondary)}
+.tk-cg-name{font:600 18px/24px var(--font-system);margin:4px 0 12px}
+.tk-cts{display:flex;flex-direction:column;gap:4px}
+.tk-ct{display:flex;gap:16px;align-items:flex-start;padding:10px 0}
+.tk-ct-i{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--graphic-primary);display:inline-flex;align-items:center;justify-content:center}
+.tk-ct-c{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.tk-ct-cap{font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.tk-ct-src{color:var(--text-tertiary, rgba(5,8,29,.38))}
+.tk-pill{display:inline-flex;align-items:center;min-height:32px;padding:0 8px 0 0;border-radius:999px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1));color:var(--text-primary);max-width:100%}
+.tk-pill--green{background:var(--decorative-green, #0cc44d);color:rgba(255,255,255,.94)}
+.tk-pill-main{appearance:none;border:0;margin:0;padding:6px 4px 6px 12px;background:transparent;color:inherit;display:inline-flex;align-items:center;gap:6px;font:500 14px/20px var(--font-system);cursor:pointer;border-radius:999px 0 0 999px;min-width:0}
+.tk-pill-main span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tk-pill-cp{appearance:none;border:0;margin:0;padding:0;width:20px;height:20px;border-radius:6px;background:transparent;color:inherit;opacity:.6;display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.tk-pill-cp:hover{opacity:1}
+.tk-pill:hover{filter:brightness(.97)}
+.tk-pill-main:focus-visible,.tk-pill-cp:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.tk-ci{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:8px 0;font:400 14px/20px var(--font-system)}
+.tk-ci-l{color:var(--text-secondary)}
+.tk-ci-v{font-weight:500;text-align:left}
+.tk-ci small,.tk-pins small{display:block;color:var(--text-secondary);font-size:13px;line-height:18px}
+.tk-empty{display:flex;flex-direction:column;align-items:center;gap:8px;padding:72px 0;text-align:center;font:400 15px/20px var(--font-system)}
+.tk-empty b{font:600 20px/26px var(--font-system)}
+.tk-empty-i{width:56px;height:56px;border-radius:16px;background:var(--color-neutral-translucent-100);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px}
+.tk-skel{display:flex;flex-direction:column;gap:24px}
+.tk-skel i{display:block;height:12px;border-radius:6px;background:var(--color-neutral-translucent-200);animation:tk-pulse 1.2s ease-in-out infinite}
+.tk-skel-g{display:flex;flex-direction:column;gap:12px;padding-bottom:20px;border-bottom:1px solid var(--color-neutral-translucent-200)}
+.tk-skel-r{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@keyframes tk-pulse{50%{opacity:.5}}
+@media (prefers-reduced-motion: reduce){.tk-skel i{animation:none}}
+.tk-pinc{padding:16px;border-radius:16px;background:var(--color-neutral-translucent-100);display:flex;flex-direction:column;gap:2px}
+.tk-pinc b{font:700 14px/20px var(--font-system);text-transform:uppercase}
+.tk-pinc small{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.tk-pin-total{font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.tk-pin-total b{color:var(--text-primary);margin-left:4px}
+.tk-pins{list-style:none;margin:0;padding:0}
+.tk-pins li{display:grid;grid-template-columns:48px 1fr;padding:12px 0;border-bottom:1px solid var(--color-neutral-translucent-200)}
+.tk-pin-n{color:var(--text-secondary);font:400 15px/20px var(--font-system)}
+.tk-pin-c{font:500 15px/20px var(--font-system)}
+.tk-pin-more{font:400 13px/18px var(--font-system);color:var(--text-secondary);text-align:center;padding:8px 0}
+/* Скелетоны */
+.tk-skc{padding:12px;gap:12px;min-height:calc(100vh - 92px);border-radius:32px 32px 0 0}
+.tk-sk{display:block;height:40px;border-radius:12px;background:var(--color-neutral-translucent-200);animation:tk-pulse 1.4s ease-in-out infinite}
+.tk-sk--head{height:112px;border-radius:24px;margin:0}
+.tk-sk--body{flex:1 1 auto;min-height:540px;border-radius:24px 24px 0 0;margin:0 -12px -12px}
+.tk-skd-top{display:flex;gap:16px;align-items:center;padding:8px 12px 0}
+.tk-skd-lines{display:flex;flex-direction:column;gap:12px}
+.tk-skd-btns{display:flex;gap:12px;padding:4px 12px}
+.tk-skd-tabs{display:flex;align-items:center;justify-content:space-between;padding:8px 12px 4px}
+/* Нет задачи */
+.tk-miss{min-height:0;flex:0 0 auto;border-radius:32px;background:var(--bg-base-primary);border:0;padding:8px 0}
+.tk-empty .tk-btn{margin-top:16px}
+.tk-panel[data-short="true"]{flex:0 0 auto;min-height:0;border-radius:24px}
+.tk-panel[data-short="true"] .tk-empty{padding:40px 0 32px}
+/* Сообщения в шапке */
+.tk-hmsg{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:84px;font:400 15px/20px var(--font-system);color:var(--text-secondary)}
+.tk-top[data-mode="error"]{padding-top:28px;padding-bottom:28px}
+.tk-top[data-mode="error"] .tk-seg,.tk-top[data-mode="nodata"] .tk-seg{position:absolute;right:24px;top:20px}
+.tk-top{position:relative}
+.tk-plate{display:flex;align-items:center;gap:12px;padding:8px 8px 8px 14px;border-radius:14px;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.tk-plate--warn{background:var(--status-muted-attention);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--status-attention) 45%,transparent)}
+.tk-plate--wide{min-width:min(100%,640px)}
+.tk-plate-t{flex:1 1 auto}
+.tk-plate-i{width:20px;height:20px;border-radius:99px;background:var(--status-attention);color:#fff;font:700 13px/20px var(--font-system);text-align:center;flex:0 0 auto}
+.tk-btn--sm{height:32px;padding:0 12px;border-radius:10px;font-size:14px;gap:6px}
+.tk-hbody .tk-plate{margin:4px 0 2px}
+.tk-acts[data-locked="true"] .tk-btn,.tk-acts[data-locked="true"] .tk-ibtn{opacity:.45;pointer-events:none}
+/* Закрытие */
+.tk-spin16{width:16px;height:16px;border-radius:99px;border:2px solid var(--color-neutral-translucent-300);border-top-color:var(--graphic-primary);animation:tk-spin .8s linear infinite;box-sizing:border-box}
+@media (prefers-reduced-motion: reduce){.tk-spin16{animation-duration:2s}}
+.tk-errtip{position:relative;display:inline-flex;align-items:center;gap:8px;cursor:help;outline:none}
+.tk-errtip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);width:max-content;max-width:220px;padding:8px 12px;border-radius:10px;background:var(--accent-secondary,#222);color:#fff;font:400 13px/18px var(--font-system);text-align:center;white-space:normal;opacity:0;pointer-events:none;transition:opacity .12s ease;z-index:5}
+.tk-errtip:hover::after,.tk-errtip:focus-visible::after{opacity:1}
+.tk-errtip:focus-visible{outline:2px solid var(--status-info);outline-offset:4px;border-radius:6px}
+/* Модалки-прерывания */
+.tk-im{padding:28px 24px 24px;width:min(500px,calc(100vw - 32px))}
+.tk-im h2{margin:0 40px 12px 0;font:700 24px/30px var(--font-system)}
+.tk-im p{margin:0;font:400 16px/24px var(--font-system);color:var(--text-primary)}
+.tk-im .tk-im-sub{margin-top:12px;color:var(--text-secondary);font-size:14px}
+.tk-im-x{position:absolute;top:20px;right:20px;width:40px;height:40px}
+.tk-im-f{display:flex;gap:12px;margin-top:28px}
+.tk-im-f .tk-btn{height:48px;border-radius:14px;padding:0 24px;justify-content:center}
+.tk-im[data-center="true"]{text-align:center;padding-top:48px}
+.tk-im[data-center="true"] h2{margin:0 0 12px}
+.tk-im[data-center="true"] .tk-im-f .tk-btn{flex:1 1 0}
+.tk-im[data-center="true"] .tk-im-f{margin-top:48px}
+.tk-im-ic{display:inline-flex;width:80px;height:80px;border-radius:24px;background:var(--status-negative);align-items:center;justify-content:center;margin-bottom:24px}
+.tk-btn--primary[data-tone="danger"]{background:var(--accent-primary,#ef3124);color:#fff}
+/* История задачи */
+.hs{display:grid;grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:80px;padding:24px 32px 48px;align-items:start}
+@media (max-width: 1100px){.hs{grid-template-columns:1fr;gap:32px}}
+.hs-side{display:flex;flex-direction:column;gap:16px}
+.hs-card{background:var(--neutral-translucent-100, var(--color-neutral-translucent-100, rgba(30, 43, 68, 0.04)));border-radius:24px;padding:24px}
+.hs-card h3{margin:0 0 24px;font:700 18px/22px var(--font-system)}
+.hs-tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px}
+.hs-it{display:grid;grid-template-columns:24px 1fr;gap:16px;position:relative}
+.hs-it:not(:last-child)::before{content:"";position:absolute;left:11px;top:32px;bottom:-8px;width:2px;border-radius:2px;background:var(--color-neutral-translucent-200)}
+.hs-n{width:24px;height:24px;border-radius:99px;background:var(--neutral-translucent-200, var(--color-neutral-translucent-200, rgba(30, 43, 68, 0.08)));display:inline-flex;align-items:center;justify-content:center;font:600 13px/16px var(--font-system);color:var(--text-primary)}
+.hs-it[data-last="true"] .hs-n{background:var(--graphic-primary);color:var(--text-primary-inverted,#fff)}
+.hs-b{min-width:0;display:flex;flex-direction:column;gap:4px;padding-bottom:8px}
+.hs-cap{font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.hs-big{font:700 18px/24px var(--font-system);margin-bottom:6px}
+.hs-txt{font:400 14px/20px var(--font-system)}
+.hs-sec{font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.hs-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:4px}
+.hs-dur{font:400 13px/18px var(--font-system);color:var(--text-secondary);white-space:nowrap}
+.hs-chip{display:inline-flex;align-items:center;height:24px;padding:0 12px;border-radius:99px;font:500 13px/16px var(--font-system);color:#fff;white-space:nowrap}
+.hs-chip[data-tone="green"]{background:var(--status-positive)}
+.hs-chip[data-tone="pink"]{background:var(--decorative-fuchsia, #f859c5)}
+.hs-chip[data-tone="purple"]{background:var(--decorative-indigo, #897eff)}
+.hs-chip[data-tone="blue"]{background:var(--decorative-cyan, #13b6f2)}
+.hs-chip[data-tone="red"]{background:var(--status-negative)}
+.hs-chip[data-tone="grey"]{background:var(--color-neutral-translucent-300);color:var(--text-primary)}
+.hs-main{min-width:0;display:flex;flex-direction:column;gap:28px;padding-top:0}
+.hs-filter{appearance:none;border:0;margin:0;height:40px;padding:0 12px 0 16px;border-radius:12px;background:var(--color-neutral-translucent-100);display:inline-flex;align-items:center;gap:8px;font:400 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.hs-filter:hover{background:var(--color-neutral-translucent-200)}
+.hs-filter:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.hs-filter svg{color:var(--graphic-secondary)}
+.tk-menu [role="option"][aria-selected="true"]{font-weight:600}
+.hs-steps{gap:20px}
+.hs-steps .hs-b{gap:2px;padding-bottom:12px}
+.hs-title{font:400 16px/22px var(--font-system);color:var(--text-primary)}
+.hs-title .hs-strong{font-weight:700}
+.hs-who{margin-top:10px;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+/* SSE: поток событий истории */
+.hs-bar{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.hs-live{appearance:none;border:0;margin:0;height:32px;padding:0 12px;border-radius:99px;background:transparent;display:inline-flex;align-items:center;gap:8px;font:400 14px/18px var(--font-system);color:var(--text-secondary);cursor:pointer}
+.hs-live:hover{background:var(--color-neutral-translucent-100);color:var(--text-primary)}
+.hs-live:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.hs-live-dot{width:8px;height:8px;border-radius:99px;background:var(--status-positive);box-shadow:0 0 0 0 color-mix(in srgb,var(--status-positive) 50%,transparent);animation:hs-pulse 1.8s ease-out infinite}
+.hs-live[data-state="paused"] .hs-live-dot{background:var(--graphic-secondary);animation:none}
+.hs-live[data-state="reconnect"] .hs-live-dot{background:var(--status-attention);animation:hs-blink 1s steps(2,end) infinite}
+@keyframes hs-pulse{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--status-positive) 55%,transparent)}70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@keyframes hs-blink{50%{opacity:.3}}
+.hs-it[data-fresh="true"] .hs-b{animation:hs-new 3s ease-out}
+.hs-it[data-fresh="true"] .hs-n{animation:hs-pop .4s ease-out}
+@keyframes hs-new{0%{background:color-mix(in srgb,var(--status-info) 14%,transparent);box-shadow:-8px 0 0 8px color-mix(in srgb,var(--status-info) 14%,transparent)}100%{background:transparent;box-shadow:-8px 0 0 8px transparent}}
+@keyframes hs-pop{0%{transform:scale(.4)}70%{transform:scale(1.15)}100%{transform:scale(1)}}
+@media (prefers-reduced-motion: reduce){.hs-live-dot,.hs-it[data-fresh="true"] .hs-b,.hs-it[data-fresh="true"] .hs-n{animation:none}.hs-it[data-fresh="true"] .hs-b{background:color-mix(in srgb,var(--status-info) 10%,transparent)}}
+.hs-b{border-radius:12px}
+.hs-tabcnt{margin-left:6px;background:var(--accent-primary,#ef3124);color:#fff}
+.hs-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.tk-toast{position:fixed;left:50%;bottom:84px;transform:translateX(-50%);z-index:930;padding:12px 16px;border-radius:14px;background:var(--accent-secondary, #222);color:#fff;font:500 14px/20px var(--font-system);box-shadow:var(--shadow-m);animation:tk-fade .16s ease}
+
+/* Подпись рядом с вкладками: закрытие / холд / требуется действие */
+.tk-cap{display:inline-flex;align-items:center;gap:8px}
+.tk-capnote{color:var(--text-secondary)}
+.tk-spin28{width:28px;height:28px;border-radius:50%;border:3px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));border-top-color:var(--text-primary);animation:tk-rot .8s linear infinite;display:inline-block}
+@keyframes tk-rot{to{transform:rotate(360deg)}}
+.tk-empty-s{color:var(--text-secondary);font-size:13px;line-height:18px;max-width:640px;word-break:break-all}
+.tk-ext{color:var(--text-secondary);text-decoration:underline}
+.tk-head--stub .tk-title{align-items:baseline}
+/* Уведомления (как [D] Notification) */
+.tk-ntf{position:fixed;top:72px;right:24px;z-index:935;display:flex;align-items:flex-start;gap:12px;min-width:280px;max-width:380px;padding:14px 12px 14px 16px;border-radius:16px;background:#1c1c1e;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18);animation:tk-ntf-in .22s cubic-bezier(.2,.7,.2,1)}
+@keyframes tk-ntf-in{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+.tk-ntf-i{flex:0 0 auto;display:inline-flex;margin-top:1px}
+.tk-ntf-b{flex:1 1 auto;display:flex;flex-direction:column;gap:2px;font:400 14px/20px var(--font-system);color:rgba(255,255,255,.72)}
+.tk-ntf-b b{font:500 15px/20px var(--font-system);color:#fff}
+.tk-ntf-x{appearance:none;border:0;margin:0;background:transparent;color:rgba(255,255,255,.6);width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.tk-ntf-x:hover{color:#fff;background:rgba(255,255,255,.1)}
+@media (prefers-reduced-motion: reduce){.tk-ntf{animation:none}.tk-spin28{animation-duration:2s}}
+/* Модалка «Поставить на холд» */
+.tk-dsub{font:400 16px/22px var(--font-system);color:var(--text-primary);margin:0 0 8px}
+.tk-fl{display:flex;flex-direction:column;gap:6px;margin-top:12px}
+.tk-fl-c{font:400 13px/16px var(--font-system);color:var(--text-secondary)}
+.tk-ta--auto{min-height:48px;resize:none;overflow:hidden;border:0;background:var(--color-neutral-translucent-100, rgba(30,43,68,.06));border-radius:12px;padding:14px 16px}
+.tk-ta--auto:focus{outline:2px solid var(--border-key, #212124);outline-offset:-2px}
+.tk-fl-h{display:flex;justify-content:space-between;gap:8px;font:400 13px/16px var(--font-system);color:var(--text-secondary)}
+.tk-cnt250{margin-left:auto;font-variant-numeric:tabular-nums}
+.tk-dmsg{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:120px 8px;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.tk-dmsg b{font:700 20px/24px var(--font-system)}
+.tk-dmsg-i{width:56px;height:56px;border-radius:16px;background:var(--color-neutral-translucent-100);display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px}
+.tk-dmsg-i--err{background:var(--status-negative, #ef3124);color:#fff}
+/* Плашка «Над задачей уже работает» по макету */
+.tk-acts .tk-plate--warn{border:1px solid var(--status-attention, #fa9313);box-shadow:none;background:var(--status-muted-alt-attention, #fde6c8);border-radius:16px;padding:11px 11px 11px 15px;font-size:14px;min-height:56px;box-sizing:border-box;width:672px;max-width:100%;flex:0 1 672px;margin-right:12px}
+.tk-acts .tk-plate--warn .tk-plate-i{width:24px;height:24px;line-height:24px;font-size:14px}
+.tk-acts .tk-plate--warn .tk-btn--sm{border-radius:8px;font-weight:500}
+/* Панель звонка (встройка ConversationPanel) */
+.tk-card{position:relative}
+.tk-conv{position:absolute;top:-14px;left:-16px;right:-16px;z-index:40;display:flex;align-items:center;gap:12px;padding:8px 12px 8px 16px;border-radius:16px;background:var(--bg-base-primary);box-shadow:0 8px 24px rgba(0,0,0,.12);animation:tk-ntf-in .2s ease}
+.tk-conv-g{display:inline-flex;align-items:center;gap:8px}
+.tk-conv-sep{width:1px;height:24px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1));margin:0 4px}
+.tk-conv-b{appearance:none;border:0;margin:0;width:40px;height:40px;border-radius:10px;background:var(--color-neutral-translucent-100, rgba(30,43,68,.06));color:var(--graphic-primary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.tk-conv-b[aria-disabled="true"]{color:var(--text-tertiary, rgba(4,4,19,.3));cursor:default}
+.tk-conv-b--on{background:transparent;box-shadow:inset 0 0 0 1.5px var(--text-primary)}
+.tk-conv-b--line{background:transparent;box-shadow:inset 0 0 0 1.5px var(--text-primary)}
+.tk-conv-b--line[aria-pressed="true"]{background:var(--text-primary);color:#fff}
+.tk-conv-b--end{background:var(--status-negative, #ef3124);color:#fff;width:48px}
+.tk-conv-b:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.tk-conv-m{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px;padding:6px 12px;border-radius:10px;background:var(--color-neutral-translucent-100, rgba(30,43,68,.06));font:400 13px/18px var(--font-system);color:var(--text-primary)}
+.tk-conv-l1,.tk-conv-l2{display:flex;align-items:center;gap:8px;white-space:nowrap;min-width:0}
+.tk-conv-l2{color:var(--text-secondary)}
+.tk-conv-dot{width:8px;height:8px;border-radius:50%;background:var(--status-positive, #0cc44d);flex:0 0 auto}
+.tk-conv-dot--grey{background:var(--graphic-tertiary, #b8bcc3)}
+.tk-conv-t{padding:1px 8px;border-radius:99px;background:var(--text-primary);color:#fff;font:500 12px/16px var(--font-system);font-variant-numeric:tabular-nums}
+.tk-conv-ext{margin-left:auto;color:var(--text-secondary)}
+.tk-conv-op{font:400 10px/12px var(--font-system);color:var(--text-secondary);white-space:nowrap}
+@media (prefers-reduced-motion: reduce){.tk-conv{animation:none}}
+
+/* Все модалки — правые шторки на всю высоту */
+.tk-dlg{position:fixed;top:8px;right:8px;bottom:8px;left:auto;transform:none;max-height:none;width:min(500px,calc(100vw - 16px));animation:sheet-in .2s ease}
+.tk-im{display:flex;flex-direction:column}
+.tk-im .tk-im-f{margin-top:auto}
+.tk-im[data-center="true"]{justify-content:center}
+.tk-im[data-center="true"] .tk-im-f{margin-top:48px}
+@keyframes sheet-in{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.cc-modal,.cs-modal,.tk-dlg{animation:none !important}}
+
+/* Окно задачи = высота экрана за вычетом шапки. Карточка с инфо о задаче/клиенте стоит на месте,
+   окно при прокрутке страницы наезжает на неё и встаёт под шапку; дальше скроллится только встройка (один скролл). */
+.tk-card{overflow:clip}
+.tk-topwrap{position:sticky;top:76px;z-index:0}
+/* снизу у страницы 24 px воздуха, окно и карточка скруглены со всех сторон */
+.tk-card{border-radius:32px}
+/* разделы «Задача» и «Клиент» одной высоты: равняемся на больший */
+.tk-top{min-height:96px}
+.tk-acts{min-height:68px}
+.tk-panel{position:relative;z-index:1;flex:0 0 auto;height:calc(100vh - 64px - 24px);min-height:0;overflow:hidden;overscroll-behavior:auto;box-shadow:0 -8px 24px rgba(0,0,0,.06);border-radius:24px}
+.tk-ptab{white-space:nowrap}
+.tk-panel[data-docked="true"]{overflow-y:auto}
+.tk-panel .tk-pbar{position:sticky;top:0;z-index:3;background:var(--bg-base-primary);border-radius:24px 24px 0 0}
+.tk-panel[data-short="true"]{height:auto;overflow:visible;box-shadow:none}
+.tk-card[data-full="true"] .tk-panel{height:auto;min-height:100%;overflow:visible;box-shadow:none}
+.tk-card[data-full="true"]{border-radius:0;border:0}
+.tk-card[data-full="true"] .tk-panel{border-radius:0}
+.tk-sys{align-self:center;padding:2px 8px;border-radius:6px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 12px/16px var(--font-system);color:var(--text-secondary);white-space:nowrap}
+.tk-embsk{padding:24px 32px;display:flex;flex-direction:column;gap:10px}
+.tk-embsk i{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,rgba(30,43,68,.06),rgba(30,43,68,.11),rgba(30,43,68,.06));background-size:200% 100%;animation:tk-embsk 1.2s linear infinite}
+@keyframes tk-embsk{from{background-position:200% 0}to{background-position:-200% 0}}
+@media (prefers-reduced-motion: reduce){.tk-embsk i{animation-duration:3s}}
+@media (max-height: 560px){.tk-topwrap{position:static}.tk-panel{height:auto;min-height:480px;overflow:visible}}
+
+/* Тикет в УО ещё создаётся: вместо шапки — две плашки, окно задачи уже работает */
+.tk-pend{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px}
+.tk-pend-c{background:var(--bg-base-primary);border-radius:20px;padding:16px 20px;display:flex;flex-direction:column;gap:6px;font:400 14px/20px var(--font-system)}
+.tk-pend-c b{font:700 18px/24px var(--font-system)}
+.tk-pend-c span{display:inline-flex;align-items:center;gap:8px;color:var(--text-secondary)}
+@media (max-width: 900px){.tk-pend{grid-template-columns:1fr}}
+
+/* Единое правило: любая модалка — шторка справа на всю высоту, выезжает справа (side-in) */
+.tk-sheet,.tk-sheet--wide{top:8px;right:8px;bottom:8px;width:min(500px,calc(100vw - 16px));border-radius:24px;animation:sbo-sheet-in .22s ease}
+.tk-dlg{animation:sbo-sheet-in .22s ease}
+@media (prefers-reduced-motion: reduce){.tk-sheet,.tk-dlg{animation:none !important}}
+@keyframes sbo-sheet-in{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.tk-btn,
+.tk-btn--primary,
+.tk-ibtn,
+.tk-link,
+.tk-menu button,
+.tk-ptab,
+.tk-tbtn,
+.tk-fsbtn,
+.lg-btn,
+.lg-add,
+.tk-opt,
+.tk-cp,
+.tk-pill-cp,
+.tk-pill,
+.tk-errtip::after,
+.hs-filter,
+.hs-live,
+.tk-ntf-x{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.tk-btn:hover,
+.tk-btn--primary:hover,
+.tk-ibtn:hover,
+.tk-link:hover,
+.tk-menu button:hover,
+.tk-ptab:hover,
+.tk-tbtn:hover,
+.tk-fsbtn:hover,
+.lg-btn:hover,
+.lg-add:hover,
+.tk-opt:hover,
+.tk-cp:hover,
+.tk-pill-cp:hover,
+.tk-pill:hover,
+.tk-errtip:hover::after,
+.hs-filter:hover,
+.hs-live:hover,
+.tk-ntf-x:hover{transition-delay:.3s}
+.tk-btn:hover:active,
+.tk-btn--primary:hover:active,
+.tk-ibtn:hover:active,
+.tk-link:hover:active,
+.tk-menu button:hover:active,
+.tk-ptab:hover:active,
+.tk-tbtn:hover:active,
+.tk-fsbtn:hover:active,
+.lg-btn:hover:active,
+.lg-add:hover:active,
+.tk-opt:hover:active,
+.tk-cp:hover:active,
+.tk-pill-cp:hover:active,
+.tk-pill:hover:active,
+.hs-filter:hover:active,
+.hs-live:hover:active,
+.tk-ntf-x:hover:active{transition-delay:0s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<div class="tk">
+<sc-if value="{{skelSimple}}" hint-placeholder-val="{{false}}"><div class="tk-card tk-skc" aria-busy="true" aria-label="Загружаем задачу"><div class="tk-sk tk-sk--head"></div><div class="tk-sk tk-sk--body"></div></div></sc-if>
+<sc-if value="{{skelDetail}}" hint-placeholder-val="{{false}}"><div class="tk-card tk-skc" aria-busy="true" aria-label="Загружаем задачу">
+<div class="tk-skd-top"><span class="tk-sk" style="width: 56px; height: 56px; border-radius: 16px"></span><span class="tk-skd-lines"><span class="tk-sk" style="width: 420px; height: 12px"></span><span class="tk-sk" style="width: 600px; height: 12px"></span></span></div>
+<div class="tk-skd-btns"><span class="tk-sk" style="width: 112px"></span><span class="tk-sk" style="width: 176px"></span><span class="tk-sk" style="width: 132px"></span><span class="tk-sk" style="width: 40px"></span><span class="tk-sk" style="width: 40px"></span><span class="tk-sk" style="width: 40px"></span></div>
+<div class="tk-skd-tabs"><span class="tk-sk" style="width: 110px; height: 12px"></span><span class="tk-sk" style="width: 160px; height: 12px"></span><span style="display: inline-flex; gap: 12px"><span class="tk-sk" style="width: 32px; height: 32px; border-radius: 99px"></span><span class="tk-sk" style="width: 32px; height: 32px; border-radius: 99px"></span></span></div>
+<div class="tk-sk tk-sk--body"></div>
+</div></sc-if>
+<sc-if value="{{isMissing}}" hint-placeholder-val="{{false}}"><div class="tk-card tk-miss"><div class="tk-empty"><span class="tk-empty-i"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 10v6h14v-6h-4a3 3 0 01-6 0H5z"/></svg></span><b>Такой задачи нет</b><span>Скорее всего, её удалили или ссылка устарела.<br>Попробуйте зайти её из очереди задач</span><button type="button" class="tk-btn" onClick="{{goBack}}">К списку задач</button></div></div></sc-if>
+<sc-if value="{{isPageMsg}}" hint-placeholder-val="{{false}}"><div class="tk-card tk-miss"><div class="tk-empty"><span class="tk-empty-i">
+<sc-if value="{{pmUser}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 110 10 5 5 0 010-10zm0 11c4.4 0 8 1.8 8 5v3H4v-3c0-3.2 3.6-5 8-5z"/></svg></sc-if>
+<sc-if value="{{pmWifi}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3.3 2l18.7 18.7-1.4 1.4-6.2-6.2a3 3 0 00-4.3 1.4L8.6 15.8a6 6 0 014.4-2.6l-2.5-2.5a9 9 0 00-4.7 2.8L4.3 12a12 12 0 014.4-3.1L6.4 6.6A15 15 0 002.2 9.4L.8 8a17 17 0 013.9-2.8L1.9 3.4 3.3 2zM12 6a15 15 0 0110.8 4.4l-1.4 1.4a13 13 0 00-6.8-3.6L12 6zm0 12a2 2 0 110 4 2 2 0 010-4z"/></svg></sc-if>
+<sc-if value="{{pmTools}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm-.5 8h4l-.5 12H7l-.5-12zM15 2h2l2 3-1 3v14h-4V8l-1-3 2-3z"/></svg></sc-if>
+</span><b>{{pmTitle}}</b><span>{{pmText}}</span><button type="button" class="tk-btn" onClick="{{pmAct}}">{{pmBtn}}</button></div></div></sc-if>
+<sc-if value="{{showCard}}" hint-placeholder-val="{{true}}">
+<div class="tk-card" data-full="{{expanded}}">
+<sc-if value="{{inCall}}" hint-placeholder-val="{{false}}"><div class="tk-conv" role="region" aria-label="Панель звонка">
+<span class="tk-conv-g"><button type="button" class="tk-conv-b" aria-label="Телефония выключена" aria-disabled="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 3v8"/><path d="M6.3 6.6a8 8 0 1011.4 0"/></svg></button><span class="tk-conv-sep" aria-hidden="true"></span><button type="button" class="tk-conv-b" aria-label="Перевести звонок" title="Перевести звонок" onClick="{{callTransfer}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 5.5V9C6.5 9 3 12.5 3 19c2-3 5-4.5 10-4.5V18l8-6.25L13 5.5z"/></svg></button><button type="button" class="tk-conv-b tk-conv-b--on" aria-label="Карточка звонка" title="Карточка звонка"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 2h14a1 1 0 011 1v18a1 1 0 01-1 1H5a1 1 0 01-1-1V3a1 1 0 011-1zm9.6 13.1l-1.6-.4a.8.8 0 00-.8.2l-.7.8a6.8 6.8 0 01-3-3l.8-.7a.8.8 0 00.2-.8l-.4-1.6a.8.8 0 00-.8-.6H7.1a.8.8 0 00-.8.8c0 4.1 3.9 8 8 8a.8.8 0 00.8-.8v-1.2a.8.8 0 00-.5-.7z"/></svg></button></span>
+<span class="tk-conv-m"><span class="tk-conv-l1"><span class="tk-conv-dot" aria-hidden="true"></span>Исходящий<b class="tk-conv-t">{{callTimeLong}}</b><span>{{callNum}}</span><span class="tk-conv-ext">8472</span></span><span class="tk-conv-l2"><span class="tk-conv-dot tk-conv-dot--grey" aria-hidden="true"></span>{{callLine}}</span></span>
+<button type="button" class="tk-conv-b tk-conv-b--line" aria-pressed="{{callPausedStr}}" aria-label="{{callPauseLabel}}" title="{{callPauseLabel}}" onClick="{{toggleCallPause}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 5h3.5v14H7V5zm6.5 0H17v14h-3.5V5z"/></svg></button>
+<button type="button" class="tk-conv-b tk-conv-b--end" aria-label="Завершить звонок" title="Завершить звонок" onClick="{{endCall}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 9c-2.6 0-5 .6-7.3 1.7-.8.4-1.2 1.2-1.2 2v2.1c0 .6.6 1.1 1.2 1l3-.6c.5-.1.9-.5.9-1.1v-1.8a12 12 0 016.8 0v1.8c0 .6.4 1 .9 1.1l3 .6c.6.1 1.2-.4 1.2-1v-2.1c0-.8-.4-1.6-1.2-2C17 9.6 14.6 9 12 9z"/></svg></button>
+<span class="tk-conv-op" aria-label="Оператор">U_2930M<br>25000<br>31219<br>POM 3</span>
+</div></sc-if>
+
+<div class="tk-topwrap"><sc-if value="{{ticketPending}}" hint-placeholder-val="{{false}}"><div class="tk-pend" aria-live="polite"><div class="tk-pend-c"><b>Задача</b><span><span class="tk-spin16" aria-hidden="true"></span>Данные скоро загрузятся — с задачей уже можно работать</span></div><div class="tk-pend-c"><b>Клиент</b><span><span class="tk-spin16" aria-hidden="true"></span>Данные скоро загрузятся</span></div></div></sc-if><sc-if value="{{showTop}}" hint-placeholder-val="{{true}}">
+<div class="tk-top" data-mode="{{headMode}}">
+<sc-if value="{{headErr}}" hint-placeholder-val="{{false}}"><div class="tk-hmsg"><span>{{headErrText}}</span><sc-if value="{{headRetryShow}}" hint-placeholder-val="{{true}}"><button type="button" class="tk-btn" onClick="{{retry}}">{{retryLabel}}</button></sc-if></div></sc-if>
+<sc-if value="{{taskCreating}}" hint-placeholder-val="{{false}}">
+<div class="tk-head">
+<span class="tk-tile"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM8 6v2h8V6H8zm0 4v2h6v-2H8z"/></svg></span>
+<div class="tk-hbody"><div class="tk-title"><span class="tk-name">{{title}}</span></div>
+<div class="tk-tags"><span class="tk-st" data-tone="{{st.tone}}">{{st.label}}</span><span class="tk-meta" style="margin-left: 4px">№ {{num}}<span aria-hidden="true">·</span><button type="button" class="tk-link" onClick="{{openDetails}}">Детали о задаче</button></span></div></div>
+</div>
+</sc-if>
+<sc-if value="{{isStub}}" hint-placeholder-val="{{false}}">
+<div class="tk-head tk-head--stub">
+<span class="tk-tile"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM8 6v2h8V6H8zm0 4v2h6v-2H8z"/></svg></span>
+<div class="tk-hbody"><div class="tk-title"><span class="tk-name">Задача</span><span class="tk-dir">{{stubText}}</span></div></div>
+</div>
+</sc-if>
+<sc-if value="{{taskHead}}" hint-placeholder-val="{{true}}">
+<div class="tk-head">
+<span class="tk-tile"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM8 6v2h8V6H8zm0 4v2h6v-2H8z"/></svg></span>
+<div class="tk-hbody">
+<div class="tk-title"><span class="tk-name">{{title}}</span><span class="tk-dir">{{dir}}</span></div>
+<div class="tk-tags">
+<span class="tk-st" data-tone="{{st.tone}}">{{st.label}}</span>
+<sc-if value="{{hasHoldText}}" hint-placeholder-val="{{false}}"><span class="tk-holdtxt">{{holdText}}</span></sc-if>
+<sc-for list="{{flags}}" as="fl" hint-placeholder-count="4">
+<span class="tk-flag" data-k="{{fl.k}}" title="{{fl.title}}">
+<sc-if value="{{fl.isFlame}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 14.292c0-.996.191-3.325 2.35-5.872.062-.075.125-.148.186-.22 1.888-2.226 3.152-3.717 3.54-6.458.05-.352.43-.565.735-.382 3.02 1.803 5.031 5.034 5.031 8.719 0 1.487 1.713-.31 2.48-1.677.206-.369.832-.556 1.106-.234C19.635 9.59 20.974 12.1 21 14.294 21 19.104 16.97 23 12 23s-9-3.898-9-8.708zm9.67.117c.33.96.551 1.603 1.847.888.263-.145.604-.06.704.224.714 2.031.22 4.979-3.22 4.979-3.181 0-5.406-3.834-1.275-8.218a.448.448 0 01.598-.061c.808.629 1.105 1.492 1.345 2.188z"/></svg></sc-if>
+<sc-if value="{{fl.isDoc}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M5 2a1 1 0 00-1 1v18a1 1 0 001 1h14a1 1 0 001-1V9.815a3 3 0 00-3.299-2.985l-1.458.146a.2.2 0 01-.219-.22L15.17 5.3A3 3 0 0012.185 2H5zm2 9h5v2H7v-2zm0 4h9v2H7v-2z"/></svg></sc-if>
+<sc-if value="{{fl.isBulb}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 8a6.969 6.969 0 01-1.313 4.082c-.367.597-.73 1.114-1.063 1.591-.58.83-1.076 1.538-1.362 2.327H8.736c-.286-.786-.78-1.49-1.36-2.317a29.906 29.906 0 01-1.127-1.692A7 7 0 1119 8zM9 18v2l2 2h2l2-2v-2H9z"/></svg></sc-if>
+<sc-if value="{{fl.isMail}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 5a1 1 0 00-1 1v1l10 4.5L22 7V6a1 1 0 00-1-1H3zm9 8.5L22 9v9a1 1 0 01-1 1H3a1 1 0 01-1-1V9l10 4.5z"/></svg></sc-if>
+<sc-if value="{{fl.isRub}}" hint-placeholder-val="{{false}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 17v2h2.5v3H10v-3h6v-2h-6v-2h3.816c3.994 0 6.684-2.847 6.684-6.5 0-3.682-2.591-6.5-6.528-6.5H6.5v11H4v2h2.5v2H4zm6-12h3.078C15.683 5 17 6.376 17 8.5c0 2.152-1.331 3.5-3.937 3.5H10V5z"/></svg></sc-if>
+</span>
+</sc-for>
+<sc-for list="{{chips}}" as="ch" hint-placeholder-count="2"><span class="tk-chip">{{ch}}</span></sc-for>
+<sc-if value="{{hasMore}}" hint-placeholder-val="{{true}}"><span class="tk-chip">{{moreLabel}}<i>{{moreCount}}</i></span></sc-if>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{clientHead}}" hint-placeholder-val="{{false}}">
+<div class="tk-head">
+<span class="tk-tile"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 22v-2.051c-.052-.78-.395-1.384-.892-1.976-1.133-1.351-3.716-3.152-8.108-3.152-4.008 0-6.68 1.694-7.946 3.055-.602.647-.995 1.18-1.054 2.073V22h18zM12 2c3 0 4 2.588 4 5.128s-1.773 4.616-4 4.616c-2.227 0-4-2.029-4-4.616C8 4.541 9 2 12 2z"/></svg></span>
+<div class="tk-hbody">
+<div class="tk-title tk-title--one"><span class="tk-name tk-cname" title="{{clientFull}}">{{clientFull}}</span></div>
+<sc-if value="{{clientNotFound}}" hint-placeholder-val="{{false}}"><div class="tk-plate tk-plate--warn"><span class="tk-plate-i">!</span><span class="tk-plate-t">Не загружено полностью – не нашли клиента</span><button type="button" class="tk-btn tk-btn--sm" onClick="{{retry}}">{{retryLabel}}</button></div></sc-if>
+<div class="tk-tags">
+<sc-for list="{{clientChips}}" as="cc" hint-placeholder-count="3"><span class="tk-chip" title="{{cc.title}}">{{cc.label}}<i>{{cc.more}}</i></span></sc-for>
+</div>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{showSeg}}" hint-placeholder-val="{{true}}">
+<div class="tk-seg" role="group" aria-label="Что показать">
+<button type="button" aria-pressed="{{isTaskView}}" aria-label="Окно задачи" title="Окно задачи" onClick="{{showTask}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 12H8v-2h6v2zm2-4H8V6h8v2z"/><path d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM6 19.276l5.504-3.144A1 1 0 0113 17v2.276l5-2.857V4H6v15.276z"/></svg></button>
+<button type="button" aria-pressed="{{isClientView}}" aria-label="Карточка клиента" title="Карточка клиента" onClick="{{showClient}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 22v-2.051c-.052-.78-.395-1.384-.892-1.976-1.133-1.351-3.716-3.152-8.108-3.152-4.008 0-6.68 1.694-7.946 3.055-.602.647-.995 1.18-1.054 2.073V22h18zM12 2c3 0 4 2.588 4 5.128s-1.773 4.616-4 4.616c-2.227 0-4-2.029-4-4.616C8 4.541 9 2 12 2z"/></svg></button>
+</div>
+</sc-if>
+</div>
+
+<sc-if value="{{taskActs}}" hint-placeholder-val="{{true}}">
+<div class="tk-acts" data-locked="{{locked}}" style="{{actsStyle}}">
+<sc-if value="{{isOther}}" hint-placeholder-val="{{false}}"><div class="tk-plate tk-plate--warn tk-plate--wide"><span class="tk-plate-i">!</span><span class="tk-plate-t">Над задачей уже работает {{otherName}}</span><button type="button" class="tk-btn tk-btn--primary tk-btn--sm" onClick="{{intercept}}"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 001.5.87l13-7.5a1 1 0 000-1.74l-13-7.5A1 1 0 007 4.5z"/></svg>Взять в работу</button></div></sc-if>
+<sc-if value="{{isPassed}}" hint-placeholder-val="{{false}}"><span class="tk-passed">Задача передана: <b>{{passedTo}}</b></span></sc-if>
+<sc-if value="{{showHold}}" hint-placeholder-val="{{true}}"><button type="button" class="tk-btn tk-btn--primary" onClick="{{doHold}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/></svg>На холд</button></sc-if>
+<sc-if value="{{showTake}}" hint-placeholder-val="{{false}}"><button type="button" class="tk-btn tk-btn--primary" onClick="{{doTake}}">Взять в работу</button></sc-if>
+<sc-if value="{{showUnhold}}" hint-placeholder-val="{{false}}"><button type="button" class="tk-btn tk-btn--primary" onClick="{{doUnhold}}">Снять с холда</button></sc-if>
+<sc-if value="{{canAct}}" hint-placeholder-val="{{true}}">
+<button type="button" class="tk-btn" onClick="{{doPass}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.258 15.063a.5.5 0 01.507.013l4 2.5a.5.5 0 010 .848l-4 2.5A.5.5 0 0118 20.5V19a2 2 0 00-2 2v2h-2v-2a4 4 0 014-4v-1.5a.5.5 0 01.258-.438zM12 13c1.12 0 2.119.103 3 .324v2.085c-.758-.26-1.733-.409-3-.409-2.675 0-4.051.655-4.825 1.652C6.349 17.716 6 19.416 6 22H4c0-2.644.33-4.945 1.595-6.574C6.91 13.73 9.035 13 12 13zm0-11a5 5 0 110 10 5 5 0 010-10z"/></svg>Передать задачу</button>
+<button type="button" class="tk-btn" onClick="{{doReject}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm3.293-14.707L12 10.586 8.707 7.293 7.293 8.707 10.586 12l-3.293 3.293 1.414 1.414L12 13.414l3.293 3.293 1.414-1.414L13.414 12l3.293-3.293-1.414-1.414z"/></svg>Отклонить</button>
+</sc-if>
+<button type="button" class="tk-ibtn" data-on="{{inCall}}" aria-pressed="{{inCall}}" aria-label="{{callLabel}}" title="{{callLabel}}" onClick="{{doCall}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 15.6l-3.2-.9a1.5 1.5 0 00-1.5.4l-1.5 1.6a13.6 13.6 0 01-6-6l1.6-1.5c.4-.4.5-1 .4-1.5l-.9-3.2A1.5 1.5 0 006.9 3.4H4.5A1.5 1.5 0 003 4.9C3 13.2 10.8 21 19.1 21a1.5 1.5 0 001.5-1.5v-2.4c0-.7-.4-1.3-1.1-1.5z"/></svg></button>
+<button type="button" class="tk-ibtn" aria-label="{{noteLabel}}" title="{{noteLabel}}" onClick="{{doNote}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 12H8v-2h6v2zm2-4H8V6h8v2z"/><path d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58z"/></svg><sc-if value="{{hasNotes}}" hint-placeholder-val="{{false}}"><span class="tk-badge" aria-hidden="true">{{notesCount}}</span></sc-if></button>
+<span class="tk-wrap">
+<button type="button" class="tk-ibtn" aria-label="Ещё действия" aria-expanded="{{menuOpen}}" title="Ещё" onClick="{{toggleMenu}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7a2 2 0 110-4 2 2 0 010 4zm0 7a2 2 0 110-4 2 2 0 010 4zm-2 5a2 2 0 104 0 2 2 0 00-4 0z"/></svg></button>
+<sc-if value="{{menuOpen}}" hint-placeholder-val="{{false}}"><div class="tk-menu" role="menu">
+<sc-if value="{{canClose}}" hint-placeholder-val="{{true}}"><button type="button" role="menuitem" onClick="{{menuClose}}">Закрыть задачу</button></sc-if>
+<button type="button" role="menuitem" onClick="{{menuClient}}">Карточка клиента</button>
+<button type="button" role="menuitem" onClick="{{menuHistory}}">История изменений</button>
+<button type="button" role="menuitem" onClick="{{menuSla}}">К правилу SLA</button>
+<button type="button" role="menuitem" onClick="{{menuCopy}}">Скопировать ссылку на задачу</button>
+</div></sc-if>
+</span>
+<span class="tk-meta">№ {{num}}<span aria-hidden="true">·</span><button type="button" class="tk-link" onClick="{{openDetails}}">Детали о задаче</button></span>
+</div>
+</sc-if>
+<sc-if value="{{clientActs}}" hint-placeholder-val="{{false}}">
+<div class="tk-acts">
+<button type="button" class="tk-btn tk-btn--primary" onClick="{{openCrm}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13 5.5V9C6.5 9 3 12.5 3 19c2-3 5-4.5 10-4.5V18l8-6.25L13 5.5z"/></svg>К карточке клиента</button>
+<button type="button" class="tk-btn" onClick="{{openContacts}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 15.6l-3.2-.9a1.5 1.5 0 00-1.5.4l-1.5 1.6a13.6 13.6 0 01-6-6l1.6-1.5c.4-.4.5-1 .4-1.5l-.9-3.2A1.5 1.5 0 006.9 3.4H4.5A1.5 1.5 0 003 4.9C3 13.2 10.8 21 19.1 21a1.5 1.5 0 001.5-1.5v-2.4c0-.7-.4-1.3-1.1-1.5z"/></svg>Контакты</button>
+<button type="button" class="tk-btn" onClick="{{clientTasks}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM8 6v2h8V6H8zm0 4v2h6v-2H8z"/></svg>Задачи клиента</button>
+<span class="tk-wrap">
+<button type="button" class="tk-ibtn" aria-label="Ещё действия по клиенту" aria-expanded="{{cmenuOpen}}" title="Ещё" onClick="{{toggleCmenu}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 7a2 2 0 110-4 2 2 0 010 4zm0 7a2 2 0 110-4 2 2 0 010 4zm-2 5a2 2 0 104 0 2 2 0 00-4 0z"/></svg></button>
+<sc-if value="{{cmenuOpen}}" hint-placeholder-val="{{false}}"><div class="tk-menu" role="menu">
+<button type="button" role="menuitem" onClick="{{copyAllReq}}">Скопировать реквизиты</button>
+<button type="button" role="menuitem" onClick="{{openPins}}">Пины клиента</button>
+<button type="button" role="menuitem" onClick="{{callClient}}">Позвонить клиенту</button>
+</div></sc-if>
+</span>
+<span class="tk-req">
+<span class="tk-req-i">Пин <button type="button" class="tk-cp" title="Скопировать ПИН" onClick="{{cpPin}}">{{req.pin}}</button></span><button type="button" class="tk-link" onClick="{{openPins}}">Ещё {{req.morePins}}</button>
+<span class="tk-req-i"><span aria-hidden="true">·</span>ИНН <button type="button" class="tk-cp" title="Скопировать ИНН" onClick="{{cpInn}}">{{req.inn}}</button></span>
+<span class="tk-req-i"><span aria-hidden="true">·</span>КПП <button type="button" class="tk-cp" title="Скопировать КПП" onClick="{{cpKpp}}">{{req.kpp}}</button></span>
+<span class="tk-req-i"><span aria-hidden="true">·</span>ОГРН <button type="button" class="tk-cp" title="Скопировать ОГРН" onClick="{{cpOgrn}}">{{req.ogrn}}</button></span>
+</span>
+</div>
+</sc-if>
+</sc-if></div>
+
+<section class="tk-panel" data-short="{{panelShort}}" data-docked="{{dockedStr}}" aria-label="{{panelLabel}}">
+<div class="tk-pbar">
+<span class="tk-ptabs" role="tablist" aria-label="Разделы окна задачи"><button type="button" role="tab" class="tk-ptab" aria-selected="{{tabFormOn}}" onClick="{{tabForm}}">Окно задачи</button><sc-if value="{{notStub}}" hint-placeholder-val="{{true}}"><button type="button" role="tab" class="tk-ptab" aria-selected="{{tabHistOn}}" onClick="{{tabHist}}">История изменений<sc-if value="{{histUnseen}}" hint-placeholder-val="{{false}}"><span class="tk-cnt hs-tabcnt" aria-label="новых событий: {{histUnseenN}}">{{histUnseenN}}</span></sc-if></button></sc-if></span>
+<span class="tk-timer">
+<sc-if value="{{capOn}}" hint-placeholder-val="{{false}}"><span class="tk-cap"><sc-if value="{{capSpin}}" hint-placeholder-val="{{false}}"><span class="tk-spin16" aria-hidden="true"></span></sc-if><sc-if value="{{capOk}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-positive)"/><path d="M10.5 14.6l-3.1-3.1-1.4 1.4 4.5 4.5 7.5-7.5-1.4-1.4-6.1 6.1z" fill="#fff"/></svg></sc-if><sc-if value="{{capWarn}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-attention)"/><path d="M11 6h2l-.25 8h-1.5L11 6zm0 10h2v2h-2v-2z" fill="#fff"/></svg></sc-if><span role="status">{{capText}}</span><sc-if value="{{capNext}}" hint-placeholder-val="{{false}}"><span class="sep">·</span><button type="button" class="tk-link" onClick="{{goNext}}">К следующей</button></sc-if><sc-if value="{{capNone}}" hint-placeholder-val="{{false}}"><span class="sep">·</span><span class="tk-capnote">Новых задач нет</span></sc-if><sc-if value="{{capSeek}}" hint-placeholder-val="{{false}}"><span class="sep">·</span><span class="tk-spin16" aria-hidden="true"></span><span class="tk-capnote">Ищем новую</span></sc-if></span></sc-if>
+<sc-if value="{{isCloseErr}}" hint-placeholder-val="{{false}}"><span class="tk-errtip" tabindex="0" data-tip="Проверьте данные и попробуйте еще раз"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-negative)"/><path d="M11 6h2l-.25 8h-1.5L11 6zm0 10h2v2h-2v-2z" fill="#fff"/></svg><span role="alert">Ошибка при закрытии</span></span></sc-if>
+<sc-if value="{{timerNormal}}" hint-placeholder-val="{{true}}">
+<sc-if value="{{tRing}}" hint-placeholder-val="{{true}}"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6" fill="none" stroke="var(--color-neutral-translucent-300)" stroke-width="3"/><circle cx="8" cy="8" r="6" fill="none" stroke="{{ringColor}}" stroke-width="3" stroke-linecap="round" stroke-dasharray="{{ringDash}}" transform="rotate(-90 8 8)"/></svg></sc-if>
+<sc-if value="{{tAlert}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-negative)"/><path d="M11 6h2l-.25 8h-1.5L11 6zm0 10h2v2h-2v-2z" fill="#fff"/></svg></sc-if>
+<sc-if value="{{tOk}}" hint-placeholder-val="{{false}}"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-positive)"/><path d="M10.5 14.6l-3.1-3.1-1.4 1.4 4.5 4.5 7.5-7.5-1.4-1.4-6.1 6.1z" fill="#fff"/></svg></sc-if>
+<sc-if value="{{hasTimer}}" hint-placeholder-val="{{true}}"><span>{{timerText}}</span><span class="sep">/</span></sc-if>
+<span class="sla">{{slaText}}</span>
+</sc-if>
+</span>
+<span class="tk-ptools">
+<button type="button" class="tk-tbtn tk-rfbtn" aria-label="Обновить окно задачи" title="Обновить" onClick="{{refresh}}"><svg class="{{spinCls}}" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg></button>
+<button type="button" class="tk-fsbtn" title="{{expandTitle}}" aria-pressed="{{expanded}}" onClick="{{toggleExpand}}">
+<sc-if value="{{notExpanded}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-4.29 4.3-1.42-1.42L17.59 5H14V3zM3 14h2v3.59l4.29-4.3 1.42 1.42L6.41 19H10v2H3v-7z"/></svg></sc-if>
+<sc-if value="{{expanded}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.29 2.29l1.42 1.42L17.41 8H21v2h-7V3h2v3.59l4.29-4.3zM3 14h7v7H8v-3.59l-4.29 4.3-1.42-1.42L6.59 16H3v-2z"/></svg></sc-if>
+<span>{{expandText}}</span></button>
+</span>
+</div>
+
+<sc-if value="{{contentErr}}" hint-placeholder-val="{{false}}"><div class="tk-empty"><span class="tk-empty-i"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 10v6h14v-6h-4a3 3 0 01-6 0H5z"/></svg></span><b>Не получилось загрузить окно задачи</b><span>Шапка задачи работает — попробуйте обновить вкладку</span><button type="button" class="tk-btn" onClick="{{retry}}">{{retryLabel}}</button></div></sc-if>
+<sc-if value="{{contentCreating}}" hint-placeholder-val="{{false}}"><div class="tk-empty"><span class="tk-empty-i"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 10v6h14v-6h-4a3 3 0 01-6 0H5z"/></svg></span><b>Такой задачи нет</b><span>Возможно, указана неверная ссылка<br>или задача создаётся</span><button type="button" class="tk-btn" onClick="{{goBack}}">К списку задач</button></div></sc-if>
+<sc-if value="{{contentWaiting}}" hint-placeholder-val="{{false}}"><div class="tk-empty"><span class="tk-empty-i"><span class="tk-spin28" aria-hidden="true"></span></span><b>Ждём новую задачу из очереди</b><span>Сейчас задач нет, но она может скоро прийти</span><span class="tk-empty-s">Если задачи не приходят — обратитесь к Администратору</span><button type="button" class="tk-btn" onClick="{{goBack}}">На главную</button></div></sc-if>
+<sc-if value="{{contentExternal}}" hint-placeholder-val="{{false}}"><div class="tk-empty"><span class="tk-empty-i"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 3h7v7h-2V6.41l-8.29 8.3-1.42-1.42L17.59 5H14V3zM5 5h6v2H5v12h12v-6h2v6a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2z"/></svg></span><b>Перейдите к задаче во внешней системе</b><span>Пока не можем отобразить задачу — она откроется по ссылке в новой вкладке</span><span class="tk-empty-s">Ссылка: <a class="tk-ext" href="#" onClick="{{openExternal}}">https://rcvk.rc-int-ui.moscow.alfaintra.net/rcvk-confirmcertificate-ui/confirmcertificate/ConfirmDocumentExcel</a></span><button type="button" class="tk-btn" onClick="{{openExternal}}">Перейти к задаче</button></div></sc-if>
+<sc-if value="{{embLoading}}" hint-placeholder-val="{{false}}"><div class="tk-embsk" aria-busy="true" aria-label="Загружаем окно задачи"><i style="width: 38%"></i><i style="width: 22%"></i><i style="width: 30%"></i><i style="width: 100%; height: 36px"></i><i style="width: 18%; height: 22px; margin-top: 16px"></i><i style="width: 100%; height: 120px"></i><i style="width: 100%; height: 120px"></i></div></sc-if>
+<sc-if value="{{embErr}}" hint-placeholder-val="{{false}}"><div class="tk-empty" role="alert"><span class="tk-empty-i"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm-.5 8h4l-.5 12H7l-.5-12zM15 2h2l2 3-1 3v14h-4V8l-1-3 2-3z"/></svg></span><b>{{embErrTitle}}</b><span>{{embErrText}}</span><sc-if value="{{embErrBtn}}" hint-placeholder-val="{{true}}"><button type="button" class="tk-btn" onClick="{{embRetry}}">Повторить</button></sc-if></div></sc-if>
+<sc-if value="{{contentForm}}" hint-placeholder-val="{{true}}">
+<div class="lg">
+<div class="lg-info">591529678 <b>Обработка ВК</b><br>Этап <b>Обработка ВК</b><br>Процесс <b>Создание контракта</b><br>Отправил <b>Шеремет О.С.</b><br>Исполнитель <b>Шеремет О.С.</b><br>Заявка <b>81016596</b></div>
+<div class="lg-btns">
+<sc-for list="{{legacyBtns}}" as="lb" hint-placeholder-count="9"><button type="button" class="lg-btn" onClick="{{lb.click}}">{{lb.label}}</button></sc-for>
+<sc-if value="{{hasSaved}}" hint-placeholder-val="{{false}}"><span class="lg-saved"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="vertical-align: -2px"><path d="M9.5 16.2L5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7z"/></svg> {{savedText}}</span></sc-if>
+</div>
+<h3 class="lg-h">Контракт</h3>
+<div class="lg-tabs" role="tablist">
+<sc-for list="{{legacyTabs}}" as="lt" hint-placeholder-count="8"><button type="button" role="tab" class="lg-tab" aria-selected="{{lt.on}}" onClick="{{lt.click}}">{{lt.label}}</button></sc-for>
+</div>
+<sc-if value="{{lgMain}}" hint-placeholder-val="{{true}}">
+<span class="lg-lbl">Клиент</span>
+<div class="lg-field">{{legacyClient}}</div>
+<div class="lg-row">
+<div class="lg-in"><small>ИНН</small><span>7702734076</span></div>
+<div class="lg-date"><span><small>Дата подачи документов</small>15.10.2026</span><svg width="14" height="14" viewBox="0 0 16 16" fill="#555" aria-hidden="true"><path d="M5 0H3v2H1v11.25A2.75 2.75 0 003.75 16h8.5A2.75 2.75 0 0015 13.25V2h-2V0h-2v2H5V0zM2.5 6h11v7.25c0 .69-.56 1.25-1.25 1.25h-8.5c-.69 0-1.25-.56-1.25-1.25V6z"/></svg></div>
+</div>
+<fieldset class="lg-fs"><legend>Сведения о контрагенте</legend>
+<table class="lg-tbl"><thead><tr><th class="add"><button type="button" class="lg-add" aria-label="Добавить контрагента" onClick="{{addCp}}">+</button></th><th>Контрагент</th><th>Страна</th></tr></thead><tbody><sc-for list="{{cpRows}}" as="r1" hint-placeholder-count="0"><tr><td style="text-align:center">{{r1.n}}</td><td><input onChange="{{markDirty}}" aria-label="Контрагент"></td><td><input onChange="{{markDirty}}" aria-label="Страна"></td></tr></sc-for></tbody></table>
+</fieldset>
+<fieldset class="lg-fs"><legend>Сведения о плательщике/получателе</legend>
+<table class="lg-tbl"><thead><tr><th class="add"><button type="button" class="lg-add" aria-label="Добавить плательщика или получателя" onClick="{{addPr}}">+</button></th><th>Наименование плательщика/получателя</th><th>Тип плательщика/ получателя</th><th>Страна плательщика/ получателя</th><th>ИНН</th><th>БИК банка</th><th>SWIFT банка</th><th>Страна банка</th><th>Счет</th></tr></thead><tbody><sc-for list="{{prRows}}" as="r2" hint-placeholder-count="0"><tr><td style="text-align:center">{{r2.n}}</td><td><input onChange="{{markDirty}}" aria-label="Наименование"></td><td><input onChange="{{markDirty}}" aria-label="Тип"></td><td><input onChange="{{markDirty}}" aria-label="Страна"></td><td><input onChange="{{markDirty}}" aria-label="ИНН"></td><td><input onChange="{{markDirty}}" aria-label="БИК банка"></td><td><input onChange="{{markDirty}}" aria-label="SWIFT банка"></td><td><input onChange="{{markDirty}}" aria-label="Страна банка"></td><td><input onChange="{{markDirty}}" aria-label="Счет"></td></tr></sc-for></tbody></table>
+</fieldset>
+<fieldset class="lg-fs"><legend>Сведения о контракте</legend>
+<table class="lg-tbl"><thead><tr><th>№</th><th>БН</th><th>Дата</th><th>Сумма</th><th>Без суммы</th><th>Валюта</th><th>Дата завершения</th><th>Код вида УНК</th><th>Дата последнего изменения суммы контракта</th><th>Рублевый эквивалент</th></tr></thead>
+<tbody><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr><tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr></tbody></table>
+</fieldset>
+</sc-if>
+<sc-if value="{{lgOther}}" hint-placeholder-val="{{false}}"><fieldset class="lg-fs"><legend>{{lgTabLabel}}</legend><table class="lg-tbl"><thead><tr><sc-for list="{{lgCols}}" as="lc" hint-placeholder-count="3"><th>{{lc}}</th></sc-for></tr></thead><tbody><sc-for list="{{lgRows}}" as="lr" hint-placeholder-count="3"><tr><sc-for list="{{lr}}" as="lv" hint-placeholder-count="3"><td>{{lv}}</td></sc-for></tr></sc-for></tbody></table></fieldset></sc-if>
+</div>
+</sc-if>
+
+<sc-if value="{{showHistory}}" hint-placeholder-val="{{false}}">
+<div class="hs">
+<div class="hs-side">
+<section class="hs-card" aria-labelledby="hs-exec"><h3 id="hs-exec">Исполнители</h3>
+<ol class="hs-tl"><sc-for list="{{histExecs}}" as="ex" hint-placeholder-count="2"><li class="hs-it"><span class="hs-n">{{ex.n}}</span><div class="hs-b"><div class="hs-cap">{{ex.cap}}</div><div class="hs-big">{{ex.name}}</div><sc-for list="{{ex.lines}}" as="xl" hint-placeholder-count="1"><div class="hs-txt">{{xl}}</div></sc-for><div class="hs-sec">{{ex.when}}</div></div></li></sc-for></ol>
+</section>
+<section class="hs-card" aria-labelledby="hs-st"><h3 id="hs-st">Статусы</h3>
+<ol class="hs-tl"><sc-for list="{{histStatuses}}" as="hst" hint-placeholder-count="4"><li class="hs-it"><span class="hs-n">{{hst.n}}</span><div class="hs-b"><div class="hs-head"><span class="hs-chip" data-tone="{{hst.tone}}">{{hst.label}}</span><span class="hs-dur">{{hst.dur}}</span></div><div class="hs-txt">{{hst.who}}</div><div class="hs-sec">{{hst.when}}</div></div></li></sc-for></ol>
+</section>
+</div>
+<div class="hs-main">
+<div class="hs-bar">
+<div class="tk-wrap">
+<button type="button" class="hs-filter" aria-haspopup="listbox" aria-expanded="{{hfOpen}}" onClick="{{toggleHf}}">{{hfLabel}}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 13.586l-5.293-5.293-1.414 1.414L12 16.414l6.707-6.707-1.414-1.414L12 13.586z"/></svg></button>
+<sc-if value="{{hfOpen}}" hint-placeholder-val="{{false}}"><div class="tk-menu" role="listbox" aria-label="Параметр"><sc-for list="{{hfOptions}}" as="hfo" hint-placeholder-count="5"><button type="button" role="option" aria-selected="{{hfo.on}}" onClick="{{hfo.pick}}">{{hfo.label}}</button></sc-for></div></sc-if>
+</div>
+<sc-if value="{{sseShow}}" hint-placeholder-val="{{true}}"><button type="button" class="hs-live" data-state="{{sseState}}" aria-pressed="{{ssePaused}}" title="{{sseTitle}}" onClick="{{toggleSse}}"><span class="hs-live-dot" aria-hidden="true"></span>{{sseLabel}}<sc-if value="{{sseHasQueued}}" hint-placeholder-val="{{false}}"><span class="tk-cnt">+{{sseQueued}}</span></sc-if></button></sc-if>
+<span class="hs-sr" aria-live="polite">{{sseAnnounce}}</span>
+</div>
+<ol class="hs-tl hs-steps"><sc-for list="{{histEvents}}" as="hv" hint-placeholder-count="7"><li class="hs-it" data-last="{{hv.latest}}" data-fresh="{{hv.fresh}}"><span class="hs-n">{{hv.n}}</span><div class="hs-b"><div class="hs-title"><sc-for list="{{hv.parts}}" as="hp" hint-placeholder-count="2"><span class="{{hp.cls}}">{{hp.t}}</span></sc-for></div><sc-for list="{{hv.meta}}" as="hm" hint-placeholder-count="1"><div class="hs-sec">{{hm}}</div></sc-for><div class="hs-who">{{hv.who}}</div></div></li></sc-for></ol>
+<sc-if value="{{histNone}}" hint-placeholder-val="{{false}}"><div class="tk-empty"><b>Нет событий</b><span>По параметру «{{hfLabel}}» в истории ничего нет</span></div></sc-if>
+</div>
+</div>
+</sc-if>
+
+</section>
+</div>
+</sc-if>
+
+<sc-if value="{{detailsOpen}}" hint-placeholder-val="{{false}}">
+<button type="button" class="tk-scrim" aria-label="Закрыть" onClick="{{closeDetails}}"></button>
+<aside class="tk-sheet" role="dialog" aria-label="Информация по задаче">
+<div class="tk-sh"><h2>Информация по задаче</h2><button type="button" class="tk-tbtn tk-tbtn--fill" aria-label="Закрыть" onClick="{{closeDetails}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.707 5.707l-1.414-1.414L12 10.586 5.707 4.293 4.293 5.707 10.586 12l-6.293 6.293 1.414 1.414L12 13.414l6.293 6.293 1.414-1.414L13.414 12l6.293-6.293z"/></svg></button></div>
+<div class="tk-sb">
+<div><span class="tk-st" data-tone="{{st.tone}}">{{st.label}}</span></div>
+<div class="tk-sgt">Задача</div>
+<dl class="tk-kv">
+<dt>Номер</dt><dd>№ {{num}}</dd>
+<dt>Тип</dt><dd>{{title}}</dd>
+<dt>Направление</dt><dd>{{dir}}</dd>
+<dt>Исполнитель</dt><dd>{{executor}}</dd>
+<dt>Поступила</dt><dd>15.10.2026 в 09:12</dd>
+<dt>Норматив</dt><dd>{{slaText}}</dd>
+<sc-if value="{{hasTimer}}" hint-placeholder-val="{{true}}"><dt>{{timerTitle}}</dt><dd>{{timerText}}</dd></sc-if>
+</dl>
+<div class="tk-sgt">Теги</div>
+<div class="tk-tags"><sc-for list="{{allTags}}" as="tg" hint-placeholder-count="6"><span class="tk-chip">{{tg}}</span></sc-for></div>
+<div class="tk-sgt">Клиент</div>
+<dl class="tk-kv"><dt>Название</dt><dd>{{client}}</dd><dt>ИНН</dt><dd>7702734076</dd></dl>
+</div>
+</aside>
+</sc-if>
+
+
+<sc-if value="{{csheet}}" hint-placeholder-val="{{false}}">
+<button type="button" class="tk-scrim" aria-label="Закрыть" onClick="{{closeCsheet}}"></button>
+<aside class="tk-sheet tk-sheet--wide" role="dialog" aria-label="{{csheetTitle}}">
+<div class="tk-sh"><h2 class="tk-sh-big">{{csheetTitle}}</h2><button type="button" class="tk-tbtn" aria-label="Закрыть" onClick="{{closeCsheet}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.707 5.707l-1.414-1.414L12 10.586 5.707 4.293 4.293 5.707 10.586 12l-6.293 6.293 1.414 1.414L12 13.414l6.293 6.293 1.414-1.414L13.414 12l6.293-6.293z"/></svg></button></div>
+<div class="tk-sb">
+<sc-if value="{{isContacts}}" hint-placeholder-val="{{true}}">
+<div class="tk-pseg" role="tablist" aria-label="Чьи контакты">
+<button type="button" role="tab" aria-selected="{{ctClientOn}}" onClick="{{ctClient}}">Клиентские <span class="tk-cnt">{{ctClientCount}}</span></button>
+<button type="button" role="tab" aria-selected="{{ctBankOn}}" onClick="{{ctBank}}">Банковские <span class="tk-cnt">{{ctBankCount}}</span></button>
+</div>
+<label class="tk-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 3a7 7 0 015.6 11.2l5.1 5.1-1.4 1.4-5.1-5.1A7 7 0 1110 3zm0 2a5 5 0 100 10 5 5 0 000-10z"/></svg><input type="search" placeholder="ФИО или номер телефона" aria-label="Поиск по контактам" value="{{ctQ}}" onChange="{{setCtQ}}"></label>
+<sc-if value="{{ctLoading}}" hint-placeholder-val="{{false}}"><div class="tk-skel" aria-busy="true" aria-label="Загружаем контакты"><sc-for list="{{skelRows}}" as="sk" hint-placeholder-count="2"><div class="tk-skel-g"><i style="width: 100px"></i><i style="width: 100%"></i><div class="tk-skel-r"><i></i><i></i></div><div class="tk-skel-r"><i></i><i></i></div><div class="tk-skel-r"><i></i><i></i></div></div></sc-for></div></sc-if>
+<sc-if value="{{ctEmpty}}" hint-placeholder-val="{{false}}"><div class="tk-empty"><span class="tk-empty-i"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 10v6h14v-6h-4a3 3 0 01-6 0H5z"/></svg></span><b>Нет контактов</b><span>{{ctEmptyText}}</span></div></sc-if>
+<sc-if value="{{ctReady}}" hint-placeholder-val="{{true}}">
+<sc-for list="{{ctGroups}}" as="cg" hint-placeholder-count="2"><section class="tk-cg"><div class="tk-cg-role">{{cg.role}}</div><div class="tk-cg-name">{{cg.name}}</div>
+<div class="tk-cts"><sc-for list="{{cg.items}}" as="ci" hint-placeholder-count="3"><div class="tk-ct"><span class="tk-ct-i" aria-hidden="true"><sc-if value="{{ci.isMail}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/></svg></sc-if><sc-if value="{{ci.isPhone}}" hint-placeholder-val="{{true}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="2.5" width="11" height="19" rx="2.5"/><path d="M14.5 13.5a4 4 0 114 4.6L20 20l-2.6-.6a4 4 0 01-2.9-5.9z"/></svg></sc-if></span><div class="tk-ct-c"><span class="{{ci.pillCls}}"><button type="button" class="tk-pill-main" aria-label="{{ci.mainLabel}}" onClick="{{ci.act}}"><sc-if value="{{ci.isPhone}}" hint-placeholder-val="{{true}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.5 15.6l-3.2-.9a1.5 1.5 0 00-1.5.4l-1.5 1.6a13.6 13.6 0 01-6-6l1.6-1.5c.4-.4.5-1 .4-1.5l-.9-3.2A1.5 1.5 0 006.9 3.4H4.5A1.5 1.5 0 003 4.9C3 13.2 10.8 21 19.1 21a1.5 1.5 0 001.5-1.5v-2.4c0-.7-.4-1.3-1.1-1.5z"/></svg></sc-if><sc-if value="{{ci.isMail}}" hint-placeholder-val="{{false}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3.5 6.5L12 13l8.5-6.5"/></svg></sc-if><span>{{ci.value}}</span></button><button type="button" class="tk-pill-cp" aria-label="{{ci.cpLabel}}" title="Скопировать" onClick="{{ci.copy}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 00-2-2H6a2 2 0 00-2 2v8a2 2 0 002 2h2"/></svg></button></span><span class="tk-ct-cap">{{ci.label}}<span class="tk-ct-src"> · {{ci.src}}</span></span></div></div></sc-for></div>
+</section></sc-for>
+</sc-if>
+</sc-if>
+<sc-if value="{{isPins}}" hint-placeholder-val="{{false}}">
+<div class="tk-pinc"><b>{{clientFull}}</b><small>{{pinSeg}}</small></div>
+<label class="tk-search"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10 3a7 7 0 015.6 11.2l5.1 5.1-1.4 1.4-5.1-5.1A7 7 0 1110 3zm0 2a5 5 0 100 10 5 5 0 000-10z"/></svg><input type="search" placeholder="Поиск по ПИНам" aria-label="Поиск по ПИНам" value="{{pinQ}}" onChange="{{setPinQ}}"></label>
+<div class="tk-pin-total">{{pinTotalLabel}} <b>{{pinTotal}}</b></div>
+<ol class="tk-pins"><sc-for list="{{pins}}" as="pn" hint-placeholder-count="6"><li><span class="tk-pin-n">{{pn.n}}</span><span><button type="button" class="tk-cp tk-pin-c" title="Скопировать ПИН" onClick="{{pn.copy}}">{{pn.code}}</button><small>{{pn.kind}}</small></span></li></sc-for></ol>
+<sc-if value="{{pinsCut}}" hint-placeholder-val="{{false}}"><div class="tk-pin-more">Показаны первые {{pinsShown}} — уточните поиск</div></sc-if>
+<sc-if value="{{pinsNone}}" hint-placeholder-val="{{false}}"><div class="tk-empty"><b>Ничего не нашлось</b><span>Проверьте ПИН</span></div></sc-if>
+</sc-if>
+</div>
+</aside>
+</sc-if>
+
+<sc-if value="{{imOpen}}" hint-placeholder-val="{{false}}">
+<button type="button" class="tk-mback" aria-label="Закрыть" onClick="{{imCancel}}"></button>
+<div class="tk-dlg tk-im" role="alertdialog" aria-modal="true" aria-label="{{imTitle}}" data-center="{{imCenter}}">
+<button type="button" class="tk-tbtn tk-im-x" aria-label="Закрыть" onClick="{{imCancel}}"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.707 5.707l-1.414-1.414L12 10.586 5.707 4.293 4.293 5.707 10.586 12l-6.293 6.293 1.414 1.414L12 13.414l6.293 6.293 1.414-1.414L13.414 12l6.293-6.293z"/></svg></button>
+<sc-if value="{{imIcon}}" hint-placeholder-val="{{false}}"><span class="tk-im-ic"><svg width="40" height="40" viewBox="0 0 24 24" fill="#fff" aria-hidden="true"><path d="M8.3 3.3l1.4-1.4L12 4.2l2.3-2.3 1.4 1.4L13.4 5.6l2.3 2.3-1.4 1.4L12 7l-2.3 2.3-1.4-1.4 2.3-2.3-2.3-2.3zM3 13h4.5c1 0 2 .3 2.8 1l.7.5h3a1.5 1.5 0 010 3H9v1h5.5a2.5 2.5 0 002.4-1.8l2.6-1.5a1.6 1.6 0 012.2.6 1.6 1.6 0 01-.5 2.1L15 20.5a4 4 0 01-2 .5H3v-8z"/></svg></span></sc-if>
+<h2>{{imTitle}}</h2>
+<p>{{imText}}</p>
+<sc-if value="{{imHasSub}}" hint-placeholder-val="{{false}}"><p class="tk-im-sub">{{imSub}}</p></sc-if>
+<div class="tk-im-f"><button type="button" class="tk-btn tk-btn--primary" data-tone="{{imTone}}" onClick="{{imOk}}">{{imOkLabel}}</button><button type="button" class="tk-btn" onClick="{{imSecond}}">{{imCancelLabel}}</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{dlgOpen}}" hint-placeholder-val="{{false}}">
+<button type="button" class="tk-mback" aria-label="Закрыть" onClick="{{closeDlg}}"></button>
+<div class="tk-dlg" role="dialog" aria-modal="true" aria-label="{{dlgTitle}}">
+<div class="tk-dh"><h2>{{dlgTitle}}</h2><button type="button" class="tk-tbtn tk-tbtn--fill" aria-label="Закрыть" onClick="{{closeDlg}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.707 5.707l-1.414-1.414L12 10.586 5.707 4.293 4.293 5.707 10.586 12l-6.293 6.293 1.414 1.414L12 13.414l6.293 6.293 1.414-1.414L13.414 12l6.293-6.293z"/></svg></button></div>
+<div class="tk-db">
+<sc-if value="{{holdErr}}" hint-placeholder-val="{{false}}"><div class="tk-dmsg"><span class="tk-dmsg-i tk-dmsg-i--err"><svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.95 5.636l1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12l-4.95-4.95L7.05 5.636 12 10.586l4.95-4.95z"/></svg></span><b>Не получилось перевести на холд</b><span>Попробуйте ещё раз или зайдите позже</span></div></sc-if>
+<sc-if value="{{holdNoRights}}" hint-placeholder-val="{{false}}"><div class="tk-dmsg"><span class="tk-dmsg-i"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 110 10 5 5 0 010-10zm0 11c4.4 0 8 1.8 8 5v3H4v-3c0-3.2 3.6-5 8-5z"/></svg></span><b>Недостаточно прав</b><span>Перевести задачу на холд может исполнитель или руководитель</span></div></sc-if>
+<sc-if value="{{holdReasonsErr}}" hint-placeholder-val="{{false}}"><div class="tk-dmsg"><span class="tk-dmsg-i"><svg width="26" height="26" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 2l-1 3.2 2.3 2.3-2.4 2.4 1.4 1.4 3.8-3.8-2.3-2.3L16 2h-2.5zM3 21l7.5-7.5 3 3L6 24H3v-3zm9.9-10.4l-2 2 3 3 2-2-3-3zM19 13a4 4 0 014 4l-2.5.5-1-1L20 14a4 4 0 00-1-1z"/></svg></span><b>Не получилось загрузить причины</b><span>Попробуйте ещё раз или зайдите позже</span><button type="button" class="tk-btn" onClick="{{retryReasons}}">Попробовать ещё раз</button></div></sc-if>
+<sc-if value="{{dlgReasons}}" hint-placeholder-val="{{false}}">
+<sc-if value="{{isHoldDlg}}" hint-placeholder-val="{{false}}"><div class="tk-dsub">Выберите причину</div></sc-if>
+<div role="radiogroup" aria-label="Причина"><sc-for list="{{reasons}}" as="rs" hint-placeholder-count="5"><button type="button" class="tk-opt" role="radio" aria-checked="{{rs.on}}" onClick="{{rs.pick}}"><span class="tk-radio"></span><span>{{rs.label}}</span></button></sc-for></div>
+<sc-if value="{{isHoldDlg}}" hint-placeholder-val="{{false}}"><label class="tk-fl"><span class="tk-fl-c">Комментарий</span><textarea class="tk-ta tk-ta--auto" rows="1" maxlength="250" placeholder="Максимально 250 символов" aria-label="Комментарий" aria-invalid="{{commentErr}}" value="{{comment}}" onChange="{{setComment}}"></textarea><span class="tk-fl-h"><sc-if value="{{commentErrB}}" hint-placeholder-val="{{false}}"><span class="tk-err">Напишите причину</span></sc-if><span class="tk-cnt250">{{commentCount}} / 250</span></span></label></sc-if>
+<sc-if value="{{needCommentReject}}" hint-placeholder-val="{{false}}"><textarea class="tk-ta" placeholder="Комментарий" aria-label="Комментарий" aria-invalid="{{commentErr}}" value="{{comment}}" onChange="{{setComment}}"></textarea><sc-if value="{{commentErr}}" hint-placeholder-val="{{false}}"><span class="tk-err">Напишите причину</span></sc-if></sc-if>
+</sc-if>
+<sc-if value="{{dlgPass}}" hint-placeholder-val="{{false}}">
+<input class="tk-sin" type="search" placeholder="Поиск по ФИО или логину" aria-label="Поиск сотрудника" value="{{passQ}}" onChange="{{setPassQ}}">
+<div role="radiogroup" aria-label="Сотрудник"><sc-for list="{{emps}}" as="em" hint-placeholder-count="5"><button type="button" class="tk-opt" role="radio" aria-checked="{{em.on}}" onClick="{{em.pick}}"><span class="tk-radio"></span><span>{{em.name}}<small><span class="tk-dot" style="{{em.dot}}"></span>{{em.meta}}</small></span></button></sc-for></div>
+<sc-if value="{{noEmps}}" hint-placeholder-val="{{false}}"><div class="tk-err" style="color: var(--text-secondary)">Никого не нашлось</div></sc-if>
+</sc-if>
+<sc-if value="{{dlgNote}}" hint-placeholder-val="{{false}}">
+<sc-for list="{{notes}}" as="nt" hint-placeholder-count="1"><div class="tk-note"><small>{{nt.time}} · Вы</small>{{nt.text}}</div></sc-for>
+<textarea class="tk-ta" placeholder="Текст заметки" aria-label="Текст заметки" value="{{noteDraft}}" onChange="{{setNoteDraft}}"></textarea>
+</sc-if>
+<sc-if value="{{dlgHistory}}" hint-placeholder-val="{{false}}"><ul class="tk-hist"><sc-for list="{{history}}" as="hi" hint-placeholder-count="4"><li><span>{{hi.time}}</span>{{hi.text}}</li></sc-for></ul></sc-if>
+<sc-if value="{{dlgSla}}" hint-placeholder-val="{{false}}"><dl class="tk-kv" style="grid-template-columns: 170px 1fr; font-size: 14px"><dt>Норматив</dt><dd>{{slaText}}</dd><dt>Правило</dt><dd>ВК · Официальное письмо · КИБ</dd><dt>Календарь</dt><dd>Рабочие дни, 09:00–18:00 МСК</dd><dt>На холде</dt><dd>Время холда в норматив не входит</dd><dt>Приоритет</dt><dd>Высокий — есть отметка «Срочная»</dd></dl></sc-if>
+</div>
+<sc-if value="{{dlgHasFoot}}" hint-placeholder-val="{{false}}"><div class="tk-df"><button type="button" class="tk-btn tk-btn--primary" aria-disabled="{{dlgDisabled}}" onClick="{{dlgSubmit}}">{{dlgOk}}</button><button type="button" class="tk-btn" onClick="{{closeDlg}}">{{dlgCancel}}</button></div></sc-if>
+</div>
+</sc-if>
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}"><div class="tk-toast" role="status">{{toast}}</div></sc-if>
+<sc-if value="{{hasNtf}}" hint-placeholder-val="{{false}}"><div class="tk-ntf" role="status" data-tone="{{ntfTone}}"><span class="tk-ntf-i" aria-hidden="true"><sc-if value="{{ntfOk}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-positive)"/><path d="M10.5 14.6l-3.1-3.1-1.4 1.4 4.5 4.5 7.5-7.5-1.4-1.4-6.1 6.1z" fill="#fff"/></svg></sc-if><sc-if value="{{ntfWarn}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-attention)"/><path d="M11 6h2l-.25 8h-1.5L11 6zm0 10h2v2h-2v-2z" fill="#fff"/></svg></sc-if><sc-if value="{{ntfErr}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-negative)"/><path d="M11 6h2l-.25 8h-1.5L11 6zm0 10h2v2h-2v-2z" fill="#fff"/></svg></sc-if></span><span class="tk-ntf-b"><b>{{ntfTitle}}</b><span>{{ntfText}}</span></span><button type="button" class="tk-ntf-x" aria-label="Закрыть уведомление" onClick="{{closeNtf}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.707 5.707l-1.414-1.414L12 10.586 5.707 4.293 4.293 5.707 10.586 12l-6.293 6.293 1.414 1.414L12 13.414l6.293 6.293 1.414-1.414L13.414 12l6.293-6.293z"/></svg></button></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"status":{"editor":"enum","options":["work","work-soon","work-over","unassigned","assigned","done","done-late","rejected","draft","hold"],"default":"work"},"pending":{"editor":"boolean","default":false},"embed":{"editor":"enum","options":["","loading","timeout","not-found","network","internal"],"default":""},"readyTimeout":{"editor":"number","default":10000},"title":{"editor":"string","default":"Официальное письмо"},"dir":{"editor":"string","default":"Валютные операции (конвертация, консалтинг ВЭД, расследование, FX в рамках ГС)"},"num":{"editor":"string","default":"7520"},"client":{"editor":"string","default":"ООО «Терем»"},"flags":{"editor":null},"chips":{"editor":null},"hold":{"editor":"string","default":""},"view":{"editor":"enum","options":["task","client"],"default":"task"},"clientFull":{"editor":"string","default":""},"clientTags":{"editor":null},"onClientTasks":{"editor":null},"tab":{"editor":"enum","options":["form","history"],"default":"form"},"headless":{"editor":"boolean","default":false},"stream":{"editor":"enum","options":["on","off"],"default":"on"},"scenario":{"editor":"enum","options":["normal","other","taken","skeleton","skeleton-detailed","header-error","content-error","client-error","client-nodata","client-notfound","creating","missing","grabbed","waiting","copy-loading","external","action-required","forbidden","offline","server-error"],"default":"normal"},"takeMode":{"editor":"enum","options":["v2","v1"],"default":"v2"},"nextMode":{"editor":"enum","options":["link","none","seek"],"default":"link"},"holdModal":{"editor":"enum","options":["","error","reasons-error","forbidden"],"default":""},"holdStep":{"editor":"enum","options":["","holding","held"],"default":""},"failTake":{"editor":"boolean","default":false},"callOn":{"editor":"boolean","default":false},"closeState":{"editor":"enum","options":["","closing","closed","error"],"default":""},"failClose":{"editor":"boolean","default":false},"demo":{"editor":"enum","options":["","taken","refresh","leave","hold","hold-error"],"default":""},"leaveAsk":{"editor":"boolean","default":false},"loadMs":{"editor":null},"takenBy":{"editor":null},"otherName":{"editor":null},"onBack":{"editor":null},"onNext":{"editor":null},"onLeave":{"editor":null},"onDirty":{"editor":null},"onStatusChange":{"editor":null},"$preview":{"width":1376,"height":836}}'>
+const STATES = {
+  'work':       { label: 'В работе',     tone: 'purple',  primary: 'hold',   active: true,  timer: { kind: 'ring', pct: 0.72, color: 'var(--status-positive)',  text: '1 д 2 ч', title: 'В работе' }, sla: 'SLA 1 ч' },
+  'work-soon':  { label: 'В работе',     tone: 'purple',  primary: 'hold',   active: true,  timer: { kind: 'ring', pct: 0.12, color: 'var(--status-attention)', text: '5 мин', title: 'Осталось' }, sla: 'SLA 1 ч' },
+  'work-over':  { label: 'В работе',     tone: 'purple',  primary: 'hold',   active: true,  timer: { kind: 'alert', text: 'Истекло 3м назад', title: 'SLA' }, sla: 'SLA 1 ч' },
+  'unassigned': { label: 'Не назначено', tone: 'orange',  primary: 'take',   active: true,  timer: null, sla: 'SLA 1 ч' },
+  'assigned':   { label: 'Назначено',    tone: 'blue',    primary: 'take',   active: true,  timer: { kind: 'ring', pct: 0.75, color: 'var(--status-positive)', text: '45 мин', title: 'Осталось' }, sla: 'SLA 1 ч' },
+  'done':       { label: 'Исполнено',    tone: 'green',   primary: null,     active: false, timer: { kind: 'ok', text: 'За 20 мин', title: 'Исполнено' }, sla: 'SLA 1 ч' },
+  'done-late':  { label: 'Исполнено',    tone: 'green',   primary: null,     active: false, timer: { kind: 'alert', text: 'На 1 ч 20 мин позже', title: 'Исполнено' }, sla: 'SLA 1 ч' },
+  'rejected':   { label: 'Отклонено',    tone: 'red',     primary: null,     active: false, timer: null, sla: 'SLA 1 ч' },
+  'draft':      { label: 'Черновик',     tone: 'grey',    primary: 'hold',   active: true,  timer: null, sla: 'Без SLA' },
+  'hold':       { label: 'Холд',         tone: 'magenta', primary: 'unhold', active: true,  timer: { kind: 'ring', pct: 0.72, color: 'var(--status-positive)', text: '1 д 2 ч', title: 'В работе' }, sla: 'SLA 2д 12 ч' }
+};
+const FLAG_TITLES = { flame: 'Срочная', doc: 'Есть документы', bulb: 'Есть подсказка', mail: 'Есть письмо', rub: 'Валютная операция' };
+const LEGACY_BTNS = ['Отклонить...', 'На распознавание', 'Отправить в ДК', 'Разархивировать', 'Согласовать', 'Создать УНК из Контракта', 'Копировать', 'Сохранить', 'Рассчитать остаток'];
+const EMB_ERR = { 'not-found': ['Такой задачи нет', 'Проверьте ссылку или вернитесь к списку задач'], network: ['Нет интернета', 'Проверьте подключение и попробуйте ещё раз'], internal: ['Не получилось загрузить', 'Уже исправляем. Попробуйте ещё раз или зайдите позже'] };
+const LG_TABS = {
+  1: [['Этап', 'Исполнитель', 'Начало', 'Окончание'], [['Регистрация', 'Шеремет О.С.', '15.10.2026 09:12', '15.10.2026 09:14'], ['Обработка ВК', 'Шеремет О.С.', '15.10.2026 09:14', '—']]],
+  2: [['Дата', 'Автор', 'Комментарий'], [['15.10.2026 09:20', 'Шеремет О.С.', 'Запросили у клиента копию контракта'], ['15.10.2026 11:02', 'Набоков Д.Ы.', 'Клиент прислал документы, проверка'], ['15.10.2026 11:40', 'Шеремет О.С.', 'Документы корректны']]],
+  3: [['Дата', 'ID ПД', 'Сумма', 'Валюта', 'Статус'], [['12.10.2026', 'WSFLD263A000000K', '1 234 567,00', 'EUR', 'Исполнен'], ['13.10.2026', 'WSFLD263A000001K', '250 000,00', 'USD', 'Исполнен'], ['14.10.2026', 'WSFLD263A000002K', '75 000,00', 'USD', 'На контроле'], ['15.10.2026', 'WSFLD263A000003K', '12 000,00', 'CNY', 'На контроле']]],
+  4: [['Файл', 'Тип', 'Размер', 'Загружен'], [['Контракт_Н-3254-962.pdf', 'Контракт', '1,2 МБ', '15.10.2026'], ['Допсоглашение_1.pdf', 'Доп. соглашение', '340 КБ', '15.10.2026'], ['Инвойс_INV-2026-0412.pdf', 'Инвойс', '212 КБ', '15.10.2026'], ['Паспорт_сделки.xml', 'УНК', '18 КБ', '15.10.2026'], ['Письмо_клиента.docx', 'Письмо', '64 КБ', '15.10.2026']]],
+  5: [['ФИО', 'Роль', 'Телефон', 'Почта'], [['Константинопольский К. К.', 'Учредитель', '+7 (929) 490-27-17', 'kk@vostok-oil.ru'], ['Орлова М. С.', 'Бухгалтер', '+7 (926) 410-77-31', 'buh@vostok-oil.ru']]],
+  6: [['Тип связи', 'Документ', 'Номер'], [['УНК', 'Паспорт сделки', '25100009/2673/0000/1/1'], ['СПД', 'Справка о подтверждающих документах', '591529701']]],
+  7: [['№ контракта', 'Дата', 'Контрагент', 'Сумма', 'Валюта'], [['Н-3254/962', '24.12.2025', 'Vostok Trading GmbH', '500 000,00', 'CNY'], ['Н-3254/963', '12.01.2026', 'Vostok Trading GmbH', '250 000,00', 'CNY'], ['Н-3301/014', '03.03.2026', 'Sino Export Ltd', '150 000,00', 'USD']]]
+};
+const LEGACY_TABS = ['Главная', 'Информация по процессу', 'Комментарии', 'Платежи', 'Файлы', 'Контакты', 'Связи', 'Список контрактов'];
+
+const HOLD_REASONS = [
+  'Отсутствие полного комплекта документов',
+  'Процедуры Банка (комплаенс, льготы)',
+  'Дата валютирования (T+1)',
+  'Задержка в поступлении на ВК документов',
+  'Предоставление СПД Клиентом ранее срока поступления в Банк ДТ',
+  'Задержка по просьбе Клиента',
+  'Несоответствие КВО данным ВБК и/или представленным документам',
+  'Технический сбой при согласовании',
+  'Свой вариант'
+];
+const REJECT_REASONS = ['Дубликат задачи', 'Задача пришла не по адресу', 'Клиент отозвал запрос', 'Недостаточно данных для обработки', 'Свой вариант'];
+const EMPLOYEES = [
+  { name: 'Давыдов Г. Г.', login: 'U_APW2B', busy: false, tasks: 0 },
+  { name: 'Иванов А. А.', login: 'U_APW2A', busy: true, tasks: 3 },
+  { name: 'Додыров Н. Н.', login: 'U_APW2D', busy: false, tasks: 0 },
+  { name: 'Айрахмат-Азулин О. Ф.', login: 'U_APW21', busy: false, tasks: 0 },
+  { name: 'Гагаринов Г. Г.', login: 'U_APW12B', busy: false, tasks: 1 },
+  { name: 'Отабеков Ф. А.', login: 'U_APW2E', busy: true, tasks: 5 }
+];
+const DLG_TITLES = { hold: 'Поставить на холд', reject: 'Отклонить задачу', pass: 'Передать задачу', note: 'Заметки к задаче', history: 'История задачи', sla: 'Правило SLA' };
+const CONTACTS = {
+  client: [
+    { role: 'Учредитель', name: 'Константинопольский Ванилин Константинович', items: [
+      ['Личный телефон', '+7 (916) 204-18-73', 'Рассчётный конвейер'], ['Личный телефон', '+7 (925) 511-02-44', 'SalesLogix'],
+      ['Дополнительный', '+7 (495) 640-11-20', 'SalesLogix'], ['Рабочий телефон', '+7 (495) 640-11-21', 'SalesLogix'],
+      ['Почта', 'v.konstantinopolsky@gtlk.ru', 'Рассчётный конвейер'], ['Почта', 'founder@gtlk.ru', 'SalesLogix'] ] },
+    { role: 'Соучредитель', name: 'Константинопольский Даниил Константинович', items: [
+      ['Личный телефон', '+7 (903) 777-31-90', 'Рассчётный конвейер'], ['Почта', 'd.konstantinopolsky@gtlk.ru', 'Рассчётный конвейер'] ] },
+    { role: 'Главный бухгалтер', name: 'Мирошниченко Алла Викторовна', items: [
+      ['Рабочий телефон', '+7 (495) 640-11-35', 'SalesLogix'], ['Дополнительный', '+7 (495) 640-11-36', 'SalesLogix'],
+      ['Почта', 'buh@gtlk.ru', 'Рассчётный конвейер'], ['Почта', 'a.miroshnichenko@gtlk.ru', 'SalesLogix'] ] }
+  ],
+  bank: [
+    { role: 'Клиентский менеджер', name: 'Шеремет Ольга Сергеевна', items: [
+      ['Рабочий телефон', '+7 (495) 788-88-78', 'доб. 4512'], ['Мобильный', '+7 (926) 300-45-12', 'Корпоративный'],
+      ['Почта', 'o.sheremet@alfabank.ru', 'Корпоративная'] ] },
+    { role: 'Персональный менеджер', name: 'Гагаринов Глеб Геннадьевич', items: [
+      ['Рабочий телефон', '+7 (495) 788-88-78', 'доб. 4630'], ['Почта', 'g.gagarinov@alfabank.ru', 'Корпоративная'] ] },
+    { role: 'Валютный контроль', name: 'Отабеков Фарход Алишерович', items: [
+      ['Рабочий телефон', '+7 (495) 788-88-78', 'доб. 5101'], ['Почта', 'vk-support@alfabank.ru', 'Общий ящик'] ] },
+    { role: 'Служба поддержки', name: 'Линия для корпоративных клиентов', items: [
+      ['Телефон', '8 (800) 100-77-55', 'Круглосуточно'], ['Телефон', '+7 (495) 755-58-58', 'Для звонков из-за рубежа'], ['Почта', 'corp@alfabank.ru', 'Ответ в течение дня'] ] }
+  ]
+};
+const PIN_TOTAL = 1121;
+const pinCode = (i) => { if (i === 0) return 'AUSZ1J'; const a = 'ABCDEFGHJKLMNPQRSTUVWXYZ'; const n = (i * 7919) % 331776; return 'A' + a[n % 24] + a[Math.floor(n / 24) % 24] + a[Math.floor(n / 576) % 24] + ((i % 9) + 1) + a[Math.floor(n / 13824) % 24]; };
+const fullLegal = (c) => {
+  const name = String(c || '').trim();
+  if (/^ООО\s/.test(name)) return 'ОБЩЕСТВО С ОГРАНИЧЕННОЙ ОТВЕТСТВЕННОСТЬЮ ' + name.replace(/^ООО\s+/, '');
+  if (/^АО\s/.test(name)) return 'АКЦИОНЕРНОЕ ОБЩЕСТВО ' + name.replace(/^АО\s+/, '');
+  if (/^ИП\s/.test(name)) return 'Индивидуальный предприниматель ' + name.replace(/^ИП\s+/, '');
+  return name;
+};
+// История задачи: события из макета, от старых к новым. b — жирная часть заголовка
+const HIST_EVENTS = [
+  { kind: 'status', parts: [['Задача создана', 1]], meta: ['17 октября в 17:55'], who: 'Источник: Валютный контроль' },
+  { kind: 'deadline', parts: [['Установлен срок', 1], [' исполнения: 20.10.2026 в 13:00', 0]], meta: ['17 октября в 17:58'], who: 'Установил: SBO_Administrator' },
+  { kind: 'exec', parts: [['Задача назначена', 1], [' на: Пашнин А. А.', 0]], meta: ['17 октября в 18:05'], who: 'Назначил: SBO_Administrator' },
+  { kind: 'status', parts: [['Задача ', 0], ['взята в работу', 1]], meta: ['Вчера в 10:10'], who: 'Взял в работу: Пашнин А. А.' },
+  { kind: 'hold', parts: [['Задача ', 0], ['поставлена на холд:', 1], [' Задержка в поступлении на ВК документов (технический сбой)', 0]], meta: ['Время удержания: 13 дней 30 часов 15 мин 12 сек', 'Сегодня в 10:20'], who: 'Изменил: Пашнин А. А.' },
+  { kind: 'exec', parts: [['Задача назначена', 1], [' на: SBO_Administrator', 0]], meta: ['Сегодня в 10:25'], who: 'Назначил: SBO_Administrator' },
+  { kind: 'status', parts: [['Задача ', 0], ['взята в работу', 1]], meta: ['Сегодня в 10:39'], who: 'Снял с холда: SBO_Administrator' },
+  { kind: 'status', parts: [['Задача исполнена:', 1], [' за 25 минут 30 сек', 0]], meta: ['Сегодня в 10:39'], who: 'Закрыл: SBO_Administrator' }
+];
+const HIST_EXECS = [
+  { cap: 'Исполнитель 2', name: 'SBO_Administrator', lines: ['Причина: технические проблемы', 'Комментарий: Ошибка 901'], when: '13:45 13.10.2026' },
+  { cap: 'Исполнитель 1', name: 'Пашнин А. А.', lines: ['Назначен системой'], when: '13:00 13.10.2026' }
+];
+const HIST_STATUSES = [
+  { label: 'Исполнено', tone: 'green', dur: '', who: 'Закрыл: SBO_Administrator', when: 'Сегодня в 13:00' },
+  { label: 'Холд', tone: 'pink', dur: '2 ч 39 мин', who: 'Поставил на холд: SBO_Administrator', when: 'Сегодня в 10:39 — 12:00' },
+  { label: 'В работе', tone: 'purple', dur: '10 ч 10 мин', who: 'Взял в работу: Пашнин А. А.', when: 'Вчера 10:10 – сегодня 10:39' },
+  { label: 'Назначено', tone: 'blue', dur: '5 мин', who: 'Назначено на: Пашнин А. А.', when: 'Вчера в 22:00' }
+];
+const HIST_FILTERS = [['all', 'Все события'], ['status', 'Статус'], ['exec', 'Исполнитель'], ['hold', 'Холд'], ['deadline', 'Срок']];
+const ME = 'Константинопольский К. К.';
+// Имитация SSE: события, которые «приходят с сервера» по очереди
+const SSE_POOL = [
+  { kind: 'comment', parts: [['Добавлен комментарий:', 1], [' «Клиент прислал недостающие документы»', 0]], who: 'Автор: Пашнин А. А.' },
+  { kind: 'comment', parts: [['Приложен документ', 1], [' Контракт_ВЭД_2026.pdf', 0]], who: 'Загрузил: клиент через Альфа-Бизнес' },
+  { kind: 'deadline', parts: [['Срок исполнения пересчитан:', 1], [' 20.10.2026 в 15:00', 0]], who: 'Система: правило SLA «ВК · Официальное письмо»' },
+  { kind: 'comment', parts: [['Клиент позвонил', 1], [' в контакт-центр', 0]], who: 'Оператор: Гагаринов Г. Г.' },
+  { kind: 'status', parts: [['Приоритет повышен:', 1], [' срочная', 0]], who: 'Система: умная очередь' },
+  { kind: 'comment', parts: [['Обновлены данные клиента:', 1], [' КПП 770401001', 0]], who: 'Источник: ЕГРЮЛ' },
+  { kind: 'comment', parts: [['Добавлен комментарий:', 1], [' «Согласовал с валютным контролем, можно закрывать»', 0]], who: 'Автор: SBO_Administrator' },
+  { kind: 'deadline', parts: [['Срок исполнения продлён', 1], [' до 21.10.2026 в 18:00', 0]], who: 'Изменил: SBO_Administrator' }
+];
+const pad = (n) => (n < 10 ? '0' : '') + n;
+const now = () => { const d = new Date(); return pad(d.getHours()) + ':' + pad(d.getMinutes()); };
+
+class Component extends DCLogic {
+  // ---- Встройка РК (спека 6.11.1 и «Страница задачи»): embedded=true → embedded:ready → host:ack; если ready нет за 10 с — «Не получилось загрузить»
+  embLoad() {
+    clearTimeout(this._er); clearTimeout(this._eto);
+    const mode = this.props.embed || '';
+    if (mode === 'not-found' || mode === 'network' || mode === 'internal') { this.setState({ emb: mode }); return; }
+    this.setState({ emb: 'loading' });
+    if (mode === 'loading') return;
+    if (mode === 'timeout' && !this._embRetried) { this._eto = setTimeout(() => this.setState({ emb: 'internal' }), this.props.readyTimeout || 10000); return; }
+    this._er = setTimeout(() => this.setState({ emb: 'ready' }), 700);
+  }
+  // Окно «пристыковано», когда встало под шапку: тогда скроллится содержимое встройки, а не страница
+  dockCheck() {
+    this._dr = 0;
+    let el = null; const find = (root) => { root.querySelectorAll('*').forEach((e) => { if (!el && e.classList && e.classList.contains('tk-panel')) el = e; if (e.shadowRoot && !el) find(e.shadowRoot); }); };
+    try { find(document); } catch (e) {}
+    if (!el) return;
+    const top = el.getBoundingClientRect().top;
+    const end = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    const on = top <= 66 || end;
+    if (on !== !!this.st().docked) this.setState({ docked: on });
+    if (!on && el.scrollTop) el.scrollTop = 0;
+  }
+  // Переключатель «Задача / Клиент»: высота шапки не прыгает — держим наибольшую из двух
+  eqEl() { let el = null; const find = (root) => { root.querySelectorAll('*').forEach((e) => { if (!el && e.classList && e.classList.contains('tk-topwrap')) el = e; if (e.shadowRoot && !el) find(e.shadowRoot); }); }; try { find(document); } catch (e) {} return el; }
+  eqView(v) {
+    const el = this.eqEl();
+    if (el) { this._eqH = Math.max(this._eqH || 0, Math.ceil(el.getBoundingClientRect().height)); el.style.minHeight = this._eqH + 'px'; }
+    this.setState({ view: v });
+    requestAnimationFrame(() => { const e2 = this.eqEl(); if (!e2) return; e2.style.minHeight = ''; const h = Math.ceil(e2.getBoundingClientRect().height); this._eqH = Math.max(this._eqH || 0, h); e2.style.minHeight = this._eqH + 'px'; });
+  }
+  componentDidMount() {
+    this.embLoad();
+    this._dock = () => { if (!this._dr) this._dr = requestAnimationFrame(() => this.dockCheck()); };
+    window.addEventListener('scroll', this._dock, { passive: true }); window.addEventListener('resize', this._dock);
+    this._eqR = () => { this._eqH = 0; const e = this.eqEl(); if (e) e.style.minHeight = ''; }; window.addEventListener('resize', this._eqR);
+    this._dockT = setTimeout(() => this.dockCheck(), 400);
+    if (this.props.stream !== 'off') this.sseNext(5000);
+    if (this.props.scenario === 'grabbed') this._gb = setTimeout(() => { this.setState({ scn: 'other', status: 'work', otherName: 'Волков М.С.', history: this.log('Задачу взял в работу Волков М.С.') }); this.notify('warn', 'Задачу взял в работу Волков М.С.', 'Переходите к другим задачам'); }, 2500);
+    if (this.props.scenario === 'copy-loading') this._cpl = setTimeout(() => this.setState({ scn: 'normal' }), 4000);
+    if (this.props.callOn) this.startCall();
+    if (this.props.closeState === 'closed' || this.props.holdStep === 'held') this.afterDone();
+    if (this.props.demo === 'hold' || this.props.demo === 'hold-error') { this.openDlg('hold'); if (this.props.demo === 'hold-error') this.setState({ holdErr: true, holdErrSeen: true }); }
+    if (this.props.loadMs) this._ld = setTimeout(() => this.setState({ loaded: true }), Number(this.props.loadMs) || 700);
+    this._key = (e) => {
+      if (e.key !== 'Escape') return;
+      const s = this.st();
+      if (this.imKind()) { this.imAct('cancel'); return; }
+      if (s.dlg) this.setState({ dlg: null });
+      else if (s.csheet) this.setState({ csheet: null });
+      else if (s.cmenu) this.setState({ cmenu: false });
+      else if (s.details) this.setState({ details: false });
+      else if (s.menu) this.setState({ menu: false });
+      else if (s.expanded) this.setState({ expanded: false });
+    };
+    document.addEventListener('keydown', this._key);
+  }
+  openCsheet(kind) {
+    clearTimeout(this._ct);
+    this.setState({ csheet: kind, cmenu: false, menu: false, ctQ: '', pinQ: '', ctLoading: kind === 'contacts' });
+    if (kind === 'contacts') this._ct = setTimeout(() => this.setState({ ctLoading: false }), 700);
+  }
+  copy(text, what) { try { navigator.clipboard.writeText(text).catch(() => {}); } catch (e) {} this.toast(what + ' скопирован' + (what === 'ОГРН' || what === 'ПИН' || what === 'ИНН' || what === 'КПП' ? '' : 'о') + ': ' + text); }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this._dock); window.removeEventListener('resize', this._dock); clearTimeout(this._dockT); clearTimeout(this._er); clearTimeout(this._eto); clearTimeout(this._gb); clearTimeout(this._cpl); clearTimeout(this._nt); clearTimeout(this._hd); clearTimeout(this._sk); clearTimeout(this._sse); clearTimeout(this._fr); clearTimeout(this._rc); clearTimeout(this._ld); clearTimeout(this._cl); clearTimeout(this._rt); clearTimeout(this._ct); clearTimeout(this._t); clearTimeout(this._s); clearInterval(this._c); document.removeEventListener('keydown', this._key); }
+  st() { return this.state || {}; }
+  status() { const s = this.st(); return s.status || this.props.status || 'work'; }
+  log(text) {
+    const h = (this.st().history || this.baseHistory()).concat([{ time: now(), text: text, at: Date.now() }]);
+    return h;
+  }
+  baseHistory() {
+    return [
+      { time: '09:12', text: 'Задача поступила в очередь' },
+      { time: '09:14', text: 'Назначена автоматически: Константинопольский К. К.' }
+    ];
+  }
+  setStatus(next, msg, extra) {
+    const patch = Object.assign({ status: next, menu: false, dlg: null }, extra || {});
+    if (msg) patch.history = this.log(msg);
+    this.setState(patch);
+    if (this.props.onStatusChange) this.props.onStatusChange(next, extra || {});
+    if (msg) this.toast(msg);
+  }
+  notify(tone, title, text) {
+    clearTimeout(this._nt);
+    this.setState({ ntf: { tone: tone, title: title, text: text || '' } });
+    this._nt = setTimeout(() => this.setState({ ntf: null }), 5000);
+  }
+  afterDone() {
+    // «Ищем новую» → экран ожидания задачи из очереди
+    if ((this.st().nextMode || this.props.nextMode) !== 'seek') return;
+    clearTimeout(this._sk);
+    this._sk = setTimeout(() => this.setState({ scn: 'waiting', close: null, holdStep: '', ntf: null }), 2600);
+  }
+  toast(msg) {
+    clearTimeout(this._t);
+    this.setState({ toast: msg });
+    this._t = setTimeout(() => this.setState({ toast: '' }), 2600);
+  }
+  openDlg(kind) { this.setState({ dlg: kind, reason: null, comment: '', tried: false, passQ: '', passEmp: null, menu: false, holdErr: false, reasonsOk: false }); }
+  submitDlg() {
+    const s = this.st();
+    if (s.dlg === 'hold' || s.dlg === 'reject') {
+      const list = s.dlg === 'hold' ? HOLD_REASONS : REJECT_REASONS;
+      if (s.reason == null) return;
+      const own = s.reason === list.length - 1;
+      const comment = (s.comment || '').trim();
+      if (own && !comment) { this.setState({ tried: true }); return; }
+      const text = own ? comment : list[s.reason];
+      if (s.dlg === 'hold') {
+        if (this.props.holdModal === 'error' && !s.holdErrSeen) { this.setState({ holdErr: true, holdErrSeen: true }); return; }
+        this.setState({ dlg: null, holdStep: 'holding', history: this.log('Переводим на холд: ' + text + (own || !comment ? '' : ' · ' + comment)) });
+        clearTimeout(this._hd);
+        this._hd = setTimeout(() => {
+          this.setState({ holdStep: 'held' });
+          this.setStatus('hold', null, { hold: text });
+          this.notify('ok', 'Задача переведена на холд', (this.props.title || 'Официальное письмо') + ' ID 93062040');
+          this.afterDone();
+        }, 1100);
+        return;
+      }
+      else this.setStatus('rejected', 'Задача отклонена: ' + text, { hold: null, rejectReason: text });
+      return;
+    }
+    if (s.dlg === 'pass') {
+      const emp = EMPLOYEES.find((e) => e.login === s.passEmp);
+      if (!emp) return;
+      this.setState({ passedTo: emp.name, dlg: null, history: this.log('Задача передана: ' + emp.name + ' (' + emp.login + ')') });
+      if (this.props.onStatusChange) this.props.onStatusChange('passed', { to: emp.name });
+      this.toast('Задача передана: ' + emp.name);
+      return;
+    }
+    if (s.dlg === 'note') {
+      const text = (s.noteDraft || '').trim();
+      if (!text) return;
+      this.setState({ notes: (s.notes || []).concat([{ time: now(), text: text }]), noteDraft: '', history: this.log('Добавлена заметка') });
+      this.toast('Заметка сохранена');
+    }
+  }
+  startCall(num) {
+    // Если на странице есть шапка с виджетом звонков — звонок идёт через неё (один виджет на всю систему, без второй панели)
+    if (window.__sboCallReady && !this.props.callOn) {
+      const n = typeof num === 'string' ? num : '+7 (929) 490-27-17';
+      try { window.dispatchEvent(new CustomEvent('sbo:call', { detail: { num: n, who: this.props.client || 'ООО «Государственная транспортная лизинговая компания»' } })); } catch (e) {}
+      this.setState({ history: this.log('Звонок клиенту начат') });
+      return;
+    }
+    clearInterval(this._c);
+    this.setState({ callStart: Date.now(), callSec: 0, callPaused: false, callNum: typeof num === 'string' ? num : null, history: this.log('Звонок клиенту начат') });
+    this._c = setInterval(() => this.setState({ callSec: Math.floor((Date.now() - (this.st().callStart || Date.now())) / 1000) }), 1000);
+  }
+  endCall() {
+    clearInterval(this._c);
+    const sec = this.st().callSec || 0;
+    const dur = pad(Math.floor(sec / 60)) + ':' + pad(sec % 60);
+    this.setState({ callStart: null, callSec: 0, history: this.log('Звонок клиенту завершён, ' + dur) });
+    this.toast('Звонок завершён · ' + dur);
+  }
+  // SSE: следующее событие через 8–14 с; раз в 6 событий — короткий обрыв и переподключение
+  sseNext(delay) {
+    clearTimeout(this._sse);
+    this._sse = setTimeout(() => this.sseTick(), delay != null ? delay : 8000 + Math.floor(Math.random() * 6000));
+  }
+  sseTick() {
+    const s = this.st();
+    const seq = (s.sseSeq || 0) + 1;
+    if (seq % 6 === 0 && !s.ssePaused) {
+      this.setState({ sseSeq: seq, sseConn: 'reconnect' });
+      clearTimeout(this._rc);
+      this._rc = setTimeout(() => { this.setState({ sseConn: 'live' }); this.sseNext(1500); }, 2500);
+      return;
+    }
+    const base = SSE_POOL[(seq - 1) % SSE_POOL.length];
+    const ev = Object.assign({}, base, { sid: 'e' + seq, at: Date.now(), meta: ['Сегодня в ' + now()] });
+    if (s.ssePaused) { this.setState({ sseSeq: seq, queued: (s.queued || []).concat([ev]) }); this.sseNext(); return; }
+    this.pushEvents([ev], seq);
+    this.sseNext();
+  }
+  pushEvents(evs, seq) {
+    const s = this.st();
+    const fresh = Object.assign({}, s.fresh || {});
+    evs.forEach((e) => { fresh[e.sid] = true; });
+    const onHist = (s.ptab || this.props.tab || 'form') === 'history';
+    const last = evs[evs.length - 1];
+    this.setState({ feed: (s.feed || []).concat(evs), fresh: fresh, sseSeq: seq != null ? seq : s.sseSeq, unseen: onHist ? 0 : (s.unseen || 0) + evs.length, sseAnnounce: 'Новое событие: ' + last.parts.map((pp) => pp[0]).join('') });
+    clearTimeout(this._fr);
+    this._fr = setTimeout(() => this.setState({ fresh: {} }), 3000);
+  }
+  scn() { const s = this.st(); return s.scn || this.props.scenario || 'normal'; }
+  takenBy() { const s = this.st(); if (s.takenSet) return s.takenBy; return this.props.takenBy || (this.scn() === 'taken' ? 'Ильнурова Г. А. U_APW2UP' : null); }
+  imKind() {
+    const s = this.st();
+    // запрос «Покинуть страницу?» приходит от списка — он важнее остальных окон
+    if (this.props.leaveAsk) return 'leave';
+    if (s.imSet) return s.im || null;
+    const d = this.props.demo;
+    return d === 'hold' || d === 'hold-error' ? null : (d || null);
+  }
+  setIm(kind) { this.setState({ imSet: true, im: kind }); }
+  guard(fn) { return () => { if (this.takenBy()) { this.setIm('taken'); return; } fn(); }; }
+  setDirty(v) { if (!!this.st().dirty === v) return; this.setState({ dirty: v }); if (this.props.onDirty) this.props.onDirty(v); }
+  doRefresh() {
+    clearTimeout(this._s);
+    this.setState({ spin: false, cp: 0, pr: 0, lgKey: (this.st().lgKey || 0) + 1, savedAt: 0 });
+    this.setDirty(false);
+    this._embRetried = true; this.embLoad();
+    setTimeout(() => this.setState({ spin: true }), 0);
+    this._s = setTimeout(() => { this.setState({ spin: false }); this.toast('Окно задачи обновлено'); }, 650);
+  }
+  goBack() { if (this.props.onBack) this.props.onBack(); else this.toast('Возвращаемся к списку задач'); }
+  imAct(which) {
+    const kind = this.imKind();
+    if (kind === 'taken') {
+      if (which === 'ok') { this.setState({ imSet: true, im: null, takenSet: true, takenBy: null }); this.setStatus('work', 'Задача снова у вас'); return; }
+      if (which === 'second') { this.setIm(null); this.goBack(); return; }
+      this.setIm(null); return;
+    }
+    if (kind === 'refresh') { this.setIm(null); if (which === 'ok') this.doRefresh(); return; }
+    if (kind === 'leave') {
+      this.setState({ imSet: true, im: null });
+      if (this.props.onLeave) this.props.onLeave(which === 'ok');
+      else if (which === 'ok') this.toast('Изменения не сохранены — уходим к списку задач');
+      if (which === 'ok') this.setDirty(false);
+    }
+  }
+  closeTask() {
+    if (this.st().actionReq && this.st().actionDone) this.setState({ actionReq: false });
+    const s = this.st();
+    if (s.close === 'closing') return;
+    if (this.scn() === 'action-required' && !s.actionDone) { this.setState({ actionReq: true, menu: false, history: this.log('Закрытие невозможно: требуется действие по задаче') }); this.toast('Сначала выполните действие по задаче в окне'); return; }
+    clearTimeout(this._cl);
+    this.setState({ close: 'closing', menu: false, history: this.log('Закрываем задачу…') });
+    this._cl = setTimeout(() => {
+      if (this.props.failClose) { this.setState({ close: 'error', history: this.log('Ошибка при закрытии') }); return; }
+      this.setState({ close: 'closed' });
+      this.setStatus('done', 'Задача закрыта');
+      this.afterDone();
+    }, 1400);
+  }
+  retry() {
+    clearTimeout(this._rt);
+    this.setState({ retrying: true });
+    this._rt = setTimeout(() => { this.setState({ retrying: false, scn: 'normal' }); this.toast('Загружено'); }, 900);
+  }
+  legacy(label) {
+    const s = this.st();
+    const st = STATES[this.status()] || STATES.work;
+    if (label === 'Отклонить...') {
+      if (s.passedTo) { this.toast('Задача уже передана: ' + s.passedTo); return; }
+      if (!st.active) { this.toast('Задача закрыта — отклонить её нельзя'); return; }
+      this.openDlg('reject'); return;
+    }
+    if (this.scn() === 'action-required' && label !== 'Согласовать') this.setState({ actionDone: true, actionReq: false });
+    if (label === 'Сохранить') { this.setState({ saved: now(), savedAt: Date.now(), history: this.log('Контракт сохранён') }); this.setDirty(false); this.toast('Задача сохранена'); return; }
+    if (label === 'Согласовать') { if (!st.active || s.passedTo) { this.toast('Задача уже не в работе'); return; } if (this.takenBy()) { this.setIm('taken'); return; } this.closeTask(); return; }
+    const msg = {
+      'На распознавание': 'Документы отправлены на распознавание',
+      'Отправить в ДК': 'Контракт отправлен в ДК',
+      'Разархивировать': 'Контракт разархивирован',
+      'Согласовать': 'Контракт отправлен на согласование',
+      'Создать УНК из Контракта': 'Создан УНК 2026' + (this.props.num || '7520') + '/0001 — открыт в новой вкладке окна задачи',
+      'Копировать': 'Создана копия контракта',
+      'Рассчитать остаток': 'Остаток по контракту: 120 000,00 RUR'
+    }[label] || label;
+    this.setState({ history: this.log(msg) });
+    this.toast(msg);
+  }
+  renderVals() {
+    const s = this.st();
+    const key = this.status();
+    const st = STATES[key] || STATES.work;
+    const t = st.timer;
+    const flagsIn = this.props.flags || ['flame', 'doc', 'bulb', 'rub'];
+    const chipsIn = this.props.chips || ['РООО/17014/DP', '120 000 RUR', 'Бутик ВК', 'Валютный контроль', 'ВЭД', 'Москва'];
+    const shown = chipsIn.slice(0, 2);
+    const rest = chipsIn.slice(2);
+    const scn = this.scn();
+    // сценарии «client-…» относятся к карточке клиента — открываем её, пока пользователь сам не переключит
+    const view = s.view || (scn.indexOf('client-') === 0 ? 'client' : (this.props.view || 'task'));
+    const clientShort = this.props.client || 'ООО «Государственная транспортная лизинговая компания»';
+    const clientFull = this.props.clientFull || fullLegal(clientShort);
+    const ctags = this.props.clientTags || ['Авиатор', 'Бутик ВК', 'Отдел ВЭД', 'КИБ', 'Москва', 'ММБ 500'];
+    const clientChips = ctags.length <= 3 ? ctags.map((t) => ({ label: t, more: '', title: t })) : [
+      { label: ctags[0], more: '', title: ctags[0] },
+      { label: ctags[1], more: ' + ещё ' + (ctags.length - 3), title: ctags.slice(1, -1).join(', ') },
+      { label: ctags[ctags.length - 1], more: '', title: ctags[ctags.length - 1] }
+    ];
+    const req = { pin: 'AUSZ1J', morePins: PIN_TOTAL - 1, inn: '7727563778', kpp: '770401001', ogrn: '1057749631994' };
+    const ctTab = s.ctTab || 'client';
+    const ctQ = (s.ctQ || '').trim().toLowerCase();
+    const ctDigits = ctQ.replace(/\D/g, '');
+    const ctGroups = CONTACTS[ctTab].map((g) => {
+      const nameHit = !ctQ || g.name.toLowerCase().indexOf(ctQ) !== -1;
+      const items = g.items.filter((it) => nameHit || (ctDigits.length >= 3 && it[1].replace(/\D/g, '').indexOf(ctDigits) !== -1) || it[1].toLowerCase().indexOf(ctQ) !== -1);
+      return { role: g.role, name: g.name, items: items.map((it) => {
+        const mail = it[1].indexOf('@') !== -1;
+        return { label: it[0], value: it[1], src: it[2], hint: mail ? 'Скопировать почту' : 'Позвонить', isMail: mail, isPhone: !mail, pillCls: 'tk-pill' + (mail ? '' : ' tk-pill--green'), mainLabel: (mail ? 'Скопировать почту: ' : 'Позвонить: ') + it[1], cpLabel: 'Скопировать: ' + it[0], copy: () => { try { navigator.clipboard.writeText(it[1]).catch(() => {}); } catch (e) {} this.toast('Данные скопированы'); },
+          act: () => { if (mail) this.copy(it[1], 'Почта'); else { this.setState({ csheet: null }); if (this.st().callStart) this.endCall(); this.startCall(it[1]); this.toast('Звоним: ' + g.name.split(' ').slice(0, 2).join(' ') + ', ' + it[1]); } } };
+      }) };
+    }).filter((g) => g.items.length > 0);
+    const pinQ = (s.pinQ || '').trim().toUpperCase();
+    const pinMatches = [];
+    for (let i = 0; i < PIN_TOTAL; i++) { if (!pinQ || pinCode(i).indexOf(pinQ) !== -1) pinMatches.push(i); }
+    const lgTab = s.lgTab || 0;
+    const C = 2 * Math.PI * 6;
+    const pct = t && t.kind === 'ring' ? t.pct : 0;
+    const passed = !!s.passedTo;
+    const holdText = key === 'hold' ? (s.hold || this.props.hold || 'Ожидание ответа клиента') : '';
+    const dlg = s.dlg || null;
+    const ptab = s.ptab || this.props.tab || 'form';
+    const hf = s.hf || 'all';
+    // события этой сессии (после двух базовых записей) — новые шаги сверху
+    const live = (s.history || []).slice(2).map((h) => {
+      const t = h.text;
+      const kind = /холд/i.test(t) ? 'hold' : (/передана|перехвач/i.test(t) ? 'exec' : 'status');
+      return { kind: kind, parts: [[t, 0]], meta: ['Сегодня в ' + h.time], who: 'Вы: ' + ME, at: h.at || 0 };
+    });
+    const fresh = s.fresh || {};
+    const merged = live.concat(s.feed || []).sort((a, b) => (a.at || 0) - (b.at || 0));
+    const allEv = HIST_EVENTS.concat(merged).map((e, i) => Object.assign({ n: i + 1 }, e));
+    const histEvents = allEv.filter((e) => hf === 'all' || e.kind === hf).reverse().map((e, i) => ({
+      n: e.n, latest: i === 0 && hf === 'all' ? 'true' : 'false', fresh: e.sid && fresh[e.sid] ? 'true' : 'false', meta: e.meta, who: e.who,
+      parts: e.parts.map((pp) => ({ t: pp[0], cls: pp[1] ? 'hs-strong' : '' }))
+    }));
+    const execList = (s.passedTo ? [{ cap: 'Исполнитель 3', name: s.passedTo, lines: ['Передал: ' + ME], when: now() + ' ' + '15.11.2026' }] : []).concat(HIST_EXECS);
+    const histExecs = execList.map((x, i) => Object.assign({ n: execList.length - i }, x));
+    const histStatuses = HIST_STATUSES.map((x, i) => Object.assign({ n: HIST_STATUSES.length - i }, x));
+    const isOther = scn === 'other';
+    const holdStep = s.holdStep != null ? s.holdStep : (this.props.holdStep || '');
+    const nextMode = s.nextMode || this.props.nextMode || 'link';
+    const takeMode = this.props.takeMode || 'v2';
+    const stubHead = scn === 'waiting' || scn === 'copy-loading';
+    const PAGE_MSG = {
+      forbidden: { icon: 'user', title: 'Недостаточно прав', text: 'Обратитесь к своему руководителю', btn: 'На главную', act: () => this.goBack() },
+      offline: { icon: 'wifi', title: 'Потеряли связь с вами', text: 'Проверьте подключение к интернету и попробуйте ещё раз', btn: 'Попробовать ещё раз', act: () => this.retry() },
+      'server-error': { icon: 'tools', title: 'Не получилось загрузить', text: 'Уже исправляем. Попробуйте ещё раз или зайдите позже', btn: 'Попробовать ещё раз', act: () => this.retry() }
+    };
+    const pageMsg = PAGE_MSG[scn] || null;
+    const emb = s.emb || 'loading';
+    const ntf = s.ntf || null;
+    const callNum = s.callNum || '+7 (929) 490-27-17';
+    const loading = !!this.props.loadMs && !s.loaded;
+    const isTask = view === 'task';
+    const headMode = isTask ? (scn === 'header-error' ? 'error' : (scn === 'creating' ? 'creating' : 'normal')) : (scn === 'client-error' ? 'error' : (scn === 'client-nodata' ? 'nodata' : 'normal'));
+    const clientNF = !isTask && scn === 'client-notfound';
+    const close = s.close || this.props.closeState || null;
+    const imKind = this.imKind();
+    const IM = {
+      taken: { title: 'Задачу взял другой исполнитель', text: 'Обратитесь к коллегам, если возникнут вопросы', sub: this.takenBy() || 'Ильнурова Г. А. U_APW2UP', icon: true, center: true, ok: 'Вернуть себе', cancel: 'В список задач', tone: '' },
+      refresh: { title: 'Обновить без сохранения?', text: 'Убедитесь, что вы сохранили изменения в окне задачи – иначе они будут потеряны', sub: '', icon: false, center: false, ok: 'Обновить', cancel: 'Отмена', tone: 'danger' },
+      leave: { title: 'Выйти без сохранения?', text: 'Убедитесь, что вы сохранили изменения в окне задачи – иначе они будут потеряны', sub: '', icon: false, center: false, ok: 'Выйти', cancel: 'Отменить', tone: 'danger' }
+    }[imKind] || null;
+    const reasonList = dlg === 'hold' ? HOLD_REASONS : REJECT_REASONS;
+    const holdModalState = dlg !== 'hold' ? '' : (s.holdErr ? 'error' : (this.props.holdModal === 'reasons-error' && !s.reasonsOk ? 'reasons-error' : (this.props.holdModal === 'forbidden' ? 'forbidden' : '')));
+    const own = s.reason != null && s.reason === reasonList.length - 1;
+    const q = (s.passQ || '').trim().toLowerCase();
+    const emps = EMPLOYEES.filter((e) => !q || (e.name + ' ' + e.login).toLowerCase().indexOf(q) !== -1);
+    const notes = s.notes || [];
+    const inCall = !!s.callStart;
+    const sec = s.callSec || 0;
+    let dlgDisabled = false;
+    if (dlg === 'hold' || dlg === 'reject') dlgDisabled = s.reason == null;
+    if (dlg === 'pass') dlgDisabled = !s.passEmp;
+    if (dlg === 'note') dlgDisabled = !(s.noteDraft || '').trim();
+    return {
+      title: this.props.title || 'Официальное письмо',
+      dir: this.props.dir != null ? this.props.dir : 'Валютные операции (конвертация, консалтинг ВЭД, расследование, FX в рамках ГС)',
+      num: this.props.num || '7520',
+      client: this.props.client || 'ООО «Терем»',
+      legacyClient: (this.props.client || 'ООО "Терем"') + ' Клиент ВЭД UABBDX',
+      executor: passed ? s.passedTo : (key === 'unassigned' ? 'Не назначен' : 'Константинопольский К. К.'),
+      st: st,
+      hasHoldText: !!holdText,
+      holdText: holdText,
+      flags: flagsIn.map((k) => ({ k: k, title: FLAG_TITLES[k] || '', isFlame: k === 'flame', isDoc: k === 'doc', isBulb: k === 'bulb', isMail: k === 'mail', isRub: k === 'rub' })),
+      chips: shown,
+      hasMore: rest.length > 0,
+      moreLabel: rest[0] || '',
+      moreCount: rest.length > 1 ? '+ ещё ' + (rest.length - 1) : '',
+      allTags: chipsIn,
+      isPassed: passed,
+      passedTo: s.passedTo || '',
+      showHold: !passed && !isOther && st.primary === 'hold',
+      showTake: !passed && !isOther && st.primary === 'take',
+      showUnhold: !passed && !isOther && st.primary === 'unhold',
+      canAct: !passed && !isOther && st.active && !(takeMode === 'v1' && st.primary === 'take'),
+      active: st.active,
+      actsStyle: '',
+      tRing: !!t && t.kind === 'ring',
+      tAlert: !!t && t.kind === 'alert',
+      tOk: !!t && t.kind === 'ok',
+      ringColor: t && t.color ? t.color : 'var(--status-positive)',
+      ringDash: (C * pct).toFixed(2) + ' ' + C.toFixed(2),
+      hasTimer: !!t,
+      timerText: t ? t.text : '',
+      timerTitle: t ? t.title : '',
+      slaText: st.sla,
+      yes: true,
+      skelSimple: scn === 'skeleton',
+      skelDetail: scn === 'skeleton-detailed' || (loading && scn !== 'skeleton'),
+      isMissing: scn === 'missing' && !loading,
+      showCard: !loading && scn !== 'skeleton' && scn !== 'skeleton-detailed' && scn !== 'missing' && !pageMsg,
+      isPageMsg: !!pageMsg && !loading,
+      pmTitle: pageMsg ? pageMsg.title : '',
+      pmText: pageMsg ? pageMsg.text : '',
+      pmBtn: pageMsg ? pageMsg.btn : '',
+      pmAct: () => { if (pageMsg) pageMsg.act(); },
+      pmUser: !!pageMsg && pageMsg.icon === 'user',
+      pmWifi: !!pageMsg && pageMsg.icon === 'wifi',
+      pmTools: !!pageMsg && pageMsg.icon === 'tools',
+      isStub: stubHead,
+      stubText: scn === 'waiting' ? 'Здесь будут данные о задаче' : 'Данные скоро загрузятся — с задачей уже можно работать',
+      notStub: !stubHead,
+      contentWaiting: scn === 'waiting',
+      contentExternal: scn === 'external',
+      openExternal: () => { this.toast('Открываем задачу во внешней системе в новой вкладке'); this.setState({ history: this.log('Переход к задаче во внешней системе') }); },
+      hasNtf: !!ntf,
+      ntfTitle: ntf ? ntf.title : '',
+      ntfText: ntf ? ntf.text : '',
+      ntfTone: ntf ? ntf.tone : 'ok',
+      ntfOk: !!ntf && ntf.tone === 'ok',
+      ntfWarn: !!ntf && ntf.tone === 'warn',
+      ntfErr: !!ntf && ntf.tone === 'err',
+      closeNtf: () => { clearTimeout(this._nt); this.setState({ ntf: null }); },
+      callNum: callNum,
+      callPaused: !!s.callPaused,
+      callPausedStr: s.callPaused ? 'true' : 'false',
+      callPauseLabel: s.callPaused ? 'Снять с удержания' : 'Поставить на удержание',
+      toggleCallPause: () => { this.setState({ callPaused: !s.callPaused, history: this.log(s.callPaused ? 'Звонок снят с удержания' : 'Звонок на удержании') }); },
+      callLine: s.callPaused ? 'Удержание' : 'Свободная линия',
+      callTransfer: () => this.toast('Перевод звонка: выберите сотрудника в телефонии'),
+      headMode: headMode,
+      headErr: headMode === 'error' || headMode === 'nodata',
+      headErrText: headMode === 'nodata' ? 'Нет данных о клиенте' : 'Не получилось загрузить',
+      headRetryShow: headMode === 'error',
+      taskCreating: isTask && headMode === 'creating',
+      taskHead: (isTask && headMode === 'normal') && !stubHead,
+      clientHead: !isTask && headMode === 'normal',
+      clientNotFound: clientNF,
+      showSeg: !(isTask && headMode === 'error'),
+      taskActs: (isTask && headMode === 'normal') && !stubHead,
+      clientActs: !isTask && headMode === 'normal' && !clientNF,
+      isOther: isOther,
+      otherName: s.otherName || this.props.otherName || 'Константинопольский К. К',
+      intercept: () => { if (this.props.failTake) { this.notify('err', 'Не получилось взять в работу', 'Попробуйте ещё раз или зайдите позже'); return; } this.setState({ scn: 'normal', history: this.log('Задача перехвачена у ' + (s.otherName || this.props.otherName || 'Константинопольский К. К')) }); this.setStatus('work', null); this.notify('ok', 'Задача взята в работу', (this.props.title || 'Официальное письмо') + ' ID 93062040'); },
+      locked: close === 'closing' ? 'true' : 'false',
+      canClose: st.active && !passed && !isOther && close !== 'closing' && close !== 'closed',
+      menuClose: () => { this.setState({ menu: false }); if (this.takenBy()) { this.setIm('taken'); return; } this.closeTask(); },
+      isClosing: close === 'closing',
+      isClosed: close === 'closed',
+      isCloseErr: close === 'error',
+      timerNormal: !close && !holdStep && !s.actionReq && !stubHead,
+      capOn: close === 'closing' || close === 'closed' || !!holdStep || (!!s.actionReq && !close),
+      capSpin: close === 'closing' || (!close && holdStep === 'holding'),
+      capOk: close === 'closed' || (!close && holdStep === 'held'),
+      capWarn: !close && !holdStep && !!s.actionReq,
+      capText: close === 'closing' ? 'Закрываем задачу' : close === 'closed' ? 'Задача закрыта' : holdStep === 'holding' ? 'Переводим на холд' : holdStep === 'held' ? 'Задача переведена на холд' : 'Требуется действие по задаче',
+      capNext: close === 'closing' || ((close === 'closed' || (!close && holdStep === 'held')) && nextMode === 'link'),
+      capNone: (close === 'closed' || (!close && holdStep === 'held')) && nextMode === 'none',
+      capSeek: (close === 'closed' || (!close && holdStep === 'held')) && nextMode === 'seek',
+      goNext: () => { if (this.props.onNext) this.props.onNext(); else this.toast('Открываем следующую задачу…'); },
+      contentErr: scn === 'content-error',
+      contentCreating: scn === 'creating',
+      ...(() => { const formArea = (scn !== 'content-error' && scn !== 'creating' && ptab !== 'history') && scn !== 'waiting' && scn !== 'external'; return {
+      contentForm: formArea && emb === 'ready',
+      embLoading: formArea && emb === 'loading',
+      embErr: formArea && !!EMB_ERR[emb], embErrTitle: (EMB_ERR[emb] || [])[0] || '', embErrText: (EMB_ERR[emb] || [])[1] || '', embErrBtn: emb !== 'not-found',
+      embRetry: () => { this._embRetried = true; this.embLoad(); },
+      sysName: 'Расчётный конвейер', dockedStr: s.docked ? 'true' : 'false' }; })(),
+      showHistory: scn !== 'content-error' && scn !== 'creating' && ptab === 'history',
+      tabFormOn: ptab === 'history' ? 'false' : 'true',
+      tabHistOn: ptab === 'history' ? 'true' : 'false',
+      tabForm: () => this.setState({ ptab: 'form' }),
+      tabHist: () => this.setState({ ptab: 'history', hfOpen: false, unseen: 0 }),
+      histUnseen: ptab !== 'history' && (s.unseen || 0) > 0,
+      histUnseenN: s.unseen || 0,
+      sseShow: this.props.stream !== 'off',
+      sseState: s.ssePaused ? 'paused' : (s.sseConn === 'reconnect' ? 'reconnect' : 'live'),
+      ssePaused: s.ssePaused ? 'true' : 'false',
+      sseLabel: s.ssePaused ? 'Пауза' : (s.sseConn === 'reconnect' ? 'Переподключаемся…' : 'В реальном времени'),
+      sseTitle: s.ssePaused ? 'Возобновить поток событий' : 'Поставить поток событий на паузу',
+      sseQueued: (s.queued || []).length,
+      sseHasQueued: !!s.ssePaused && (s.queued || []).length > 0,
+      sseAnnounce: s.sseAnnounce || '',
+      toggleSse: () => {
+        if (s.ssePaused) { const q = s.queued || []; this.setState({ ssePaused: false, queued: [] }); if (q.length) this.pushEvents(q); }
+        else this.setState({ ssePaused: true });
+      },
+      histExecs: histExecs,
+      histStatuses: histStatuses,
+      histEvents: histEvents,
+      histNone: histEvents.length === 0,
+      hfOpen: !!s.hfOpen,
+      hfLabel: hf === 'all' ? 'Параметр' : HIST_FILTERS.find((f) => f[0] === hf)[1],
+      toggleHf: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ hfOpen: !s.hfOpen }); },
+      hfOptions: HIST_FILTERS.map((f) => ({ label: f[1], on: f[0] === hf ? 'true' : 'false', pick: () => this.setState({ hf: f[0], hfOpen: false }) })),
+      panelShort: scn === 'creating' ? 'true' : 'false',
+      retry: () => this.retry(),
+      retryLabel: s.retrying ? 'Загружаем…' : 'Попробовать ещё раз',
+      goBack: () => this.goBack(),
+      markDirty: () => this.setDirty(true),
+      refresh: () => { const fin = ['done', 'done-late', 'rejected'].indexOf(this.status()) >= 0; const fresh = s.savedAt && Date.now() - s.savedAt <= 10000; if (!fin && !fresh && this.st().emb === 'ready') { this.setIm('refresh'); return; } this.doRefresh(); },
+      imOpen: !!IM,
+      imTitle: IM ? IM.title : '',
+      imText: IM ? IM.text : '',
+      imSub: IM ? IM.sub : '',
+      imHasSub: !!(IM && IM.sub),
+      imIcon: !!(IM && IM.icon),
+      imCenter: IM && IM.center ? 'true' : 'false',
+      imOkLabel: IM ? IM.ok : '',
+      imCancelLabel: IM ? IM.cancel : '',
+      imTone: IM ? IM.tone : '',
+      imOk: () => this.imAct('ok'),
+      imSecond: () => this.imAct('second'),
+      imCancel: () => this.imAct('cancel'),
+      clientFull: clientFull,
+      clientChips: clientNF ? [] : clientChips,
+      req: req,
+      openCrm: () => { this.setState({ history: this.log('Открыта карточка клиента') }); if (this.props.onOpenClient) this.props.onOpenClient(clientShort, ''); else this.toast('Открываем карточку клиента…'); },
+      openContacts: () => this.openCsheet('contacts'),
+      openPins: () => this.openCsheet('pins'),
+      clientTasks: () => { if (this.props.onOpenClient) this.props.onOpenClient(clientShort, 'tasks'); else if (this.props.onClientTasks) this.props.onClientTasks(clientShort); else this.toast('Задачи клиента: ' + clientShort); },
+      cmenuOpen: !!s.cmenu,
+      toggleCmenu: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ cmenu: !s.cmenu }); },
+      copyAllReq: () => { this.setState({ cmenu: false }); this.copy(clientFull + '\nИНН ' + req.inn + ', КПП ' + req.kpp + ', ОГРН ' + req.ogrn + ', ПИН ' + req.pin, 'Реквизиты'); },
+      callClient: () => { this.setState({ cmenu: false }); if (!s.callStart) this.startCall(); },
+      cpPin: () => this.copy(req.pin, 'ПИН'),
+      cpInn: () => this.copy(req.inn, 'ИНН'),
+      cpKpp: () => this.copy(req.kpp, 'КПП'),
+      cpOgrn: () => this.copy(req.ogrn, 'ОГРН'),
+      csheet: !!s.csheet,
+      csheetTitle: s.csheet === 'pins' ? 'Пины клиента' : 'Контакты клиента',
+      closeCsheet: () => this.setState({ csheet: null }),
+      isContacts: s.csheet === 'contacts',
+      isPins: s.csheet === 'pins',
+      ctClientOn: ctTab === 'client' ? 'true' : 'false',
+      ctBankOn: ctTab === 'bank' ? 'true' : 'false',
+      ctClient: () => this.setState({ ctTab: 'client' }),
+      ctBank: () => this.setState({ ctTab: 'bank' }),
+      ctClientCount: CONTACTS.client.reduce((n, g) => n + g.items.length, 0),
+      ctBankCount: CONTACTS.bank.reduce((n, g) => n + g.items.length, 0),
+      ctQ: s.ctQ || '',
+      setCtQ: (e) => this.setState({ ctQ: (e && e.target && e.target.value) || '' }),
+      ctLoading: !!s.ctLoading,
+      ctEmpty: !s.ctLoading && ctGroups.length === 0,
+      ctEmptyText: ctQ ? 'По запросу «' + (s.ctQ || '').trim() + '» никого нет' : 'Возможно, они появятся позже',
+      ctReady: !s.ctLoading && ctGroups.length > 0,
+      ctGroups: ctGroups,
+      skelRows: [1, 2, 3],
+      pinSeg: ctags[ctags.length - 1] || '',
+      pinQ: s.pinQ || '',
+      setPinQ: (e) => this.setState({ pinQ: (e && e.target && e.target.value) || '' }),
+      pinTotalLabel: pinQ ? 'Найдено' : 'Всего',
+      pinTotal: pinMatches.length,
+      pins: pinMatches.slice(0, 60).map((i) => { const code = pinCode(i); return { n: i + 1, code: code, kind: i === 0 ? 'Основной' : 'Дополнительный', copy: () => this.copy(code, 'ПИН') }; }),
+      pinsShown: Math.min(60, pinMatches.length),
+      pinsCut: pinMatches.length > 60,
+      pinsNone: pinMatches.length === 0,
+      isTaskView: view === 'task',
+      isClientView: view === 'client',
+      panelLabel: 'Окно задачи',
+      showTask: () => this.eqView('task'),
+      showClient: () => this.eqView('client'),
+      expanded: !!s.expanded,
+      notExpanded: !s.expanded,
+      showTop: !s.expanded && !this.props.headless && !this.props.pending,
+      ticketPending: !!this.props.pending && !s.expanded,
+      expandLabel: s.expanded ? 'Выйти из полноэкранного режима (Esc)' : 'Развернуть на весь экран',
+      expandText: s.expanded ? 'Свернуть' : 'Во весь экран',
+      expandTitle: s.expanded ? 'Выйти из полноэкранного режима (Esc)' : 'Развернуть окно задачи на весь экран',
+      toggleExpand: () => this.setState({ expanded: !s.expanded }),
+      spinCls: s.spin ? 'tk-spin' : '',
+      refreshOld: () => { clearTimeout(this._s); this.setState({ spin: false }); setTimeout(() => this.setState({ spin: true }), 0); this._s = setTimeout(() => { this.setState({ spin: false }); this.toast('Окно задачи обновлено'); }, 650); },
+      // Основные действия
+      doHold: this.guard(() => this.openDlg('hold')),
+      doTake: this.guard(() => { if (this.props.failTake) { this.notify('err', 'Не получилось взять в работу', 'Попробуйте ещё раз или зайдите позже'); return; } this.setState({ holdStep: '', history: this.log('Задача взята в работу') }); this.setStatus('work', null, { hold: null }); this.notify('ok', 'Задача взята в работу', (this.props.title || 'Официальное письмо') + ' ID 93062040'); }),
+      doUnhold: this.guard(() => { this.setState({ holdStep: '' }); this.setStatus('work', 'Задача снята с холда', { hold: null }); }),
+      doReject: this.guard(() => this.openDlg('reject')),
+      doPass: this.guard(() => this.openDlg('pass')),
+      // Звонок и заметки
+      inCall: inCall,
+      callTimeLong: pad(Math.floor(sec / 3600)) + ':' + pad(Math.floor(sec / 60) % 60) + ':' + pad(sec % 60),
+      callLabel: inCall ? 'Завершить звонок' : 'Позвонить клиенту',
+      callTime: pad(Math.floor(sec / 60)) + ':' + pad(sec % 60),
+      doCall: () => (inCall ? this.endCall() : this.startCall()),
+      endCall: () => this.endCall(),
+      hasNotes: notes.length > 0,
+      notesCount: notes.length,
+      noteLabel: notes.length ? 'Заметки к задаче: ' + notes.length : 'Добавить заметку',
+      notes: notes,
+      noteDraft: s.noteDraft || '',
+      setNoteDraft: (e) => this.setState({ noteDraft: (e && e.target && e.target.value) || '' }),
+      doNote: () => this.setState({ dlg: 'note', menu: false }),
+      // Меню «Ещё»
+      menuOpen: !!s.menu,
+      toggleMenu: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.setState({ menu: !s.menu }); },
+      menuClient: () => this.setState({ menu: false, view: 'client' }),
+      panelLabelFixed: 'Окно задачи',
+      menuHistory: () => this.setState({ menu: false, ptab: 'history' }),
+      menuSla: () => this.setState({ menu: false, dlg: 'sla' }),
+      menuCopy: () => { this.setState({ menu: false }); try { navigator.clipboard.writeText(location.origin + location.pathname + '#task-' + (this.props.num || '7520')).catch(() => {}); } catch (err) {} this.toast('Ссылка на задачу скопирована'); },
+      // Детали
+      detailsOpen: !!s.details,
+      openDetails: () => this.setState({ details: true, menu: false }),
+      closeDetails: () => this.setState({ details: false }),
+      // Диалоги
+      dlgOpen: !!dlg,
+      dlgTitle: DLG_TITLES[dlg] || '',
+      dlgReasons: (dlg === 'hold' && !holdModalState) || dlg === 'reject',
+      isHoldDlg: dlg === 'hold',
+      holdErr: dlg === 'hold' && holdModalState === 'error',
+      holdNoRights: dlg === 'hold' && holdModalState === 'forbidden',
+      holdReasonsErr: dlg === 'hold' && holdModalState === 'reasons-error',
+      retryReasons: () => this.setState({ reasonsOk: true }),
+      needCommentReject: own && dlg === 'reject',
+      commentErrB: own && s.tried && !(s.comment || '').trim(),
+      commentCount: (s.comment || '').length,
+      dlgCancel: dlg === 'hold' ? 'Отменить' : 'Отмена',
+      dlgPass: dlg === 'pass',
+      dlgNote: dlg === 'note',
+      dlgHistory: dlg === 'history',
+      dlgSla: dlg === 'sla',
+      dlgHasFoot: (dlg === 'hold' && !holdModalState) || dlg === 'reject' || dlg === 'pass' || dlg === 'note',
+      dlgOk: { hold: 'На холд', reject: 'Отклонить', pass: 'Передать', note: 'Сохранить заметку' }[dlg] || 'Готово',
+      dlgDisabled: dlgDisabled ? 'true' : 'false',
+      dlgSubmit: () => { if (!dlgDisabled) this.submitDlg(); },
+      closeDlg: () => this.setState({ dlg: null }),
+      reasons: reasonList.map((label, i) => ({ label: label, on: s.reason === i ? 'true' : 'false', pick: () => this.setState({ reason: i, tried: false }) })),
+      needComment: own,
+      comment: s.comment || '',
+      commentErr: own && s.tried && !(s.comment || '').trim() ? 'true' : 'false',
+      setComment: (e) => { const v = ((e && e.target && e.target.value) || '').slice(0, 250); this.setState({ comment: v }); try { const t = e.target; t.style.height = 'auto'; t.style.height = t.scrollHeight + 'px'; } catch (_) {} },
+      passQ: s.passQ || '',
+      setPassQ: (e) => this.setState({ passQ: (e && e.target && e.target.value) || '' }),
+      emps: emps.map((e) => ({ name: e.name, meta: e.login + ' · ' + (e.busy ? 'Занят' : 'Свободен') + (e.tasks ? ' · задач: ' + e.tasks : ''), dot: 'background: ' + (e.busy ? 'var(--status-attention)' : 'var(--status-positive)'), on: s.passEmp === e.login ? 'true' : 'false', pick: () => this.setState({ passEmp: e.login }) })),
+      noEmps: emps.length === 0,
+      history: (s.history || this.baseHistory()).slice().reverse(),
+      // Старая форма
+      legacyBtns: LEGACY_BTNS.map((l) => ({ label: l, click: () => this.legacy(l) })),
+      hasSaved: !!s.saved,
+      savedText: 'Сохранено в ' + (s.saved || ''),
+      legacyTabs: LEGACY_TABS.map((l, i) => ({ label: l, on: i === lgTab ? 'true' : 'false', click: () => this.setState({ lgTab: i }) })),
+      lgMain: lgTab === 0,
+      lgCols: (LG_TABS[lgTab] || [[], []])[0], lgRows: (LG_TABS[lgTab] || [[], []])[1],
+      lgOther: lgTab !== 0,
+      lgTabLabel: LEGACY_TABS[lgTab],
+      cpRows: Array.from({ length: s.cp || 0 }, (_, i) => ({ n: i + 1 })),
+      prRows: Array.from({ length: s.pr || 0 }, (_, i) => ({ n: i + 1 })),
+      addCp: () => { this.setState({ cp: (s.cp || 0) + 1 }); this.setDirty(true); },
+      addPr: () => { this.setState({ pr: (s.pr || 0) + 1 }); this.setDirty(true); },
+      hasToast: !!s.toast,
+      toast: s.toast || ''
+    };
+  }
+}
+</script>
+</body>
+</html>

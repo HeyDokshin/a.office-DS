@@ -1,0 +1,860 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Шапка</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0; background-color: #f2f3f5; }
+.hd-bar{position:sticky;top:0;z-index:30;box-sizing:border-box;width:100%;min-height:64px;padding:10px 40px;display:flex;align-items:center;gap:16px;font-family:var(--font-system);color:var(--text-primary);isolation:isolate}
+/* Шапка: по умолчанию — прогрессивный блюр (градиент + блюр, сходят на нет за 8px под шапкой).
+   Когда под шапку прилипает заголовок таблицы — плавно (0.3s) переходит в ровную матовую панель blur 16px,
+   из того же материала, что и заголовок таблицы (Figma 7boNgcJJQe2NUEVghkadNz 11234:62899). */
+.hd-bar::before,.hd-bar::after{content:"";position:absolute;left:0;right:0;top:0;height:calc(100% + 8px);z-index:-1;pointer-events:none;transition:opacity .3s ease}
+.hd-bar::before{background:linear-gradient(to bottom,var(--bg-base-alt-primary) 0%,color-mix(in srgb,var(--bg-base-alt-primary) 70%,transparent) 60%,transparent 100%);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);-webkit-mask-image:linear-gradient(to bottom,#000 0%,#000 50%,transparent 100%);mask-image:linear-gradient(to bottom,#000 0%,#000 50%,transparent 100%)}
+.hd-bar::after{backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 50%,#000 75%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 50%,#000 75%,transparent 100%)}
+.hd-frost{position:absolute;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .3s ease;background:var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.hd-bar[data-stuck="true"]::before,.hd-bar[data-stuck="true"]::after{opacity:0}
+@media (prefers-reduced-motion: reduce){.hd-bar::before,.hd-bar::after,.hd-frost{transition:none}}
+.hd-left{flex:1 1 0;display:flex;align-items:center;min-width:0}
+.hd-right{flex:1 1 0;display:flex;align-items:center;justify-content:flex-end;gap:16px;min-width:0;filter:drop-shadow(0 8px 12px rgba(0,0,0,.04))}
+.hd-glass{background:color-mix(in srgb,var(--bg-base-primary) 64%,transparent);backdrop-filter:blur(40px);-webkit-backdrop-filter:blur(40px);border:1px solid var(--color-neutral-100);box-sizing:border-box}
+.hd-backlink{appearance:none;border:0;margin:0;min-height:40px;padding:4px 16px 4px 0;border-radius:10px;background:transparent;display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:var(--text-secondary);font:500 14px/20px var(--font-system)}
+.hd-backlink svg{color:var(--graphic-secondary)}
+.hd-backlink:hover{color:var(--text-primary)}
+.hd-backlink:hover svg{color:var(--graphic-primary)}
+.hd-sbox{flex:0 0 360px;width:360px;height:44px;border-radius:99px;padding:2px 6px 2px 4px;display:flex;align-items:center;gap:4px;box-shadow:0 8px 24px rgba(0,0,0,.04)}
+.hd-sbox:focus-within{border-color:var(--border-key, var(--graphic-primary))}
+.hd-sico{flex:0 0 40px;width:40px;height:40px;display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-secondary)}
+.hd-sinput{flex:1 1 auto;min-width:0;border:0;outline:0;background:transparent;font:400 14px/20px var(--font-system);color:var(--text-primary);padding:0}
+.hd-sinput::placeholder{color:var(--text-secondary)}
+.hd-sbtn{appearance:none;border:0;margin:0;width:32px;height:32px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:var(--color-neutral-translucent-200);color:var(--decorative-purple, #9032ee);flex:0 0 auto}
+.hd-sbtn:hover{background:var(--color-neutral-translucent-300)}
+.hd-sbtn:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.hd-seg{display:inline-flex;align-items:center;gap:0;height:44px;padding:5px;border-radius:16px}
+.hd-seg--round{border-radius:99px}
+.hd-seg-btn{appearance:none;border:0;margin:0;width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;color:var(--graphic-secondary);transition:background-color .12s ease,color .12s ease}
+.hd-seg--round .hd-seg-btn{border-radius:99px}
+.hd-seg-btn:hover{color:var(--graphic-primary);background:var(--color-neutral-translucent-100)}
+.hd-seg-btn[aria-pressed="true"]{background:var(--color-neutral-translucent-200);color:var(--graphic-primary)}
+.hd-tools{display:flex;align-items:center;gap:16px}
+.hd-profile{appearance:none;margin:0;height:44px;padding:0 5px 0 8px;border-radius:16px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;color:var(--graphic-secondary);transition:background-color .12s ease}
+.hd-profile:hover{background:color-mix(in srgb,var(--bg-base-primary) 90%,transparent)}
+.hd-popwrap{position:absolute;top:62px;right:40px;z-index:2}
+.hd-seg[data-locked="true"] .hd-seg-btn{cursor:default}
+.hd-seg[data-locked="true"] .hd-seg-btn[aria-pressed="false"]{opacity:.5}
+.hd-seg[data-locked="true"] .hd-seg-btn:hover{color:var(--graphic-secondary)}
+.hd-seg[data-locked="true"] .hd-seg-btn[aria-pressed="true"]:hover{color:var(--graphic-primary)}
+.hd-seg-btn:focus-visible,.hd-profile:focus-visible,.hd-cell--btn:focus-visible,.hd-back:focus-visible,.hd-acc:focus-visible,.hd-backlink:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.hd-tile{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;color:#fff}
+.hd-tile--24{width:24px;height:24px;border-radius:8px}
+.hd-tile--free{background:var(--status-positive)}
+.hd-tile--busy,.hd-tile--call,.hd-tile--chat{background:var(--status-attention)}
+.hd-tile--pause,.hd-tile--tech,.hd-tile--training,.hd-tile--other{background:var(--status-info)}
+.hd-tile--offline{background:var(--color-neutral-translucent-200);color:var(--graphic-primary)}
+.hd-scrim{position:fixed;inset:0;z-index:1;background:transparent;border:0;padding:0;margin:0;cursor:default}
+.hd-pop{width:308px;box-sizing:border-box;background:var(--bg-base-primary);border:1px solid var(--color-neutral-translucent-200);border-radius:16px;box-shadow:var(--shadow-m);overflow:hidden;display:flex;flex-direction:column;animation:hd-in .16s ease}
+/* Анимации появления сохраняют центрирование — без «прыжка» из угла в центр */
+@keyframes hd-modal-in{from{opacity:0;transform:translate(-50%,calc(-50% - 6px))}to{opacity:1;transform:translate(-50%,-50%)}}
+@keyframes hd-sdd-in{from{opacity:0;transform:translate(-50%,-4px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes hd-in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+.hd-pop--profile{padding:4px 12px}
+.hd-me{display:flex;gap:12px;align-items:flex-start;padding:16px 12px}
+.hd-me-body{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;flex:1 1 auto;padding-top:2px}
+.hd-name{font:700 18px/22px var(--font-system);letter-spacing:-.01em;margin-top:2px}
+.hd-note{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.hd-na{font:400 14px/20px var(--font-system);color:var(--text-negative)}
+.hd-login{font:400 12px/16px var(--font-system);color:var(--text-primary)}
+.hd-dep{font:400 14px/20px var(--font-system);color:var(--text-secondary);margin-bottom:8px}
+.hd-me-body > :last-child{width:100%}
+.hd-btn-in{display:inline-flex;align-items:center;gap:4px}
+.hd-btn-in svg{color:var(--graphic-secondary)}
+.hd-chg{appearance:none;border:0;margin:0;width:100%;height:40px;padding:0 16px;border-radius:99px;background:var(--color-neutral-translucent-100);color:var(--text-primary);font:500 14px/20px var(--font-system);display:inline-flex;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:background-color .12s ease}
+.hd-chg:hover{background:var(--color-neutral-translucent-200)}
+.hd-chg:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.hd-chg svg{color:var(--graphic-secondary)}
+.hd-cell{display:flex;align-items:center;gap:12px;padding:16px 12px;width:100%;box-sizing:border-box;text-align:left;color:var(--text-primary)}
+.hd-cell--mode{border-top:1px solid var(--color-neutral-translucent-200);border-bottom:1px solid var(--color-neutral-translucent-200)}
+.hd-cell--btn{appearance:none;border:0;margin:0;background:transparent;cursor:pointer;border-radius:12px;font:inherit}
+.hd-cell--btn:hover{background:var(--color-neutral-translucent-100)}
+.hd-ic{flex:0 0 24px;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary)}
+.hd-cell-body{flex:1 1 auto;display:flex;flex-direction:column;gap:4px;min-width:0;padding:2px 0}
+.hd-cell-t{font:500 14px/20px var(--font-system);letter-spacing:.005em}
+.hd-cell-c{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.hd-phead{padding:20px 20px 4px}
+.hd-back{appearance:none;border:0;margin:0 0 8px -2px;padding:2px;background:transparent;display:inline-flex;align-items:center;gap:6px;cursor:pointer;color:var(--text-primary);font:500 14px/20px var(--font-system);border-radius:6px}
+.hd-back:hover{color:var(--text-secondary)}
+.hd-ptitle{font:700 18px/22px var(--font-system);letter-spacing:-.01em}
+.hd-pbody{padding:4px 20px 0}
+.hd-pbody--list{padding:8px 8px 12px}
+.hd-pbody--scroll{max-height:420px;overflow-y:auto}
+.hd-srow:focus-visible{outline:2px solid var(--status-info);outline-offset:-2px}
+.hd-srow{display:flex;align-items:center;gap:12px;padding:12px 0;cursor:pointer}
+.hd-srow[data-disabled="true"]{cursor:default}
+.hd-srow-t{flex:1 1 auto;font:400 16px/20px var(--font-system);display:flex;flex-direction:column;gap:2px}
+.hd-srow-c{font:400 14px/18px var(--font-system);color:var(--text-secondary)}
+.hd-srow--current{border-bottom:1px solid var(--color-neutral-translucent-200);margin-bottom:4px;padding-bottom:16px}
+.hd-comment{padding:12px 0}
+.hd-autogrp{border-top:1px solid var(--color-neutral-translucent-200);margin-top:4px;padding-top:8px}
+.hd-autogrp .alfa-ol-group{text-transform:uppercase;padding:12px 0 4px;color:var(--text-secondary)}
+.hd-auto-row{display:flex;gap:24px;padding:8px 0 12px}
+.hd-auto{display:inline-flex;align-items:center;gap:12px;font:400 16px/20px var(--font-system);color:var(--text-secondary)}
+.hd-pfoot{padding:8px 20px 20px}
+.hd-grp{display:flex;gap:12px;align-items:flex-start;padding:12px;border-bottom:1px solid var(--color-neutral-translucent-200)}
+.hd-grp--last{border-bottom:0}
+.hd-grp-body{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.hd-grp-t{font:500 14px/20px var(--font-system);letter-spacing:.005em;padding:2px 0}
+.hd-sub{display:flex;flex-direction:column;gap:2px;padding:4px 0 6px}
+.hd-sub:last-child{padding-bottom:0}
+.hd-sub-t{font:400 12px/16px var(--font-system);color:var(--text-primary)}
+.hd-sub-c{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.hd-subgrp{font:500 12px/16px var(--font-system);color:var(--text-primary);padding:12px 0 2px}
+.hd-subgrp:first-child{padding-top:4px}
+.hd-grp--acc{display:block;padding:0}
+.hd-acc{appearance:none;border:0;margin:0;width:100%;display:flex;align-items:center;gap:12px;padding:12px;background:transparent;cursor:pointer;text-align:left;color:var(--text-primary);border-radius:12px;font:inherit}
+.hd-acc:hover{background:var(--color-neutral-translucent-100)}
+.hd-acc .hd-grp-t{flex:1 1 auto}
+.hd-acc-chev{display:inline-flex;color:var(--graphic-secondary);transition:transform .2s ease}
+.hd-acc[aria-expanded="true"] .hd-acc-chev{transform:rotate(180deg)}
+.hd-acc-body{padding:0 12px 12px 48px;animation:hd-in .16s ease}
+
+/* ===== Общий поиск в шапке ===== */
+.hd-swrap{position:relative;flex:0 0 360px;width:360px;z-index:3}
+.hd-swrap .hd-sbox{width:100%;box-sizing:border-box}
+.hd-swrap[data-open="true"] .hd-sbox{border-color:var(--text-primary, #212124);background:var(--bg-base-primary)}
+.hd-sclr{appearance:none;border:0;margin:0;width:24px;height:24px;border-radius:99px;background:transparent;color:var(--graphic-tertiary, #b8bcc3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.hd-sclr:hover{color:var(--graphic-secondary)}
+.hd-sfind{appearance:none;border:0;margin:0 4px 0 2px;height:32px;padding:0 10px;border-radius:99px;background:transparent;font:600 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;flex:0 0 auto}
+.hd-sfind[data-tone="secondary"]{color:var(--text-secondary);font-weight:500}
+.hd-sfind[aria-disabled="true"]{color:var(--text-tertiary, rgba(5,8,29,.38));cursor:default}
+.hd-sfind:not([aria-disabled="true"]):hover{background:var(--color-neutral-translucent-100)}
+.hd-sclr:focus-visible,.hd-sfind:focus-visible,.hd-opt:focus-visible,.hd-stag:focus-visible{outline:2px solid var(--status-info);outline-offset:1px}
+.hd-sspin{width:18px;height:18px;margin:0 10px;border-radius:50%;border:2px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));border-top-color:var(--text-primary);animation:hd-rot .8s linear infinite;flex:0 0 auto}
+@keyframes hd-rot{to{transform:rotate(360deg)}}
+.hd-sdd{position:absolute;top:calc(100% + 8px);left:50%;transform:translateX(-50%);width:440px;max-width:calc(100vw - 32px);box-sizing:border-box;padding:12px 0;background:var(--bg-base-primary);border:1px solid var(--color-neutral-300, #e7e8eb);border-radius:16px;box-shadow:0 20px 24px rgba(0,0,0,.08),0 12px 16px rgba(0,0,0,.04),0 4px 8px rgba(0,0,0,.04),0 0 1px rgba(0,0,0,.04);animation:hd-sdd-in .16s ease;z-index:4}
+.hd-sdd-h{padding:0 24px 8px;font:700 16px/22px var(--font-system)}
+.hd-slist{display:flex;flex-direction:column;padding:0 12px}
+.hd-slist--scroll{max-height:388px;overflow:auto;overscroll-behavior:contain}
+.hd-opt{appearance:none;border:0;margin:0;width:100%;display:flex;gap:12px;align-items:flex-start;padding:12px;border-radius:12px;background:transparent;text-align:left;cursor:pointer;color:var(--text-primary)}
+.hd-opt[data-active="true"]{background:var(--bg-base-secondary, #f2f3f5)}
+.hd-opt-i{flex:0 0 32px;width:32px;height:32px;border-radius:8px;background:var(--neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary)}
+.hd-opt-b{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:4px;padding:2px 0}
+.hd-opt-t{font:500 14px/18px var(--font-system)}
+.hd-opt-t mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding:0}
+.hd-opt-m{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:400 14px/20px var(--font-system)}
+.hd-opt-m i{font-style:normal;color:var(--text-tertiary, rgba(5,8,29,.38))}
+.hd-opt-m em{font-style:normal;color:var(--text-secondary)}
+.hd-shint{padding:4px 24px;text-align:center;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.hd-shint b{color:var(--text-primary);font-weight:500}
+.hd-stags,.hd-sk-tags,.hd-mtags{display:flex;flex-wrap:wrap;gap:8px;padding:0 12px 12px}
+.hd-stag{appearance:none;border:0;margin:0;min-height:32px;min-width:52px;padding:4px 12px;border-radius:99px;background:var(--neutral-translucent-300, rgba(15,25,55,.1));font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.hd-stag[aria-pressed="true"]{background:#212124;color:#fff}
+.hd-sk{display:block;border-radius:8px;background:linear-gradient(90deg,rgba(30,43,68,.06),rgba(30,43,68,.11),rgba(30,43,68,.06));background-size:200% 100%;animation:hd-sk 1.2s linear infinite}
+@keyframes hd-sk{from{background-position:200% 0}to{background-position:-200% 0}}
+.hd-sk--tag{width:60px;height:32px;border-radius:99px}
+.hd-sk-row{display:flex;gap:12px;padding:12px 24px}
+.hd-sk--i{width:32px;height:32px;flex:0 0 auto}
+.hd-sk-c{flex:1;display:flex;flex-direction:column;gap:8px;padding-top:2px}
+.hd-sk--t{height:14px;width:100%}
+.hd-sk-l{display:flex;gap:6px}.hd-sk--s{height:12px;width:64px}
+.hd-scrim--s{z-index:2}
+@media (prefers-reduced-motion: reduce){.hd-sk,.hd-sspin{animation-duration:3s}}
+/* ===== Виджет звонков ===== */
+.hd-phone[data-live="true"]{background:var(--status-positive, #0cc44d) !important;color:#fff;box-shadow:0 4px 10px rgba(12,196,77,.35)}
+.hd-phone[data-live="true"] svg path{fill:#fff}
+.hd-phone .hd-ph-on{display:none}
+.hd-phone[data-live="true"] .hd-ph-on{display:block}
+.hd-phone[data-live="true"] .hd-ph-off{display:none}
+.hd-cw{position:absolute;top:calc(100% - 2px);right:40px;z-index:3;width:min(1200px,calc(100% - 300px));min-width:720px;box-sizing:border-box;display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--bg-base-primary);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.12),0 0 1px rgba(0,0,0,.08);animation:hd-in .16s ease}
+.hd-cw-ib{appearance:none;border:0;margin:0;width:40px;height:40px;border-radius:10px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--graphic-primary);cursor:pointer}
+.hd-cw-ib[data-look="line"],.hd-cw-ib--line{background:transparent;box-shadow:inset 0 0 0 1.5px var(--text-primary)}
+.hd-cw-ib[data-look="ghost"]{background:transparent;box-shadow:inset 0 0 0 1px var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.hd-cw-ib[aria-disabled="true"]{color:var(--text-tertiary, rgba(5,8,29,.3));cursor:default}
+.hd-cw-ib--line[aria-pressed="true"]{background:var(--text-primary);color:#fff}
+.hd-cw-lines{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:2px}
+.hd-cw-line{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;overflow:hidden;padding:2px 12px;border-radius:6px;background:var(--color-neutral-translucent-100, rgba(30,43,68,.06));font:400 12px/16px var(--font-system);color:var(--text-primary)}
+.hd-cw-line--on{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.hd-cw-dot{width:6px;height:6px;border-radius:50%;background:var(--graphic-tertiary, #b8bcc3);flex:0 0 auto}
+.hd-cw-dot--on{background:var(--status-positive, #0cc44d)}
+.hd-cw-line[data-ring="true"] .hd-cw-dot{animation:hd-ring 1s ease-in-out infinite}
+.hd-cw-line[data-ring="true"] .hd-cw-t{background:var(--color-neutral-translucent-300, rgba(15,25,55,.1));color:var(--text-primary)}
+@keyframes hd-ring{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.4}}
+@media (prefers-reduced-motion: reduce){.hd-cw-line[data-ring="true"] .hd-cw-dot{animation:none}}
+.hd-cw-t{padding:0 6px;border-radius:99px;background:#212124;color:#fff;font:600 11px/16px var(--font-system);font-variant-numeric:tabular-nums}
+.hd-cw-who{overflow:hidden;text-overflow:ellipsis}
+.hd-cw-login{color:var(--text-secondary)}
+.hd-cw-call{appearance:none;border:0;margin:0;height:40px;padding:0 28px;border-radius:10px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;gap:8px;font:500 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer;flex:0 0 auto}
+.hd-cw-call:hover,.hd-cw-ib:not([aria-disabled="true"]):hover{background:var(--color-neutral-translucent-300, rgba(15,25,55,.12))}
+.hd-cw-end{appearance:none;border:0;margin:0;width:48px;height:40px;border-radius:10px;background:var(--status-negative, #ef3124);color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.hd-cw-end:hover{filter:brightness(.95)}
+.hd-cw-op{font:400 9px/11px var(--font-system);color:var(--text-secondary);white-space:nowrap}
+.hd-cw-sep{width:1px;height:32px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1));flex:0 0 auto}
+.hd-cw-msg{flex:1;display:flex;align-items:center;gap:12px}
+.hd-cw-mi{width:40px;height:40px;border-radius:10px;flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--graphic-primary)}
+.hd-cw-mi--warn{background:var(--status-attention, #fa9313);color:#fff;font:700 18px/1 var(--font-system)}
+.hd-cw-mt{flex:1;display:flex;flex-direction:column;gap:2px;font:400 13px/16px var(--font-system)}
+.hd-cw-mt b{font:700 16px/20px var(--font-system)}
+.hd-cw-btn,.hd-cw-sm{appearance:none;border:0;margin:0;height:36px;padding:0 16px;border-radius:10px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.hd-cw-sm{height:28px;padding:0 10px;font-size:13px;border-radius:8px}
+.hd-cw-ib:focus-visible,.hd-cw-call:focus-visible,.hd-cw-end:focus-visible,.hd-cw-btn:focus-visible,.hd-cw-sm:focus-visible,.hd-mbtn:focus-visible,.hd-key:focus-visible,.hd-mx:focus-visible,.hd-dir-more:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+@media (max-width: 1100px){.hd-cw{right:16px;width:calc(100% - 32px);min-width:0}.hd-cw-op{display:none}}
+/* Модалки виджета */
+.hd-mback{position:fixed;inset:0;z-index:40;border:0;margin:0;padding:0;background:rgba(0,0,0,.4);cursor:default}
+.hd-modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:41;width:min(500px,calc(100vw - 32px));max-height:calc(100vh - 48px);display:flex;flex-direction:column;background:var(--bg-base-primary);border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.2);animation:hd-modal-in .16s ease;color:var(--text-primary)}
+.hd-modal[data-size="m"]{width:min(600px,calc(100vw - 32px))}
+.hd-modal[data-size="l"]{width:min(800px,calc(100vw - 32px));height:min(698px,calc(100vh - 48px))}
+.hd-mh{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 24px 16px 40px}
+.hd-mh h2{margin:0;font:700 24px/30px var(--font-system);letter-spacing:-.3px}
+.hd-mx{appearance:none;border:0;margin:0;width:40px;height:40px;border-radius:12px;background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--graphic-primary)}
+.hd-mx:hover{background:var(--color-neutral-translucent-100)}
+.hd-mb{padding:4px 40px 8px;overflow:auto}
+.hd-mb--scroll{flex:1 1 auto}
+.hd-mb .hd-mtags{padding:0 0 16px}
+.hd-mp{margin:0;font:400 15px/20px var(--font-system)}
+.hd-mp--sec{color:var(--text-secondary);font-size:13px;line-height:18px;margin-top:4px}
+.hd-mcap{font:400 13px/16px var(--font-system);color:var(--text-secondary)}
+.hd-mdur{font:600 16px/22px var(--font-system);font-variant-numeric:tabular-nums;margin-top:4px}
+.hd-mkv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 0}
+.hd-mkv dt{font:400 13px/16px var(--font-system);color:var(--text-secondary)}
+.hd-mkv dd{margin:4px 0 0;font:400 14px/20px var(--font-system)}
+.hd-mf{display:flex;gap:12px;padding:24px 40px 32px}
+.hd-mbtn{appearance:none;border:0;margin:0;height:48px;padding:0 24px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer;flex:0 0 auto}
+.hd-mbtn--pri{background:#212124;color:#fff}
+.hd-mbtn[aria-disabled="true"]{opacity:.4;cursor:default}
+[data-size="s"] .hd-mbtn{flex:0 0 auto}
+.hd-modal:not([data-size]) .hd-mbtn,.hd-modal[data-size="m"] .hd-mbtn{flex:1 1 0}
+.hd-dial-f{display:flex;align-items:flex-end;gap:8px;min-height:48px;padding:6px 12px;border:1.5px solid var(--text-primary);border-radius:12px;box-sizing:border-box;position:relative}
+.hd-dial-f span{position:absolute;left:12px;top:5px;font:400 12px/14px var(--font-system);color:var(--text-secondary)}
+.hd-dial-f input{flex:1;border:0;outline:0;background:transparent;font:400 16px/22px var(--font-system);padding:14px 0 0;color:var(--text-primary);font-variant-numeric:tabular-nums}
+.hd-dial-f .hd-sclr{align-self:center}
+.hd-dial-h{margin:6px 0 16px;font:400 13px/16px var(--font-system);color:var(--text-secondary)}
+.hd-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.hd-key{appearance:none;border:0;margin:0;height:56px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:400 18px/24px var(--font-system);color:var(--text-primary);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-variant-numeric:tabular-nums}
+.hd-key:hover{background:var(--color-neutral-translucent-300, rgba(15,25,55,.12))}
+.hd-key[data-blank="true"]{visibility:hidden}
+.hd-dir-s{display:flex;align-items:center;gap:8px;height:48px;padding:0 16px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--graphic-secondary);margin-bottom:16px}
+.hd-dir-s input{flex:1;border:0;outline:0;background:transparent;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.hd-dir-g{padding:16px;border-radius:16px;background:var(--bg-base-secondary, #f2f3f5);margin-bottom:12px}
+.hd-dir-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.hd-dir-top b{font:600 16px/22px var(--font-system)}
+.hd-dir-acts{display:flex;gap:8px;flex:0 0 auto}
+.hd-dir-info{margin-top:8px;font:400 14px/20px var(--font-system);white-space:pre-line}
+.hd-dir-more{appearance:none;border:0;margin:8px 0 0;padding:0;background:transparent;font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.hd-dir-chev{display:inline-flex;transition:transform .15s}
+.hd-dir-more[aria-expanded="true"] .hd-dir-chev{transform:rotate(180deg)}
+.hd-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:42;padding:12px 16px;border-radius:14px;background:#1c1c1e;color:#fff;font:500 14px/20px var(--font-system);white-space:nowrap}
+@media (prefers-reduced-motion: reduce){.hd-cw,.hd-modal,.hd-sdd{animation:none}}
+
+/* Единое правило: любая модалка — шторка справа на всю высоту, выезжает справа (side-in) */
+.hd-modal,.hd-modal[data-size="m"],.hd-modal[data-size="l"]{position:fixed;top:8px;right:8px;bottom:8px;left:auto;transform:none;width:min(500px,calc(100vw - 16px));height:auto;max-height:none;border-radius:24px;animation:sbo-sheet-in .22s ease}
+@media (prefers-reduced-motion: reduce){.hd-modal{animation:none !important}}
+@keyframes sbo-sheet-in{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.hd-backlink,
+.hd-backlink svg,
+.hd-sbtn,
+.hd-seg-btn,
+.hd-profile,
+.hd-seg[data-locked="true"] .hd-seg-btn,
+.hd-seg[data-locked="true"] .hd-seg-btn[aria-pressed="true"],
+.hd-chg,
+.hd-cell--btn,
+.hd-back,
+.hd-acc,
+.hd-sclr,
+.hd-sfind:not([aria-disabled="true"]),
+.hd-cw-call,
+.hd-cw-ib:not([aria-disabled="true"]),
+.hd-cw-end,
+.hd-mx,
+.hd-key{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.hd-backlink:hover,
+.hd-backlink:hover svg,
+.hd-sbtn:hover,
+.hd-seg-btn:hover,
+.hd-profile:hover,
+.hd-seg[data-locked="true"] .hd-seg-btn:hover,
+.hd-seg[data-locked="true"] .hd-seg-btn[aria-pressed="true"]:hover,
+.hd-chg:hover,
+.hd-cell--btn:hover,
+.hd-back:hover,
+.hd-acc:hover,
+.hd-sclr:hover,
+.hd-sfind:not([aria-disabled="true"]):hover,
+.hd-cw-call:hover,
+.hd-cw-ib:not([aria-disabled="true"]):hover,
+.hd-cw-end:hover,
+.hd-mx:hover,
+.hd-key:hover{transition-delay:.3s}
+.hd-backlink:hover:active,
+.hd-backlink:hover svg:active,
+.hd-sbtn:hover:active,
+.hd-seg-btn:hover:active,
+.hd-profile:hover:active,
+.hd-seg[data-locked="true"] .hd-seg-btn:hover:active,
+.hd-seg[data-locked="true"] .hd-seg-btn[aria-pressed="true"]:hover:active,
+.hd-chg:hover:active,
+.hd-cell--btn:hover:active,
+.hd-back:hover:active,
+.hd-acc:hover:active,
+.hd-sclr:hover:active,
+.hd-sfind:not([aria-disabled="true"]):hover:active,
+.hd-cw-call:hover:active,
+.hd-cw-ib:not([aria-disabled="true"]):hover:active,
+.hd-cw-end:hover:active,
+.hd-mx:hover:active,
+.hd-key:hover:active{transition-delay:0s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<div class="hd-bar" data-stuck="{{stuckStr}}"><span class="hd-frost" aria-hidden="true"></span>
+<div class="hd-left"><sc-if value="{{showBack}}" hint-placeholder-val="{{false}}"><button class="hd-backlink" type="button" onClick="{{goBack}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M10 12l5.5 5.5L14 19l-7-7 7-7 1.5 1.5L10 12z"></path></svg><span>{{backText}}</span></button></sc-if></div>
+<div class="hd-swrap" data-open="{{sOpenStr}}" onKeyDown="{{sKey}}"><div class="hd-sbox hd-glass" role="combobox" aria-expanded="{{sOpenStr}}" aria-haspopup="listbox" aria-owns="hd-slist"><span class="hd-sico"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"></path></svg></span><input class="hd-sinput" type="text" value="{{q}}" placeholder="{{sPlaceholder}}" aria-label="Поиск по SmartBackOffice: задачи и клиенты" aria-autocomplete="list" aria-controls="hd-slist" onChange="{{setQRaw}}" onFocus="{{sFocus}}"><sc-if value="{{sLoading}}" hint-placeholder-val="{{false}}"><span class="hd-sspin" role="status" aria-label="Ищем"></span></sc-if><sc-if value="{{sHasQ}}" hint-placeholder-val="{{false}}"><button type="button" class="hd-sclr" aria-label="Очистить поиск" onClick="{{clearQ}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.667A6.667 6.667 0 108 1.333a6.667 6.667 0 000 13.334zm-2.667-5L7.057 8 5.333 6.333l1-1L8 7.057l1.667-1.724 1 1L8.943 8l1.724 1.667-1 1L8 8.943l-1.667 1.724-1-1z"></path></svg></button></sc-if><sc-if value="{{sShowFind}}" hint-placeholder-val="{{false}}"><button type="button" class="hd-sfind" data-tone="{{sFindTone}}" aria-disabled="{{sFindDisabled}}" onClick="{{doSearch}}">Найти</button></sc-if><sc-if value="{{sShowVk}}" hint-placeholder-val="{{true}}"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="Поиск в ВК" position="bottom"><button class="hd-sbtn" type="button" aria-label="Поиск в ВК" onClick="{{goModule}}" style="color: var(--graphic-primary, #212124)"><svg aria-hidden="true" focusable="false" fill="currentColor" width="20" height="20" viewBox="0 0 20 20"><path d="M14 10a4 4 0 013.445 6.031l1.762 1.762-1.414 1.414-1.762-1.762A4 4 0 1114 10zm0 2a2 2 0 100 4 2 2 0 000-4z"></path><path d="M10 2a8.001 8.001 0 017.936 7h-3.845a3.33 3.33 0 01-2.942-4.889 5.974 5.974 0 00-4.9 1.206 4.115 4.115 0 012.853 4.436 3.435 3.435 0 01-1.054 2.074.817.817 0 00-.211.866L8.97 15.91l.029.004v2.022A7.998 7.998 0 0110 2zM4.753 7.09A5.972 5.972 0 004 10a5.99 5.99 0 002.479 4.856l-.528-1.498a2.816 2.816 0 01.728-2.989c.24-.226.396-.533.437-.864a2.108 2.108 0 00-1.845-2.358l-.518-.057zm8.304-2.254A1.33 1.33 0 0014.09 7h1.104a6.027 6.027 0 00-2.138-2.164z"></path></svg></button></x-import></sc-if></div><sc-if value="{{sOpen}}" hint-placeholder-val="{{false}}"><div class="hd-sdd" id="hd-slist" role="listbox" aria-label="Результаты поиска"><sc-if value="{{sRecent}}" hint-placeholder-val="{{false}}"><div class="hd-sdd-h">Найдено ранее</div><div class="hd-slist"><sc-for list="{{sRecentItems}}" as="it" hint-placeholder-count="5"><button type="button" class="hd-opt" role="option" aria-selected="{{it.active}}" data-active="{{it.active}}" onClick="{{it.pick}}" onMouseEnter="{{it.hover}}"><span class="hd-opt-i"><sc-if value="{{it.isTask}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM8 6v2h8V6H8zm0 4v2h6v-2H8z"></path></svg></sc-if><sc-if value="{{it.isSection}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg></sc-if><sc-if value="{{it.isFunc}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></sc-if><sc-if value="{{it.isRef}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h12a1 1 0 011 1v18a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1zm2 3v2h8V5H8z"/></svg></sc-if><sc-if value="{{it.isLink}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg></sc-if><sc-if value="{{it.isClient}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 22v-2c0-2.6-2.4-5-8-5s-8 2.4-8 5v2h16zM12 2c2.8 0 4.5 2 4.5 4.8S14.6 12 12 12 7.5 9.6 7.5 6.8 9.2 2 12 2zm0 13.5l-1.2 2.2L12 21l1.2-3.3-1.2-2.2z"></path></svg></sc-if></span><span class="hd-opt-b"><span class="hd-opt-t">{{it.pre}}<mark>{{it.hit}}</mark>{{it.post}}</span><sc-if value="{{it.isEnt}}" hint-placeholder-val="{{true}}"><span class="hd-opt-m"><span>{{it.kind}}</span><i aria-hidden="true">·</i><span><em>{{it.k1}}</em> {{it.v1}}</span><i aria-hidden="true">·</i><span><em>{{it.k2}}</em> {{it.v2}}</span></span></sc-if><sc-if value="{{it.isCat}}" hint-placeholder-val="{{false}}"><span class="hd-opt-m"><span>{{it.kind}}</span></span></sc-if></span></button></sc-for></div></sc-if><sc-if value="{{sHint}}" hint-placeholder-val="{{false}}"><div class="hd-shint" role="status">{{sHintText}}</div></sc-if><sc-if value="{{sLoading}}" hint-placeholder-val="{{false}}"><div class="hd-sk-tags"><span class="hd-sk hd-sk--tag"></span><span class="hd-sk hd-sk--tag"></span><span class="hd-sk hd-sk--tag"></span></div><div class="hd-sk-row"><span class="hd-sk hd-sk--i"></span><span class="hd-sk-c"><span class="hd-sk hd-sk--t"></span><span class="hd-sk-l"><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span></span></span></div><div class="hd-sk-row"><span class="hd-sk hd-sk--i"></span><span class="hd-sk-c"><span class="hd-sk hd-sk--t"></span><span class="hd-sk-l"><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span></span></span></div><div class="hd-sk-row"><span class="hd-sk hd-sk--i"></span><span class="hd-sk-c"><span class="hd-sk hd-sk--t"></span><span class="hd-sk-l"><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span></span></span></div><div class="hd-sk-row"><span class="hd-sk hd-sk--i"></span><span class="hd-sk-c"><span class="hd-sk hd-sk--t"></span><span class="hd-sk-l"><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span></span></span></div><div class="hd-sk-row"><span class="hd-sk hd-sk--i"></span><span class="hd-sk-c"><span class="hd-sk hd-sk--t"></span><span class="hd-sk-l"><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span></span></span></div></sc-if><sc-if value="{{sResults}}" hint-placeholder-val="{{false}}"><div class="hd-stags" role="group" aria-label="Тип результата"><sc-for list="{{sTags}}" as="tg" hint-placeholder-count="3"><button type="button" class="hd-stag" aria-pressed="{{tg.on}}" onClick="{{tg.pick}}">{{tg.label}}</button></sc-for></div><div class="hd-slist hd-slist--scroll" onScroll="{{sScroll}}"><sc-for list="{{sItems}}" as="it" hint-placeholder-count="5"><button type="button" class="hd-opt" role="option" aria-selected="{{it.active}}" data-active="{{it.active}}" onClick="{{it.pick}}" onMouseEnter="{{it.hover}}"><span class="hd-opt-i"><sc-if value="{{it.isTask}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM8 6v2h8V6H8zm0 4v2h6v-2H8z"></path></svg></sc-if><sc-if value="{{it.isSection}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h7v7H4V4zm9 0h7v7h-7V4zM4 13h7v7H4v-7zm9 0h7v7h-7v-7z"/></svg></sc-if><sc-if value="{{it.isFunc}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></sc-if><sc-if value="{{it.isRef}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h12a1 1 0 011 1v18a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1zm2 3v2h8V5H8z"/></svg></sc-if><sc-if value="{{it.isLink}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg></sc-if><sc-if value="{{it.isClient}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20 22v-2c0-2.6-2.4-5-8-5s-8 2.4-8 5v2h16zM12 2c2.8 0 4.5 2 4.5 4.8S14.6 12 12 12 7.5 9.6 7.5 6.8 9.2 2 12 2zm0 13.5l-1.2 2.2L12 21l1.2-3.3-1.2-2.2z"></path></svg></sc-if></span><span class="hd-opt-b"><span class="hd-opt-t">{{it.pre}}<mark>{{it.hit}}</mark>{{it.post}}</span><sc-if value="{{it.isEnt}}" hint-placeholder-val="{{true}}"><span class="hd-opt-m"><span>{{it.kind}}</span><i aria-hidden="true">·</i><span><em>{{it.k1}}</em> {{it.v1}}</span><i aria-hidden="true">·</i><span><em>{{it.k2}}</em> {{it.v2}}</span></span></sc-if><sc-if value="{{it.isCat}}" hint-placeholder-val="{{false}}"><span class="hd-opt-m"><span>{{it.kind}}</span></span></sc-if></span></button></sc-for><sc-if value="{{sMore}}" hint-placeholder-val="{{false}}"><div class="hd-sk-row"><span class="hd-sk hd-sk--i"></span><span class="hd-sk-c"><span class="hd-sk hd-sk--t"></span><span class="hd-sk-l"><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span></span></span></div><div class="hd-sk-row"><span class="hd-sk hd-sk--i"></span><span class="hd-sk-c"><span class="hd-sk hd-sk--t"></span><span class="hd-sk-l"><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span><span class="hd-sk hd-sk--s"></span></span></span></div></sc-if><sc-if value="{{sNone}}" hint-placeholder-val="{{false}}"><div class="hd-shint"><b>Ничего не нашли</b><br>Проверьте написание — ИНН или ПИН нужно вводить полностью</div></sc-if></div></sc-if></div></sc-if></div>
+<div class="hd-right">
+<x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{phoneTip}}" position="bottom"><div class="hd-seg hd-seg--round hd-glass"><button class="hd-seg-btn hd-phone" type="button" aria-label="Телефония" aria-expanded="{{cPanelStr}}" aria-pressed="{{cPanelStr}}" data-live="{{cLiveStr}}" onClick="{{togglePhone}}"><svg class="hd-ph-off" aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M16.582 21.501a5.644 5.644 0 01-2.918-.808C8.83 17.788 6.115 15.073 3.29 10.32a5.64 5.64 0 01-.79-2.865 5.881 5.881 0 011.093-3.408l1.15-1.63c.351-.49.889-.796 1.481-.845a2.003 2.003 0 011.586.581l2.874 2.875c.654.656.776 1.668.297 2.463a.886.886 0 01-.071.102l-.6.763c-.313.397-.279.968.079 1.326l3.934 3.935c.358.358.929.392 1.327.078l.763-.602a.762.762 0 01.104-.07 2.008 2.008 0 012.462.297l2.873 2.875c.418.42.63.997.581 1.586a2.021 2.021 0 01-.837 1.477l-1.633 1.153a5.81 5.81 0 01-3.381 1.091zM6.394 3.564l-1.17 1.641A3.859 3.859 0 004.5 7.448c.002.652.178 1.292.51 1.85 2.634 4.434 5.169 6.967 9.685 9.681 1.265.762 2.876.684 4.108-.198l1.632-1.153-2.872-2.896-.676.533a3.004 3.004 0 01-3.979-.235l-3.934-3.935a3 3 0 01-.236-3.977l.525-.667-2.869-2.887z"></path></svg><svg class="hd-ph-on" aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M19.5 15.6l-3.2-.9a1.5 1.5 0 00-1.5.4l-1.5 1.6a13.6 13.6 0 01-6-6l1.6-1.5c.4-.4.5-1 .4-1.5l-.9-3.2A1.5 1.5 0 006.9 3.4H4.5A1.5 1.5 0 003 4.9C3 13.2 10.8 21 19.1 21a1.5 1.5 0 001.5-1.5v-2.4c0-.7-.4-1.3-1.1-1.5z"/></svg></button></div></x-import>
+<div class="hd-tools">
+<sc-if value="{{online}}" hint-placeholder-val="{{true}}"><div class="hd-seg hd-glass" role="group" aria-label="Режим работы" data-locked="{{locked}}"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{tipSingle}}" position="bottom"><button class="hd-seg-btn" type="button" aria-label="Режим: одна задача" aria-pressed="{{isSingle}}" aria-disabled="{{locked}}" onClick="{{pickSingle}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M7 3a1 1 0 011-1h7.185a3 3 0 012.985 3.299l-.146 1.458a.2.2 0 00.22.219L19.7 6.83A3 3 0 0123 9.815V21a1 1 0 01-1 1H8a1 1 0 01-1-1V3zm8 8h-5v2h5v-2zm4 4h-9v2h9v-2z" fill-rule="evenodd" clip-rule="evenodd"></path><path d="M5.5 19.5v-12c-.833 3-2.6 9.4-3 11-.5 2 1 2.5 3.5 3-.4-.4-.5-1.5-.5-2z"></path></svg></button></x-import><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{tipMulti}}" position="bottom"><button class="hd-seg-btn" type="button" aria-label="Режим: многозадачность" aria-pressed="{{isMulti}}" aria-disabled="{{locked}}" onClick="{{pickMulti}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M13.303 5H17a3 3 0 013 3v1.013a2 2 0 011.741 2.38l-1.44 7.195A3 3 0 0117.362 21H6.64a3 3 0 01-2.942-2.412L2.26 11.393A2 2 0 014 9.013V6a3 3 0 013-3h3.303l3 2zM5.659 18.196a1 1 0 00.98.804H17.36a1 1 0 00.981-.804L19.781 11H4.22l1.44 7.196zM7 5a1 1 0 00-1 1v3h12V8a1 1 0 00-1-1h-4.303l-3-2H7z"></path></svg></button></x-import></div></sc-if>
+<x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="Профиль" position="bottom"><button class="hd-profile hd-glass" type="button" aria-label="Профиль" aria-haspopup="dialog" aria-expanded="{{open}}" onClick="{{toggle}}"><sc-if value="{{open}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 16 16"><path d="M8 7.063l4.125 4.125 1.125-1.126C10.907 7.572 8 4.813 8 4.813s-2.907 2.76-5.25 5.25l1.125 1.126L8 7.061z"></path></svg></sc-if><sc-if value="{{closed}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 16 16"><path d="M8 8.938L3.875 4.811 2.75 5.938C5.093 8.428 8 11.188 8 11.188s2.907-2.76 5.25-5.25l-1.125-1.125L8 8.938z"></path></svg></sc-if><span style="{{tile32Style}}"><sc-if value="{{is_free}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M12.497 13.938A2.004 2.004 0 0110 12a2 2 0 112.497 1.938zm7 0A2.004 2.004 0 0117 12a2 2 0 112.497 1.938zm-14 0a2 2 0 11-.994-3.876 2 2 0 01.994 3.876z"></path></svg></sc-if><sc-if value="{{is_busy}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm5-12H7v4h10v-4z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_pause}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M7 6h3v12H7V6zm7 0h3v12h-3V6z"></path></svg></sc-if><sc-if value="{{is_tech}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M13.7 4h-3.4l.7 10h2l.7-10zM12 20.5a2 2 0 100-4 2 2 0 000 4z"></path></svg></sc-if><sc-if value="{{is_training}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M23 6.184a2.667 2.667 0 01-2.31 2.643L18 9.19v6.645c0 .581-.363 1.1-.909 1.3a14.803 14.803 0 01-10.182 0 1.385 1.385 0 01-.909-1.3V9.19l-2.69-.363A2.667 2.667 0 011 6.184V6h22v.184z"></path><path d="M20 10.937v7.5c-.598.544-1 1.49-1 2.23C19 21.77 19.895 22 21 22s2-.229 2-1.333c0-.74-.402-1.686-1-2.23v-7.894c-.33.126-.679.216-1.042.265l-.958.13z"></path></svg></sc-if><sc-if value="{{is_other}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M4.653 5.112l-2 3.383L9.137 12l-6.486 3.505 2 3.383 5.834-4.247-.483 6.609h3.994l-.484-6.61 5.834 4.248 2-3.383L14.861 12l6.486-3.505-2-3.383-5.834 4.247.484-6.609h-3.994l.483 6.609-5.833-4.247z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_offline}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M3 12C3 6.477 7.477 2 13 2c.106 0 .21.002.316.005a1 1 0 01.817 1.53 7.5 7.5 0 006.874 11.45 1 1 0 01.964 1.439A10 10 0 0113 22C7.477 22 3 17.523 3 12z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_call}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M7.167 2.795a1.015 1.015 0 00-1.542.132L4.406 4.629A4.833 4.833 0 003.5 7.45c.003.808.213 1.621.65 2.358 2.77 4.664 5.411 7.252 10.03 10.028 1.648.99 3.692.84 5.205-.244l1.688-1.21c.51-.367.574-1.102.132-1.543l-2.873-2.875a1.012 1.012 0 00-1.24-.149l-2.383 1.925-6.447-6.446L10.19 6.91c.241-.4.18-.91-.148-1.24L7.167 2.796z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_chat}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M2 8.25C2 4.187 5.125 2 9.5 2c3.06 0 5.507 1.07 6.703 3.102A13.95 13.95 0 0014.499 5c-2.495 0-4.854.621-6.635 2.036-1.839 1.46-2.866 3.616-2.866 6.215 0 .416.027.818.08 1.205C3.308 12.83 2 10.65 2 8.25z"></path><path d="M14.499 7C18.875 7 22 9.188 22 13.25c0 4.064-3.624 7.502-7.014 8.668-.234.072-.35.108-.528.06a.74.74 0 01-.359-.265C14 21.559 14 21.4 14 21.083V19c-3.75 0-7.002-1.686-7.002-5.75 0-4.062 3.125-6.25 7.501-6.25z"></path></svg></sc-if></span></button></x-import>
+</div>
+</div>
+<sc-if value="{{cPanel}}" hint-placeholder-val="{{false}}"><div class="hd-cw" role="region" aria-label="Виджет звонков"><sc-if value="{{cAwp}}" hint-placeholder-val="{{false}}"><div class="hd-cw-msg"><span class="hd-cw-mi hd-cw-mi--warn" aria-hidden="true">!</span><span class="hd-cw-mt"><b>Запустите приложение AWP</b><span>Чтобы начать работу со звонками, необходимо запустить приложение на компьютере</span></span></div></sc-if><sc-if value="{{cLoadErr}}" hint-placeholder-val="{{false}}"><div class="hd-cw-msg"><span class="hd-cw-mi" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm-.5 8h4l-.5 12H7l-.5-12zM15 2h2l2 3-1 3v14h-4V8l-1-3 2-3z"></path></svg></span><span class="hd-cw-mt"><b>Не получилось загрузить</b><span>Уже исправляем. Попробуйте еще раз или зайдите позже</span></span><button type="button" class="hd-cw-btn" onClick="{{cRetry}}">Попробовать еще раз</button></div></sc-if><sc-if value="{{cReady}}" hint-placeholder-val="{{true}}"><button type="button" class="hd-cw-ib" data-look="{{cFwdLook}}" aria-label="Перевести клиента" title="Перевести клиента" aria-disabled="{{cNotLiveStr}}" onClick="{{cTransfer}}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 5.5V9C6.5 9 3 12.5 3 19c2-3 5-4.5 10-4.5V18l8-6.25L13 5.5z"></path></svg></button><button type="button" class="hd-cw-ib" data-look="{{cBookLook}}" aria-label="Телефонный справочник" title="Телефонный справочник" onClick="{{cDir}}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h12a2 2 0 012 2v16a2 2 0 01-2 2H6a2 2 0 01-2-2V4a2 2 0 012-2zm8.6 12.8l-1.5-.4a.7.7 0 00-.7.2l-.6.7a6 6 0 01-2.6-2.6l.7-.6a.7.7 0 00.2-.7l-.4-1.5a.7.7 0 00-.7-.5H8.1a.7.7 0 00-.7.7c0 3.6 3.4 7 7 7a.7.7 0 00.7-.7v-1.1a.7.7 0 00-.5-.7z"></path></svg></button><div class="hd-cw-lines"><sc-if value="{{cLive}}" hint-placeholder-val="{{false}}"><div class="hd-cw-line hd-cw-line--on" data-ring="{{cRingStr}}"><span class="hd-cw-dot hd-cw-dot--on"></span>{{cDirLabel}}<b class="hd-cw-t">{{cTime}}</b><span class="hd-cw-who">{{cWho}}</span><span>{{cNum}}</span><span class="hd-cw-login">U_APW12</span></div></sc-if><sc-if value="{{cNotLive}}" hint-placeholder-val="{{true}}"><div class="hd-cw-line"><span class="hd-cw-dot"></span>Свободная линия</div></sc-if><div class="hd-cw-line"><span class="hd-cw-dot"></span>{{cLine2}}</div></div><sc-if value="{{cNotLive}}" hint-placeholder-val="{{true}}"><button type="button" class="hd-cw-call" onClick="{{cDial}}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 15.6l-3.2-.9a1.5 1.5 0 00-1.5.4l-1.5 1.6a13.6 13.6 0 01-6-6l1.6-1.5c.4-.4.5-1 .4-1.5l-.9-3.2A1.5 1.5 0 006.9 3.4H4.5A1.5 1.5 0 003 4.9C3 13.2 10.8 21 19.1 21a1.5 1.5 0 001.5-1.5v-2.4c0-.7-.4-1.3-1.1-1.5z"></path></svg>Позвонить</button><span class="hd-cw-op" aria-label="Оператор">U_2930M<br>25000<br>31219</span></sc-if><sc-if value="{{cLive}}" hint-placeholder-val="{{false}}"><button type="button" class="hd-cw-ib hd-cw-ib--line" aria-pressed="{{cHoldStr}}" aria-label="{{cHoldLabel}}" title="{{cHoldLabel}}" onClick="{{cHold}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 110 20 10 10 0 010-20zm-2 6H8v8h2V8zm6 0h-2v8h2V8z"></path></svg></button><button type="button" class="hd-cw-end" aria-label="Завершить звонок" title="Завершить звонок" onClick="{{cAskEnd}}"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 9c-2.6 0-5 .6-7.3 1.7-.8.4-1.2 1.2-1.2 2v2.1c0 .6.6 1.1 1.2 1l3-.6c.5-.1.9-.5.9-1.1v-1.8a12 12 0 016.8 0v1.8c0 .6.4 1 .9 1.1l3 .6c.6.1 1.2-.4 1.2-1v-2.1c0-.8-.4-1.6-1.2-2C17 9.6 14.6 9 12 9z"></path></svg></button></sc-if><span class="hd-cw-sep" aria-hidden="true"></span><button type="button" class="hd-cw-ib" aria-label="Перевести на IVR" title="{{cIvrTitle}}" aria-disabled="{{cNotLiveStr}}" onClick="{{cIvr}}"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M5 3h9l5 5v6h-2V9h-4V5H7v14h6v2H5V3zm11 12l5 3.5-5 3.5v-2.5h-3v-2h3V15z"></path></svg></button></sc-if></div></sc-if>
+<sc-if value="{{cModal}}" hint-placeholder-val="{{false}}"><button type="button" class="hd-mback" aria-label="Закрыть" onClick="{{cCloseModal}}"></button><div class="hd-modal" data-size="{{cModalSize}}" role="dialog" aria-modal="true" aria-label="{{cModalTitle}}"><div class="hd-mh"><h2>{{cModalTitle}}</h2><button type="button" class="hd-mx" aria-label="Закрыть" onClick="{{cCloseModal}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.707 5.707l-1.414-1.414L12 10.586 5.707 4.293 4.293 5.707 10.586 12l-6.293 6.293 1.414 1.414L12 13.414l6.293 6.293 1.414-1.414L13.414 12l6.293-6.293z"></path></svg></button></div><sc-if value="{{mDial}}" hint-placeholder-val="{{false}}"><div class="hd-mb"><div class="hd-mtags" role="group" aria-label="Тип номера"><sc-for list="{{dialKinds}}" as="dk" hint-placeholder-count="3"><button type="button" class="hd-stag" aria-pressed="{{dk.on}}" onClick="{{dk.pick}}">{{dk.label}}</button></sc-for></div><label class="hd-dial-f" data-filled="{{dialFilled}}"><span>Введите номер</span><input type="tel" inputmode="numeric" value="{{dialShown}}" aria-describedby="hd-dial-h" onChange="{{dialInput}}"><sc-if value="{{dialHas}}" hint-placeholder-val="{{false}}"><button type="button" class="hd-sclr" aria-label="Очистить номер" onClick="{{dialClear}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.667A6.667 6.667 0 108 1.333a6.667 6.667 0 000 13.334zm-2.667-5L7.057 8 5.333 6.333l1-1L8 7.057l1.667-1.724 1 1L8.943 8l1.724 1.667-1 1L8 8.943l-1.667 1.724-1-1z"></path></svg></button></sc-if></label><div class="hd-dial-h" id="hd-dial-h">{{dialHint}}</div><div class="hd-pad"><sc-for list="{{pad}}" as="pk" hint-placeholder-count="12"><button type="button" class="hd-key" data-blank="{{pk.blank}}" aria-label="{{pk.aria}}" onClick="{{pk.press}}">{{pk.label}}<sc-if value="{{pk.isDel}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M8 5h12a1 1 0 011 1v12a1 1 0 01-1 1H8l-6-7 6-7z"></path><path d="M11 9l6 6m0-6l-6 6" stroke-linecap="round"></path></svg></sc-if></button></sc-for></div></div><div class="hd-mf"><button type="button" class="hd-mbtn hd-mbtn--pri" aria-disabled="{{dialNotReady}}" onClick="{{dialCall}}">Позвонить</button><button type="button" class="hd-mbtn" onClick="{{cCloseModal}}">Отмена</button></div></sc-if><sc-if value="{{mDir}}" hint-placeholder-val="{{false}}"><div class="hd-mb hd-mb--scroll"><label class="hd-dir-s"><svg aria-hidden="true" focusable="false" fill="currentColor" width="20" height="20" viewBox="0 0 24 24"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"></path></svg><input type="text" placeholder="Название группы или скилла" aria-label="Название группы или скилла" value="{{dirQ}}" onChange="{{dirSetQ}}"></label><sc-for list="{{dirGroups}}" as="dg" hint-placeholder-count="4"><div class="hd-dir-g"><div class="hd-dir-top"><b>{{dg.name}}</b><span class="hd-dir-acts"><button type="button" class="hd-cw-sm" onClick="{{dg.call}}"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 15.6l-3.2-.9a1.5 1.5 0 00-1.5.4l-1.5 1.6a13.6 13.6 0 01-6-6l1.6-1.5c.4-.4.5-1 .4-1.5l-.9-3.2A1.5 1.5 0 006.9 3.4H4.5A1.5 1.5 0 003 4.9C3 13.2 10.8 21 19.1 21a1.5 1.5 0 001.5-1.5v-2.4c0-.7-.4-1.3-1.1-1.5z"></path></svg>Позвонить</button><button type="button" class="hd-cw-sm" onClick="{{dg.transfer}}"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M13 5.5V9C6.5 9 3 12.5 3 19c2-3 5-4.5 10-4.5V18l8-6.25L13 5.5z"></path></svg>Перевести</button></span></div><sc-if value="{{dg.open}}" hint-placeholder-val="{{false}}"><div class="hd-dir-info">{{dg.info}}</div></sc-if><button type="button" class="hd-dir-more" aria-expanded="{{dg.openStr}}" onClick="{{dg.toggle}}">{{dg.moreLabel}}<span class="hd-dir-chev"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"></path></svg></span></button></div></sc-for><sc-if value="{{dirNone}}" hint-placeholder-val="{{false}}"><div class="hd-shint">Ничего не нашли</div></sc-if></div></sc-if><sc-if value="{{mTransfer}}" hint-placeholder-val="{{false}}"><div class="hd-mb"><p class="hd-mp">Вы уверены, что хотите перевести клиента на другого специалиста и завершить звонок?</p></div><div class="hd-mf"><button type="button" class="hd-mbtn hd-mbtn--pri" onClick="{{cDoTransfer}}">Перевести и завершить</button><button type="button" class="hd-mbtn" onClick="{{cCloseModal}}">Отмена</button></div></sc-if><sc-if value="{{mEnd}}" hint-placeholder-val="{{false}}"><div class="hd-mb"><div class="hd-mcap">Длительность текущего звонка</div><div class="hd-mdur">{{cTimeShort}}</div></div><div class="hd-mf"><button type="button" class="hd-mbtn hd-mbtn--pri" onClick="{{cDoEnd}}">Завершить</button><button type="button" class="hd-mbtn" onClick="{{cCloseModal}}">Отмена</button></div></sc-if><sc-if value="{{mInfo}}" hint-placeholder-val="{{false}}"><div class="hd-mb"><p class="hd-mp">[FATAL] RQEHandler.lineMakeCall:originate2WayCall: error in first call attempt: -ERR NORMAL_TEMPORARY_FAILURE</p><div class="hd-mcap" style="margin-top: 16px">Техническая информация</div><p class="hd-mp hd-mp--sec">RQEHandler.lineMakeCall:originate2WayCall: error in first call attempt: - ERR NORMAL_TEMPORARY_FAILURE | Команда: lineMakeCall | refId: 201 ea101-cc16-47df-9eb4-6c880afa8e8f</p><dl class="hd-mkv"><div><dt>Агент</dt><dd>U_24bag</dd></div><div><dt>Терминал</dt><dd>1010019</dd></div><div><dt>Дата</dt><dd>{{infoDate}}</dd></div></dl></div><div class="hd-mf"><button type="button" class="hd-mbtn" onClick="{{cCloseModal}}">Закрыть</button></div></sc-if></div></sc-if>
+<sc-if value="{{hdToast}}" hint-placeholder-val="{{false}}"><div class="hd-toast" role="status">{{hdToastText}}</div></sc-if>
+<sc-if value="{{sOpen}}" hint-placeholder-val="{{false}}"><button type="button" class="hd-scrim hd-scrim--s" aria-label="Закрыть поиск" tabindex="-1" onClick="{{sClose}}"></button></sc-if>
+<sc-if value="{{open}}" hint-placeholder-val="{{false}}">
+<button type="button" class="hd-scrim" aria-label="Закрыть профиль" onClick="{{close}}"></button>
+<div class="hd-popwrap" onKeyDown="{{onKey}}">
+<sc-if value="{{pProfile}}" hint-placeholder-val="{{true}}"><div class="hd-pop hd-pop--profile" role="dialog" aria-label="Профиль"><div class="hd-me"><span style="{{tile24Style}}"><sc-if value="{{is_free}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M12.497 13.938A2.004 2.004 0 0110 12a2 2 0 112.497 1.938zm7 0A2.004 2.004 0 0117 12a2 2 0 112.497 1.938zm-14 0a2 2 0 11-.994-3.876 2 2 0 01.994 3.876z"></path></svg></sc-if><sc-if value="{{is_busy}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm5-12H7v4h10v-4z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_pause}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M7 6h3v12H7V6zm7 0h3v12h-3V6z"></path></svg></sc-if><sc-if value="{{is_tech}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M13.7 4h-3.4l.7 10h2l.7-10zM12 20.5a2 2 0 100-4 2 2 0 000 4z"></path></svg></sc-if><sc-if value="{{is_training}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M23 6.184a2.667 2.667 0 01-2.31 2.643L18 9.19v6.645c0 .581-.363 1.1-.909 1.3a14.803 14.803 0 01-10.182 0 1.385 1.385 0 01-.909-1.3V9.19l-2.69-.363A2.667 2.667 0 011 6.184V6h22v.184z"></path><path d="M20 10.937v7.5c-.598.544-1 1.49-1 2.23C19 21.77 19.895 22 21 22s2-.229 2-1.333c0-.74-.402-1.686-1-2.23v-7.894c-.33.126-.679.216-1.042.265l-.958.13z"></path></svg></sc-if><sc-if value="{{is_other}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M4.653 5.112l-2 3.383L9.137 12l-6.486 3.505 2 3.383 5.834-4.247-.483 6.609h3.994l-.484-6.61 5.834 4.248 2-3.383L14.861 12l6.486-3.505-2-3.383-5.834 4.247.484-6.609h-3.994l.483 6.609-5.833-4.247z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_offline}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M3 12C3 6.477 7.477 2 13 2c.106 0 .21.002.316.005a1 1 0 01.817 1.53 7.5 7.5 0 006.874 11.45 1 1 0 01.964 1.439A10 10 0 0113 22C7.477 22 3 17.523 3 12z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_call}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M7.167 2.795a1.015 1.015 0 00-1.542.132L4.406 4.629A4.833 4.833 0 003.5 7.45c.003.808.213 1.621.65 2.358 2.77 4.664 5.411 7.252 10.03 10.028 1.648.99 3.692.84 5.205-.244l1.688-1.21c.51-.367.574-1.102.132-1.543l-2.873-2.875a1.012 1.012 0 00-1.24-.149l-2.383 1.925-6.447-6.446L10.19 6.91c.241-.4.18-.91-.148-1.24L7.167 2.796z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{is_chat}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M2 8.25C2 4.187 5.125 2 9.5 2c3.06 0 5.507 1.07 6.703 3.102A13.95 13.95 0 0014.499 5c-2.495 0-4.854.621-6.635 2.036-1.839 1.46-2.866 3.616-2.866 6.215 0 .416.027.818.08 1.205C3.308 12.83 2 10.65 2 8.25z"></path><path d="M14.499 7C18.875 7 22 9.188 22 13.25c0 4.064-3.624 7.502-7.014 8.668-.234.072-.35.108-.528.06a.74.74 0 01-.359-.265C14 21.559 14 21.4 14 21.083V19c-3.75 0-7.002-1.686-7.002-5.75 0-4.062 3.125-6.25 7.501-6.25z"></path></svg></sc-if></span><div class="hd-me-body"><x-import component-from-global-scope="DesignSystem_88b1f8.Status" color="{{tagColor}}" view="{{tagView}}">{{statusLabel}}</x-import><sc-if value="{{hasNote}}" hint-placeholder-val="{{false}}"><div class="hd-note">{{note}}</div></sc-if><div class="hd-name">Константинопольский Константин Константинович</div><sc-if value="{{unavailable}}" hint-placeholder-val="{{false}}"><div class="hd-na">Задачи не доступны</div></sc-if><div class="hd-login">U_APW12</div><div class="hd-dep">Дирекция развития систем операционных процессов</div><button type="button" class="hd-chg" onClick="{{openStatus}}">Изменить статус<svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 16 16"><path d="M9.086 8L4.793 3.707l1.414-1.414L11.914 8l-5.707 5.707-1.414-1.414L9.086 8z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></button></div></div><sc-if value="{{online}}" hint-placeholder-val="{{true}}"><div class="hd-cell hd-cell--mode"><span class="hd-ic"><sc-if value="{{isSingle}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M16 17H8v-2h8v2zm-3-4H8v-2h5v2z"></path><path d="M12 2a3 3 0 013 3v2h2a3 3 0 013 3v12H4V2h8zM6 20h12V10a1 1 0 00-1-1h-4V5a1 1 0 00-1-1H6v16z"></path></svg></sc-if><sc-if value="{{isMulti}}" hint-placeholder-val="{{true}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M13.303 5H17a3 3 0 013 3v1.013a2 2 0 011.741 2.38l-1.44 7.195A3 3 0 0117.362 21H6.64a3 3 0 01-2.942-2.412L2.26 11.393A2 2 0 014 9.013V6a3 3 0 013-3h3.303l3 2zM5.659 18.196a1 1 0 00.98.804H17.36a1 1 0 00.981-.804L19.781 11H4.22l1.44 7.196zM7 5a1 1 0 00-1 1v3h12V8a1 1 0 00-1-1h-4.303l-3-2H7z"></path></svg></sc-if></span><span class="hd-cell-body"><span class="hd-cell-t">{{modeLabel}}</span><span class="hd-cell-c">{{modeCaption}}</span></span></div></sc-if><button class="hd-cell hd-cell--btn" type="button" onClick="{{openRoles}}"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M12 13c2.966 0 5.09.73 6.405 2.427C19.67 17.057 20 19.356 20 22h-2c0-2.584-.35-4.284-1.175-5.348C16.052 15.655 14.675 15 12 15c-2.675 0-4.051.655-4.825 1.652C6.349 17.716 6 19.416 6 22H4c0-2.644.33-4.945 1.595-6.574C6.91 13.73 9.035 13 12 13zm0-11a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"></path></svg></span><span class="hd-cell-body"><span class="hd-cell-t">Роли</span></span><svg aria-hidden="true" focusable="false" style="color: var(--graphic-secondary)" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M14 12l-5.5 5.5L10 19l7-7-7-7-1.5 1.5L14 12z"></path></svg></button><button class="hd-cell hd-cell--btn" type="button" onClick="{{openSkills}}"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M10.301 3.793a7.003 7.003 0 017.968-1.367l.15 1.716-2.787 1.992a1 1 0 00-.125 1.522l.73.73a1 1 0 001.496-.092l2.145-2.751 1.69.183a7.003 7.003 0 01-1.366 7.968 6.671 6.671 0 01-5.982 1.824.217.217 0 00-.092 0c-.016.004-.018.008-.014.005L8.796 20.84a3.977 3.977 0 01-5.64-5.609L8.497 9.83a.083.083 0 00.005-.015.243.243 0 00-.002-.104c-.485-2.285.358-4.474 1.801-5.918zm5.224-.04a4.987 4.987 0 00-3.809 1.456c-1.023 1.023-1.587 2.54-1.259 4.087.135.635.006 1.391-.538 1.94l-5.341 5.401a1.978 1.978 0 002.804 2.79l5.318-5.319c.533-.533 1.27-.676 1.9-.554a4.67 4.67 0 004.187-1.275 4.987 4.987 0 001.446-3.94l-.922 1.184a3 3 0 01-4.487.277l-.732-.73a3 3 0 01.377-4.563l1.056-.755z"></path></svg></span><span class="hd-cell-body"><span class="hd-cell-t">Скиллы</span></span><svg aria-hidden="true" focusable="false" style="color: var(--graphic-secondary)" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M14 12l-5.5 5.5L10 19l7-7-7-7-1.5 1.5L14 12z"></path></svg></button><button class="hd-cell hd-cell--btn" type="button" onClick="{{close}}"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M12 10c1.14 0 2.065.895 2.065 2s-.924 2-2.065 2c-1.14 0-2.065-.895-2.065-2s.925-2 2.065-2z"></path><path d="M10.225 1c-.948 0-1.774.625-2.003 1.515l-.538 2.082a8.843 8.843 0 00-.145.082l-2.13-.59c-.912-.253-1.883.127-2.357.922L1.277 7.99c-.474.795-.328 1.8.353 2.438l1.594 1.493v.16L1.63 13.573a1.954 1.954 0 00-.353 2.438l1.775 2.978c.474.795 1.445 1.175 2.356.923l2.131-.59.145.08.538 2.083c.23.89 1.055 1.515 2.003 1.515h3.55c.948 0 1.774-.625 2.003-1.515l.538-2.082.145-.082 2.131.59c.911.253 1.882-.127 2.356-.922l1.775-2.978c.474-.795.329-1.8-.353-2.438l-1.594-1.493v-.16l1.594-1.493a1.954 1.954 0 00.353-2.438L20.948 5.01c-.474-.795-1.445-1.175-2.356-.923l-2.131.59a8.835 8.835 0 00-.145-.08l-.538-2.083C15.548 1.625 14.723 1 13.775 1h-3.55zm0 2h3.55l.65 2.515c.073.284.272.523.543.654.264.125.517.268.76.425.252.163.566.211.858.13l2.574-.713 1.775 2.978-1.925 1.803a.983.983 0 00-.313.783 6.427 6.427 0 010 .85.98.98 0 00.313.783l1.925 1.803-1.775 2.978-2.574-.713a1.06 1.06 0 00-.858.13c-.243.157-.496.3-.76.425-.271.13-.47.37-.544.654L13.775 21h-3.55l-.65-2.515a1.007 1.007 0 00-.543-.654 6.768 6.768 0 01-.76-.425 1.06 1.06 0 00-.858-.13l-2.574.713-1.775-2.978 1.925-1.803a.983.983 0 00.313-.783 6.403 6.403 0 010-.85.983.983 0 00-.313-.783L3.065 8.989 4.84 6.01l2.574.713c.292.081.606.033.859-.13.242-.157.495-.3.759-.425.271-.13.47-.37.544-.654L10.225 3z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span><span class="hd-cell-body"><span class="hd-cell-t">Настройки</span></span></button></div></sc-if>
+<sc-if value="{{pStatus}}" hint-placeholder-val="{{false}}"><div class="hd-pop" role="dialog" aria-label="Изменить статус"><div class="hd-phead"><button class="hd-back" type="button" onClick="{{back}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 16 16"><path d="M10.147 2.293l1.414 1.414L7.268 8l4.293 4.293-1.414 1.414L4.439 8l5.708-5.707z" fill-rule="evenodd" clip-rule="evenodd"></path></svg><span>Назад</span></button><div class="hd-ptitle">Изменить статус</div></div><div class="hd-pbody"><sc-if value="{{cur_call}}" hint-placeholder-val="{{false}}"><div class="hd-srow hd-srow--current" data-disabled="true"><span class="hd-tile hd-tile--24 hd-tile--call"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M7.167 2.795a1.015 1.015 0 00-1.542.132L4.406 4.629A4.833 4.833 0 003.5 7.45c.003.808.213 1.621.65 2.358 2.77 4.664 5.411 7.252 10.03 10.028 1.648.99 3.692.84 5.205-.244l1.688-1.21c.51-.367.574-1.102.132-1.543l-2.873-2.875a1.012 1.012 0 00-1.24-.149l-2.383 1.925-6.447-6.446L10.19 6.91c.241-.4.18-.91-.148-1.24L7.167 2.796z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span><span class="hd-srow-t">На звонке<span class="hd-srow-c">Выбрано сейчас</span></span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{yes}}" disabled="{{yes}}" aria-label="На звонке, выбрано сейчас"></x-import></div></sc-if><sc-if value="{{cur_chat}}" hint-placeholder-val="{{false}}"><div class="hd-srow hd-srow--current" data-disabled="true"><span class="hd-tile hd-tile--24 hd-tile--chat"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M2 8.25C2 4.187 5.125 2 9.5 2c3.06 0 5.507 1.07 6.703 3.102A13.95 13.95 0 0014.499 5c-2.495 0-4.854.621-6.635 2.036-1.839 1.46-2.866 3.616-2.866 6.215 0 .416.027.818.08 1.205C3.308 12.83 2 10.65 2 8.25z"></path><path d="M14.499 7C18.875 7 22 9.188 22 13.25c0 4.064-3.624 7.502-7.014 8.668-.234.072-.35.108-.528.06a.74.74 0 01-.359-.265C14 21.559 14 21.4 14 21.083V19c-3.75 0-7.002-1.686-7.002-5.75 0-4.062 3.125-6.25 7.501-6.25z"></path></svg></span><span class="hd-srow-t">В чате<span class="hd-srow-c">Выбрано сейчас</span></span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{yes}}" disabled="{{yes}}" aria-label="В чате, выбрано сейчас"></x-import></div></sc-if><div role="radiogroup" aria-label="Статус"><div class="hd-srow" role="radio" tabindex="{{st_free_tab}}" aria-checked="{{st_free_chk}}" aria-disabled="{{st_free_dis}}" data-disabled="{{st_free_dis}}" onClick="{{pick_free}}" onKeyDown="{{key_free}}"><span class="hd-tile hd-tile--24 hd-tile--free"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M12.497 13.938A2.004 2.004 0 0110 12a2 2 0 112.497 1.938zm7 0A2.004 2.004 0 0117 12a2 2 0 112.497 1.938zm-14 0a2 2 0 11-.994-3.876 2 2 0 01.994 3.876z"></path></svg></span><span class="hd-srow-t">Свободен</span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{st_free_on}}" disabled="{{st_free_dis}}" on-change="{{pick_free}}" aria-label="Свободен"></x-import></div><div class="hd-srow" role="radio" tabindex="{{st_busy_tab}}" aria-checked="{{st_busy_chk}}" aria-disabled="{{st_busy_dis}}" data-disabled="{{st_busy_dis}}" onClick="{{pick_busy}}" onKeyDown="{{key_busy}}"><span class="hd-tile hd-tile--24 hd-tile--busy"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm5-12H7v4h10v-4z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span><span class="hd-srow-t">Занят</span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{st_busy_on}}" disabled="{{st_busy_dis}}" on-change="{{pick_busy}}" aria-label="Занят"></x-import></div><div class="hd-srow" role="radio" tabindex="{{st_pause_tab}}" aria-checked="{{st_pause_chk}}" aria-disabled="{{st_pause_dis}}" data-disabled="{{st_pause_dis}}" onClick="{{pick_pause}}" onKeyDown="{{key_pause}}"><span class="hd-tile hd-tile--24 hd-tile--pause"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M7 6h3v12H7V6zm7 0h3v12h-3V6z"></path></svg></span><span class="hd-srow-t">Перерыв</span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{st_pause_on}}" disabled="{{st_pause_dis}}" on-change="{{pick_pause}}" aria-label="Перерыв"></x-import></div><div class="hd-srow" role="radio" tabindex="{{st_tech_tab}}" aria-checked="{{st_tech_chk}}" aria-disabled="{{st_tech_dis}}" data-disabled="{{st_tech_dis}}" onClick="{{pick_tech}}" onKeyDown="{{key_tech}}"><span class="hd-tile hd-tile--24 hd-tile--tech"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M13.7 4h-3.4l.7 10h2l.7-10zM12 20.5a2 2 0 100-4 2 2 0 000 4z"></path></svg></span><span class="hd-srow-t">Технические проблемы</span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{st_tech_on}}" disabled="{{st_tech_dis}}" on-change="{{pick_tech}}" aria-label="Технические проблемы"></x-import></div><div class="hd-srow" role="radio" tabindex="{{st_training_tab}}" aria-checked="{{st_training_chk}}" aria-disabled="{{st_training_dis}}" data-disabled="{{st_training_dis}}" onClick="{{pick_training}}" onKeyDown="{{key_training}}"><span class="hd-tile hd-tile--24 hd-tile--training"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M23 6.184a2.667 2.667 0 01-2.31 2.643L18 9.19v6.645c0 .581-.363 1.1-.909 1.3a14.803 14.803 0 01-10.182 0 1.385 1.385 0 01-.909-1.3V9.19l-2.69-.363A2.667 2.667 0 011 6.184V6h22v.184z"></path><path d="M20 10.937v7.5c-.598.544-1 1.49-1 2.23C19 21.77 19.895 22 21 22s2-.229 2-1.333c0-.74-.402-1.686-1-2.23v-7.894c-.33.126-.679.216-1.042.265l-.958.13z"></path></svg></span><span class="hd-srow-t">На обучении</span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{st_training_on}}" disabled="{{st_training_dis}}" on-change="{{pick_training}}" aria-label="На обучении"></x-import></div><div class="hd-srow" role="radio" tabindex="{{st_other_tab}}" aria-checked="{{st_other_chk}}" aria-disabled="{{st_other_dis}}" data-disabled="{{st_other_dis}}" onClick="{{pick_other}}" onKeyDown="{{key_other}}"><span class="hd-tile hd-tile--24 hd-tile--other"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M4.653 5.112l-2 3.383L9.137 12l-6.486 3.505 2 3.383 5.834-4.247-.483 6.609h3.994l-.484-6.61 5.834 4.248 2-3.383L14.861 12l6.486-3.505-2-3.383-5.834 4.247.484-6.609h-3.994l.483 6.609-5.833-4.247z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span><span class="hd-srow-t">Иная причина</span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{st_other_on}}" disabled="{{st_other_dis}}" on-change="{{pick_other}}" aria-label="Иная причина"></x-import></div><div class="hd-srow" role="radio" tabindex="{{st_offline_tab}}" aria-checked="{{st_offline_chk}}" aria-disabled="{{st_offline_dis}}" data-disabled="{{st_offline_dis}}" onClick="{{pick_offline}}" onKeyDown="{{key_offline}}"><span class="hd-tile hd-tile--24 hd-tile--offline"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M3 12C3 6.477 7.477 2 13 2c.106 0 .21.002.316.005a1 1 0 01.817 1.53 7.5 7.5 0 006.874 11.45 1 1 0 01.964 1.439A10 10 0 0113 22C7.477 22 3 17.523 3 12z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span><span class="hd-srow-t">Офлайн</span><x-import component-from-global-scope="DesignSystem_88b1f8.Radio" size="{{n24}}" checked="{{st_offline_on}}" disabled="{{st_offline_dis}}" on-change="{{pick_offline}}" aria-label="Офлайн"></x-import></div></div><sc-if value="{{needComment}}" hint-placeholder-val="{{false}}"><div class="hd-comment"><x-import component-from-global-scope="DesignSystem_88b1f8.Input" label="Комментарий *" value="{{comment}}" on-change="{{setComment}}" error="{{commentError}}" max-length="{{n33}}" block="{{fullWidth}}"></x-import></div></sc-if><div class="hd-autogrp"><x-import component-from-global-scope="DesignSystem_88b1f8.OptionListGroupTitle">Автоматические статусы</x-import><div class="hd-auto-row"><span class="hd-auto"><span class="hd-tile hd-tile--24 hd-tile--call"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M7.167 2.795a1.015 1.015 0 00-1.542.132L4.406 4.629A4.833 4.833 0 003.5 7.45c.003.808.213 1.621.65 2.358 2.77 4.664 5.411 7.252 10.03 10.028 1.648.99 3.692.84 5.205-.244l1.688-1.21c.51-.367.574-1.102.132-1.543l-2.873-2.875a1.012 1.012 0 00-1.24-.149l-2.383 1.925-6.447-6.446L10.19 6.91c.241-.4.18-.91-.148-1.24L7.167 2.796z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span><span>На звонке</span></span><span class="hd-auto"><span class="hd-tile hd-tile--24 hd-tile--chat"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M2 8.25C2 4.187 5.125 2 9.5 2c3.06 0 5.507 1.07 6.703 3.102A13.95 13.95 0 0014.499 5c-2.495 0-4.854.621-6.635 2.036-1.839 1.46-2.866 3.616-2.866 6.215 0 .416.027.818.08 1.205C3.308 12.83 2 10.65 2 8.25z"></path><path d="M14.499 7C18.875 7 22 9.188 22 13.25c0 4.064-3.624 7.502-7.014 8.668-.234.072-.35.108-.528.06a.74.74 0 01-.359-.265C14 21.559 14 21.4 14 21.083V19c-3.75 0-7.002-1.686-7.002-5.75 0-4.062 3.125-6.25 7.501-6.25z"></path></svg></span><span>В чате</span></span></div></div></div><div class="hd-pfoot"><x-import component-from-global-scope="DesignSystem_88b1f8.Button" view="primary" size="{{n40}}" on-click="{{save}}">Сохранить</x-import></div></div></sc-if>
+<sc-if value="{{pRoles}}" hint-placeholder-val="{{false}}"><div class="hd-pop" role="dialog" aria-label="Роли"><div class="hd-phead"><button class="hd-back" type="button" onClick="{{back}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 16 16"><path d="M10.147 2.293l1.414 1.414L7.268 8l4.293 4.293-1.414 1.414L4.439 8l5.708-5.707z" fill-rule="evenodd" clip-rule="evenodd"></path></svg><span>Назад</span></button><div class="hd-ptitle">Роли</div></div><div class="hd-pbody hd-pbody--list"><div class="hd-grp"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M21 14h1.5v2h-4a.5.5 0 000 1h2a2.5 2.5 0 01.5 4.95V23h-2v-1h-2.5v-2h4a.5.5 0 000-1h-2a2.5 2.5 0 010-5h.5v-1h2v1z"></path><path d="M12 2c5.185 0 9.448 3.947 9.95 9h-4.99a4.17 4.17 0 01-3.228-6.81A8.026 8.026 0 0012 4c-2.094 0-4 .805-5.426 2.122a7.755 7.755 0 011.536.834l.305.214a3.55 3.55 0 01.804 5.038 1.55 1.55 0 00.22 2.097l.854.747A5.001 5.001 0 0112 18.815V20c.69 0 1.36-.088 2-.253V21.8c-.646.131-1.315.201-2 .201-.423 0-.839-.03-1.248-.081l-.036-.004a9.866 9.866 0 01-.47-.072l-.034-.006C5.542 20.994 2 16.912 2 12a9.957 9.957 0 011.172-4.7c.036-.068.075-.135.113-.202a9.923 9.923 0 01.286-.477l.09-.14a10.05 10.05 0 01.546-.746A9.98 9.98 0 0112 2zM5.212 7.767A8.003 8.003 0 0010 19.747v-.932a3 3 0 00-1.024-2.257l-.855-.748a3.55 3.55 0 01-.502-4.802 1.55 1.55 0 00-.351-2.2l-.305-.213a5.778 5.778 0 00-1.751-.828zM15.57 5.16A2.172 2.172 0 0016.96 9h2.456a8.027 8.027 0 00-3.61-4.038l-.236.198z"></path></svg></span><div class="hd-grp-body"><div class="hd-grp-t">Валютный контроль</div><div class="hd-sub"><div class="hd-sub-t">Валютный контролёр</div><div class="hd-sub-c">До 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Администратор</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Разработчик</div><div class="hd-sub-c">Бессрочно</div></div></div></div><div class="hd-grp hd-grp--last"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M18 16h-5v-2h5v2z"></path><path d="M18 4a4 4 0 014 4v8.002A3.998 3.998 0 0118 20H6a4 4 0 01-4-4V8a4 4 0 014-4h12zM4 16a2 2 0 002 2h12c1.105 0 2-.894 2-1.998V11H4v5zM6 6a2 2 0 00-2 2v1h16V8a2 2 0 00-2-2H6z"></path></svg></span><div class="hd-grp-body"><div class="hd-grp-t">Платежи</div><div class="hd-sub"><div class="hd-sub-t">Оператор</div><div class="hd-sub-c">До 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Администратор</div><div class="hd-sub-c">До 31.12.25</div></div></div></div></div></div></sc-if>
+<sc-if value="{{pSkills}}" hint-placeholder-val="{{false}}"><div class="hd-pop" role="dialog" aria-label="Скиллы"><div class="hd-phead"><button class="hd-back" type="button" onClick="{{back}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 16 16"><path d="M10.147 2.293l1.414 1.414L7.268 8l4.293 4.293-1.414 1.414L4.439 8l5.708-5.707z" fill-rule="evenodd" clip-rule="evenodd"></path></svg><span>Назад</span></button><div class="hd-ptitle">Скиллы</div></div><div class="hd-pbody hd-pbody--list hd-pbody--scroll"><div class="hd-grp hd-grp--acc"><button class="hd-acc" type="button" aria-expanded="{{sk0Open}}" onClick="{{skToggle0}}"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M21 14h1.5v2h-4a.5.5 0 000 1h2a2.5 2.5 0 01.5 4.95V23h-2v-1h-2.5v-2h4a.5.5 0 000-1h-2a2.5 2.5 0 010-5h.5v-1h2v1z"></path><path d="M12 2c5.185 0 9.448 3.947 9.95 9h-4.99a4.17 4.17 0 01-3.228-6.81A8.026 8.026 0 0012 4c-2.094 0-4 .805-5.426 2.122a7.755 7.755 0 011.536.834l.305.214a3.55 3.55 0 01.804 5.038 1.55 1.55 0 00.22 2.097l.854.747A5.001 5.001 0 0112 18.815V20c.69 0 1.36-.088 2-.253V21.8c-.646.131-1.315.201-2 .201-.423 0-.839-.03-1.248-.081l-.036-.004a9.866 9.866 0 01-.47-.072l-.034-.006C5.542 20.994 2 16.912 2 12a9.957 9.957 0 011.172-4.7c.036-.068.075-.135.113-.202a9.923 9.923 0 01.286-.477l.09-.14a10.05 10.05 0 01.546-.746A9.98 9.98 0 0112 2zM5.212 7.767A8.003 8.003 0 0010 19.747v-.932a3 3 0 00-1.024-2.257l-.855-.748a3.55 3.55 0 01-.502-4.802 1.55 1.55 0 00-.351-2.2l-.305-.213a5.778 5.778 0 00-1.751-.828zM15.57 5.16A2.172 2.172 0 0016.96 9h2.456a8.027 8.027 0 00-3.61-4.038l-.236.198z"></path></svg></span><span class="hd-grp-t">Валютный контроль</span><span class="hd-acc-chev"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M18.207 10.207L12 16.414l-6.207-6.207 1.414-1.414L12 13.586l4.793-4.793 1.414 1.414z"></path></svg></span></button><sc-if value="{{sk0Open}}" hint-placeholder-val="{{false}}"><div class="hd-acc-body"><div class="hd-sub"><div class="hd-sub-t">Бутик</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Обработка писем в РК</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Операционный</div><div class="hd-sub-c">С 01.01.25 — Бессрочно</div></div></div></sc-if></div><div class="hd-grp hd-grp--acc"><button class="hd-acc" type="button" aria-expanded="{{sk1Open}}" onClick="{{skToggle1}}"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M22 23h-8v-2h8v2zM4.252 13.997A8.003 8.003 0 0012 20v2c-4.839 0-8.874-3.436-9.8-8.002h2.052zM22 20h-8v-2h8v2zm-.242-5.034l-7.5 2-.516-1.932 7.5-2 .516 1.932zM12 12H2a10.001 10.001 0 016.173-9.24A10.001 10.001 0 0112 2v10zm-2-7.745a8 8 0 00-3.657 2.088A8 8 0 004.255 10H10V4.255zM14 2.2a10.004 10.004 0 017.948 8.8h-2.01A8.008 8.008 0 0014 4.251V2.199z"></path></svg></span><span class="hd-grp-t">Расчёты</span><span class="hd-acc-chev"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M18.207 10.207L12 16.414l-6.207-6.207 1.414-1.414L12 13.586l4.793-4.793 1.414 1.414z"></path></svg></span></button><sc-if value="{{sk1Open}}" hint-placeholder-val="{{false}}"><div class="hd-acc-body"><div class="hd-sub"><div class="hd-sub-t">Платёжные поручения</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Возвраты платежей</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Картотека</div><div class="hd-sub-c">С 01.01.25 — Бессрочно</div></div></div></sc-if></div><div class="hd-grp hd-grp--acc"><button class="hd-acc" type="button" aria-expanded="{{sk2Open}}" onClick="{{skToggle2}}"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M22.21 15.207l-7 7-1.413-1.414 7-7 1.414 1.414zM12 1.5a7.121 7.121 0 014.343 1.479 5.187 5.187 0 01.327.278l.023.022.013.013c-.002.003-.044.046-.706.708l.707-.707a1 1 0 010 1.414L13.85 7.563l2.039.68A5.999 5.999 0 0119.668 12H17.49a4 4 0 00-2.234-1.86l-3.257-1.087-3.256 1.087a4.002 4.002 0 00-2.553 2.6l-1.052 3.365A3 3 0 008 20h4v2H8c-3.372 0-5.779-3.273-4.772-6.493l1.053-3.363c.576-1.84 2-3.292 3.83-3.902l2.037-.68-2.855-2.855a1 1 0 010-1.414L8 4l-.706-.708.013-.013a2.546 2.546 0 01.096-.09 6.786 6.786 0 011.18-.817A7.12 7.12 0 0112 1.5zm0 2a5.124 5.124 0 00-2.459.627L12 6.586l2.458-2.46A5.123 5.123 0 0012 3.501zM20.504 19a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"></path><path d="M15.504 14a1.5 1.5 0 110 3 1.5 1.5 0 010-3z"></path></svg></span><span class="hd-grp-t">Кредитование ЮЛ</span><span class="hd-acc-chev"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M18.207 10.207L12 16.414l-6.207-6.207 1.414-1.414L12 13.586l4.793-4.793 1.414 1.414z"></path></svg></span></button><sc-if value="{{sk2Open}}" hint-placeholder-val="{{false}}"><div class="hd-acc-body"><div class="hd-subgrp">Принятие на обслуживание</div><div class="hd-sub"><div class="hd-sub-t">Проверка документов</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Открытие счёта</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-subgrp">Масс</div><div class="hd-sub"><div class="hd-sub-t">Заявки до 10 млн</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Пролонгация</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-subgrp">ЭБГ</div><div class="hd-sub"><div class="hd-sub-t">Выпуск гарантии</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Изменение условий</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div></div></sc-if></div><div class="hd-grp hd-grp--acc hd-grp--last"><button class="hd-acc" type="button" aria-expanded="{{sk3Open}}" onClick="{{skToggle3}}"><span class="hd-ic"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M12.001 1.5a7.121 7.121 0 014.343 1.479 5.173 5.173 0 01.35.3l.013.013-.706.708.707-.707a1 1 0 010 1.414l-2.856 2.856 2.038.68A5.999 5.999 0 0119.669 12H17.49a3.998 3.998 0 00-2.233-1.86L12 9.053 8.744 10.14a4.001 4.001 0 00-2.553 2.6L5.14 16.105A3 3 0 008.002 20H14v2H8.002c-3.374 0-5.78-3.273-4.773-6.493l1.053-3.363c.576-1.84 2-3.292 3.83-3.902l2.037-.68-2.855-2.855a1 1 0 010-1.414L8 4l-.706-.708.013-.013a2.519 2.519 0 01.096-.09 5.19 5.19 0 01.254-.21A7.12 7.12 0 0112.001 1.5zm0 2a5.123 5.123 0 00-2.459.627l2.459 2.459 2.458-2.46a5.123 5.123 0 00-2.458-.626zM19.004 19a3 3 0 013 3h-6a3 3 0 013-3z"></path><path d="M19.004 14a2 2 0 110 4 2 2 0 010-4z"></path></svg></span><span class="hd-grp-t">Кредитование ФЛ</span><span class="hd-acc-chev"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M18.207 10.207L12 16.414l-6.207-6.207 1.414-1.414L12 13.586l4.793-4.793 1.414 1.414z"></path></svg></span></button><sc-if value="{{sk3Open}}" hint-placeholder-val="{{false}}"><div class="hd-acc-body"><div class="hd-subgrp">Рассмотрение заявок</div><div class="hd-sub"><div class="hd-sub-t">Потребительский кредит</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div><div class="hd-sub"><div class="hd-sub-t">Кредитная карта</div><div class="hd-sub-c">С 01.01.25 до 31.12.25</div></div></div></sc-if></div></div></div></sc-if>
+</div>
+</sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"mode": {"editor": "enum", "options": ["multi", "single"], "default": "multi"}, "status": {"editor": "enum", "options": ["free", "busy", "pause", "tech", "training", "other", "offline", "call", "chat"], "default": "free"}, "panel": {"editor": "enum", "options": ["none", "profile", "status", "roles", "skills"], "default": "none"}, "locked": {"editor": "boolean", "default": false}, "back": {"editor": "boolean", "default": false}, "backLabel": {"editor": "string", "default": ""}, "searchDemo": {"editor": "enum", "options": ["", "recent", "short", "loading", "results", "empty"], "default": ""}, "callDemo": {"editor": "enum", "options": ["", "panel", "outgoing", "dial", "directory", "transfer", "end", "awp", "load", "info-error"], "default": ""}, "onOpenTask": {"editor": null}, "onOpenClient": {"editor": null}, "onNavigate": {"editor": null}, "onOpenRef": {"editor": null}, "onOpenReport": {"editor": null}, "onModuleSearch": {"editor": null}, "onModeChange": {"editor": null}, "onStatusChange": {"editor": null}, "onBack": {"editor": null}, "$preview": {"width": 1376, "height": 820}}'>
+
+const META = {
+  free:     { label: 'Свободен',             color: 'green',  view: 'contrast', tile: 'var(--status-positive)',  fg: '#fff', na: false },
+  busy:     { label: 'Занят',                color: 'orange', view: 'contrast', tile: 'var(--status-attention)', fg: '#fff', na: false },
+  pause:    { label: 'Перерыв',              color: 'blue',   view: 'contrast', tile: 'var(--status-info)',      fg: '#fff', na: true },
+  tech:     { label: 'Технические проблемы', color: 'blue',   view: 'contrast', tile: 'var(--status-info)',      fg: '#fff', na: true },
+  training: { label: 'На обучении',          color: 'blue',   view: 'contrast', tile: 'var(--status-info)',      fg: '#fff', na: true },
+  other:    { label: 'Иная причина',         color: 'blue',   view: 'contrast', tile: 'var(--status-info)',      fg: '#fff', na: true },
+  offline:  { label: 'Офлайн',               color: 'grey',   view: 'soft',     tile: 'var(--color-neutral-translucent-200)', fg: 'var(--graphic-primary)', na: true },
+  call:     { label: 'На звонке',            color: 'orange', view: 'contrast', tile: 'var(--status-attention)', fg: '#fff', na: false },
+  chat:     { label: 'В чате',               color: 'orange', view: 'contrast', tile: 'var(--status-attention)', fg: '#fff', na: false }
+};
+const MANUAL = ['free', 'busy', 'pause', 'tech', 'training', 'other', 'offline'];
+const AUTO = ['call', 'chat'];
+const ALL = MANUAL.concat(AUTO);
+const SKILL_GROUPS = 4;
+
+const MIN_Q = 1;
+// Каталог для общего поиска: разделы, функции, справочники, ссылки модуля.
+// Цветные ссылки левой навигации (ЦБ, ЕГ, КО, ТР) позже будут настраиваться в админке.
+const CATALOG = [
+  { type: 'section', title: 'Очередь задач', key: 'queue', sub: 'Раздел системы', kw: 'умная очередь задачи список' },
+  { type: 'section', title: 'Клиенты', key: 'clients', sub: 'Раздел системы', kw: 'поиск клиентов мои клиенты' },
+  { type: 'section', title: 'Справочники и ссылки', key: 'book', sub: 'Раздел системы', kw: 'справочник' },
+  { type: 'section', title: 'Поиск по модулю ВК', key: 'search', sub: 'Валютный контроль', kw: 'поиск модуль валютный контроль спд снк' },
+  { type: 'section', title: 'Отчёты ВК', key: 'reports', sub: 'Валютный контроль', kw: 'отчёт выгрузка' },
+  { type: 'func', title: 'Отчёт о выгрузке УНК в ТБСВК', act: 'report:unk', sub: 'Отчёт · Валютный контроль', kw: 'унк тбсвк выгрузка' },
+  { type: 'func', title: 'Отчёт оператора по ЦФА', act: 'report:cfa', sub: 'Отчёт · Валютный контроль', kw: 'цфа оператор' },
+  { type: 'func', title: 'Скан-копии СПД', act: 'report:scans', sub: 'Отчёт · Валютный контроль', kw: 'спд сканы' },
+  { type: 'func', title: 'Контроль представления документов', act: 'nav:search', sub: 'Поиск по модулю ВК', kw: 'документы контроль' },
+  { type: 'section', title: 'Администрирование', key: 'admin', sub: 'Раздел системы', kw: 'админка настройки' },
+  { type: 'section', title: 'Траектория развития', key: 'cap', sub: 'Раздел системы · откроется в новой вкладке', kw: 'обучение' },
+  { type: 'section', title: 'База знаний', key: 'kb', sub: 'Раздел системы · откроется в новой вкладке', kw: 'инструкции регламенты' },
+  { type: 'section', title: 'АЗОН ВНТ', key: 'money', sub: 'Валютный контроль', kw: 'азон' },
+  { type: 'section', title: 'Электронный архив', key: 'archive', sub: 'Валютный контроль', kw: 'архив документы' },
+  { type: 'section', title: 'На подписание', key: 'sign', sub: 'Валютный контроль', kw: 'подпись подписать' },
+  { type: 'func', title: 'Набрать номер', act: 'dial', sub: 'Функция · Телефония', kw: 'позвонить звонок телефон' },
+  { type: 'func', title: 'Телефонный справочник', act: 'dir', sub: 'Функция · Телефония', kw: 'позвонить группа перевести' },
+  { type: 'func', title: 'Сменить статус', act: 'status', sub: 'Функция · Профиль', kw: 'перерыв обед свободен занят' },
+  { type: 'func', title: 'Уйти на перерыв', act: 'pause', sub: 'Функция · Статус', kw: 'пауза обед статус' },
+  { type: 'func', title: 'Мои роли и скиллы', act: 'profile', sub: 'Функция · Профиль', kw: 'роли скиллы профиль' },
+  { type: 'func', title: 'Скачать таблицу задач', act: 'download', sub: 'Функция · Очередь', kw: 'выгрузка excel' },
+  { type: 'func', title: 'Расширенный поиск по клиентам', act: 'nav:clients', sub: 'Функция · Клиенты', kw: 'фильтр клиент инн пин' },
+  { type: 'ref', title: 'Признаки поставки', ref: 'supply', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Признаки платежа', ref: 'pay', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Признаки комплаенса', ref: 'compl', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Признаки обязательного контроля', ref: 'oblig', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Коды видов контракта', ref: 'contract', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Коды срока привлечения', ref: 'term', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Коды ЛИБОР', ref: 'libor', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Коды необычных операций', ref: 'unusual', sub: 'Справочник · Модуль ВК' },
+  { type: 'ref', title: 'Справочник SWIFT', ref: 'swift', sub: 'Справочник · Модуль ВК', kw: 'bic свифт' },
+  { type: 'ref', title: 'Справочник БИК', ref: 'bik', sub: 'Справочник · Модуль ВК', kw: 'банк корр счёт' },
+  { type: 'ref', title: 'Запрещённый офшор', ref: 'offshore', sub: 'Справочник · Модуль ВК', kw: 'страны офшор' },
+  { type: 'link', title: 'Справочник КВО', sub: 'Ссылка модуля ВК · откроется в новой вкладке', kw: 'код вида операции' },
+  { type: 'link', title: 'Справочник КВПД', sub: 'Ссылка модуля ВК · откроется в новой вкладке' },
+  { type: 'link', title: 'Валюты', sub: 'Ссылка модуля ВК · откроется в новой вкладке', kw: 'курс доллар евро' },
+  { type: 'link', title: 'Курсы валют', sub: 'Ссылка модуля ВК · откроется в новой вкладке', kw: 'курс цб доллар евро' },
+  { type: 'link', title: 'Статусы', sub: 'Ссылка модуля ВК · откроется в новой вкладке' },
+  { type: 'link', title: 'ЦБ РФ', sub: 'Ссылка левой навигации · ЦБ', kw: 'цб центробанк банк россии' },
+  { type: 'link', title: 'ЕГРЮЛ', sub: 'Ссылка левой навигации · ЕГ', kw: 'налоговая выписка' },
+  { type: 'link', title: 'Консультант +', sub: 'Ссылка левой навигации · КО', kw: 'консультант закон право' },
+  { type: 'link', title: 'Траектория развития', sub: 'Ссылка левой навигации · ТР', kw: 'обучение' },
+  { type: 'link', title: 'ФНС России', sub: 'Ссылка левой навигации · ФН', kw: 'налоговая инн проверка' },
+  { type: 'link', title: 'Росфинмониторинг', sub: 'Ссылка левой навигации · РФ', kw: 'перечень террористов 115-фз' }
+];
+const catMatch = (q) => { const ql = q.toLowerCase(); return CATALOG.filter((c) => (c.title + ' ' + (c.kw || '') + ' ' + c.sub).toLowerCase().indexOf(ql) >= 0); };
+const RECENT0 = [
+  { type: 'client', title: 'ООО Метроном', pin: 'EQ AUSZ1J', inn: '044030123' },
+  { type: 'client', title: 'ООО Метрономиум', pin: 'EQ AUSZ1J', inn: '044030123' },
+  { type: 'client', title: 'ИП Константинопольский Константин Константинович', pin: 'EQ AUSZ1J', inn: '044030123' },
+  { type: 'client', title: 'ИП Данила Метронович', pin: 'EQ AUSZ1J', inn: '044030123' },
+  { type: 'task', title: 'Мультивалютный перевод', id: '75206272', sla: '24 минуты' }
+];
+const SUFFIX = ['', 'иум', ' Плюс', '-Сервис', ' Групп', ' Трейд', 'ика', ' Лизинг', ' Капитал', ' Логистик', ' Инвест', ' Техно'];
+const TASK_TITLES = ['Мультивалютный перевод', 'Официальное письмо ВК', 'Платёжный документ', 'Контракт', 'СВО с контрактом и РСТС', 'УНК – Заявление'];
+const SLAS = ['24 минуты', '1 ч 10 мин', '45 минут', '2 ч', '12 минут', '3 ч 30 мин'];
+const PINS = ['EQ AUSZ1J', 'EQ ABBSAQ', 'EQ UCA0OV', 'EQ UEGQH6', 'EQ UBIUAX'];
+const DIR_GROUPS = [
+  { name: 'Группа «Sell»', num: '8 800 100-11-11', info: 'Режим работы: пн–пт, 09:00–18:00\nПродажи и подключение продуктов' },
+  { name: 'Вторая линия поддержки ОДО', num: '8 800 100-22-22', info: 'Режим работы: круглосуточно' },
+  { name: 'Техническая поддержка АЛБО', num: '8 800 100-33-33', info: 'Режим работы: круглосуточно\nОшибки в интернет-банке и приложении' },
+  { name: 'Управление Мониторинга (подтверждение платежей и мошенничество)', num: '8 800 100-44-44', info: 'Режим работы: круглосуточно\nПодозрительные операции, подтверждение платежей' },
+  { name: 'Эксперты валютного контроля', num: '8 800 100-55-55', info: 'Режим работы: пн–пт, 09:00–20:00\nСложные кейсы по ВК и УНК' }
+];
+const hl = (title, q) => {
+  const i = q ? title.toLowerCase().indexOf(q.toLowerCase()) : -1;
+  if (i < 0) return { pre: title, hit: '', post: '' };
+  return { pre: title.slice(0, i), hit: title.slice(i, i + q.length), post: title.slice(i + q.length) };
+};
+const searchPool = (raw) => {
+  const q = String(raw || '').trim();
+  const out = catMatch(q).slice();
+  if (/^\d+$/.test(q)) {
+    if (q.length !== 10 && q.length !== 12) return out;
+    out.push({ type: 'client', title: 'ООО «Терем»', pin: 'EQ UCA0OV', inn: q, inn2: q });
+    TASK_TITLES.slice(0, 3).forEach((t, i) => out.push({ type: 'task', title: t, id: String(75206272 + i * 913), sla: SLAS[i] }));
+    return out;
+  }
+  if (/^[a-z0-9 ]+$/i.test(q)) {
+    if (/\d/.test(q) && q.replace(/\s/g, '').length === 6) out.push({ type: 'client', title: 'ООО «ВОСТОК ОИЛ»', pin: 'EQ ' + q.toUpperCase(), inn: '332800499005' });
+    return out;
+  }
+  const Q = q.charAt(0).toUpperCase() + q.slice(1);
+  for (let i = 0; i < 24; i++) {
+    if (i % 2 === 0) {
+      const k = i / 2;
+      out.push({ type: 'client', title: (k % 3 === 2 ? 'ИП ' : 'ООО ') + Q + SUFFIX[k % SUFFIX.length], pin: PINS[k % PINS.length], inn: String(44030123 + k * 7111).padStart(9, '0') });
+    } else {
+      const k = (i - 1) / 2;
+      out.push({ type: 'task', title: TASK_TITLES[k % TASK_TITLES.length], id: String(75206272 + k * 1371), sla: SLAS[k % SLAS.length] });
+    }
+  }
+  return out;
+};
+const pad2 = (n) => String(n).padStart(2, '0');
+const fmtDur = (sec, long) => (long ? pad2(Math.floor(sec / 3600)) + ':' : '') + pad2(Math.floor(sec / 60) % (long ? 60 : 1000)) + ':' + pad2(sec % 60);
+const fmtPhone = (d) => { let o = '+7'; if (d.length) o += ' ' + d.slice(0, 3); if (d.length > 3) o += ' ' + d.slice(3, 6); if (d.length > 6) o += '-' + d.slice(6, 8); if (d.length > 8) o += '-' + d.slice(8, 10); return o; };
+
+class Component extends DCLogic {
+  componentDidMount() {
+    this._hk = (e) => {
+      if (e.key !== 'Escape') return;
+      const s = this.state || {};
+      if (s.cModal) this.setState({ cModal: null });
+      else if (s.sOpen) this.setState({ sOpen: false });
+    };
+    document.addEventListener('keydown', this._hk);
+    // Следим, прилип ли под шапку заголовок какой-нибудь таблицы (во всех компонентах страницы, включая shadow DOM)
+    const HEAD_SEL = '.tl-head, .cc-tbl thead th, .rf-tbl thead th, .cs-head > *';
+    const collect = (root, acc) => { root.querySelectorAll('*').forEach((el) => { if (el.matches(HEAD_SEL)) acc.push(el); if (el.shadowRoot) collect(el.shadowRoot, acc); }); return acc; };
+    this._scanHeads = () => { try { this._heads = collect(document, []); const bars = []; (function f(root) { root.querySelectorAll('*').forEach((el) => { if (el.classList && el.classList.contains('hd-bar')) bars.push(el); if (el.shadowRoot) f(el.shadowRoot); }); })(document); this._bar = bars[0] || null; } catch (e) { this._heads = []; } };
+    this._chkStuck = () => { this._sraf = 0; const top = 64; let hit = null; for (const el of this._heads || []) { const r = el.getBoundingClientRect(); if (r.height > 0 && r.bottom > top && Math.abs(r.top - top) < 1.5) { hit = r; break; } } const on = !!hit; if (this._ov) { if (on) { const bar = this._bar && this._bar.getBoundingClientRect(); this._ov.style.left = (bar ? Math.max(0, bar.left) : 0) + 'px'; this._ov.style.height = Math.round(hit.bottom) + 'px'; } this._ov.style.opacity = on ? '1' : '0'; } if (on !== !!(this.state || {}).stuck) this.setState({ stuck: on }); };
+    // Одна общая подложка-блюр на слой выше контента: покрывает шапку и прилипший заголовок таблицы целиком
+    this._ov = document.createElement('div');
+    this._ov.setAttribute('aria-hidden', 'true');
+    this._ov.style.cssText = 'position:fixed;top:0;left:0;right:0;height:64px;z-index:5;pointer-events:none;opacity:0;transition:opacity .25s ease,height .15s ease;background:var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)';
+    document.body.appendChild(this._ov);
+    this._onScrollHd = () => { if (!this._sraf) this._sraf = requestAnimationFrame(this._chkStuck); };
+    window.addEventListener('scroll', this._onScrollHd, { passive: true });
+    this._scanHeads(); this._scanT = setInterval(() => { this._scanHeads(); this._chkStuck(); }, 1200);
+    // Звонок из любого места прототипа (карточка клиента и т. п.): window.dispatchEvent(new CustomEvent('sbo:call', { detail: { num, who } }))
+    this._callEv = (e) => { const d = (e && e.detail) || {}; this.ringCall(d.num || '', d.who || ''); };
+    window.addEventListener('sbo:call', this._callEv); window.__sboCallReady = true;
+    this._backEv = (e) => { const d = (e && e.detail) || {}; if (!d.id) return; const st = ((this.state || {}).backStack || []).filter((x) => x.id !== d.id); if (d.fn) st.push({ id: d.id, label: d.label || 'Назад', fn: d.fn }); this.setState({ backStack: st }); };
+    window.addEventListener('sbo:back', this._backEv);
+    const sd = this.props.searchDemo;
+    if (sd === 'recent') this.setState({ sOpen: true });
+    if (sd === 'short') this.setState({ sOpen: true, q: 'М' });
+    if (sd === 'loading') this.setState({ sOpen: true, q: 'Метроном', sLoading: true });
+    if (sd === 'results') this.setState({ sOpen: true, q: 'Метроном', sLastQ: 'Метроном', sRes: searchPool('Метроном'), sShown: 8, sActive: 0 });
+    if (sd === 'empty') this.setState({ sOpen: true, q: 'Qwerty', sLastQ: 'Qwerty', sRes: [], sShown: 8 });
+    const cd = this.props.callDemo;
+    if (cd) this.setState({ cOpen: true });
+    if (cd === 'outgoing' || cd === 'transfer' || cd === 'end') this.startCall('+7 (929) 490-27-17', 'Константин Константинович Константинопольский', 68);
+    if (cd === 'dial') this.setState({ cModal: 'dial', dial: '930198' });
+    if (cd === 'directory') this.setState({ cModal: 'dir' });
+    if (cd === 'transfer') this.setState({ cModal: 'transfer' });
+    if (cd === 'end') this.setState({ cModal: 'end' });
+    if (cd === 'awp') this.setState({ cErr: 'awp' });
+    if (cd === 'load') this.setState({ cErr: 'load' });
+    if (cd === 'info-error') this.setState({ cModal: 'info' });
+  }
+  componentWillUnmount() { window.removeEventListener('sbo:back', this._backEv); if (this._ov && this._ov.parentNode) this._ov.parentNode.removeChild(this._ov); window.removeEventListener('scroll', this._onScrollHd); clearInterval(this._scanT); window.removeEventListener('sbo:call', this._callEv); clearTimeout(this._ring); document.removeEventListener('keydown', this._hk); clearTimeout(this._sl); clearTimeout(this._sm); clearInterval(this._ci); clearTimeout(this._tt); clearTimeout(this._cr); }
+  hdToast(msg) { if (window.__sboToast) { window.__sboToast(msg); return; } clearTimeout(this._tt); this.setState({ hdToast: msg }); this._tt = setTimeout(() => this.setState({ hdToast: '' }), 2600); }
+  ringCall(num, who) {
+    const s = this.state || {};
+    if (s.cLive && !s.cLive.ring) { this.setState({ cOpen: true }); this.hdToast('Сначала завершите текущий звонок'); return; }
+    clearTimeout(this._ring); clearInterval(this._ci);
+    this.setState({ cOpen: true, cErr: null, cModal: null, cLive: { num: num, who: who, ring: true }, cSec: 0, cHold: false });
+    this._ring = setTimeout(() => { const t = this.state || {}; if (!t.cLive || !t.cLive.ring) return; this.startCall(num, who, 0); this.hdToast('Клиент ответил'); }, 1800);
+  }
+  startCall(num, who, startSec) {
+    clearInterval(this._ci);
+    const st = (this.state || {}).status !== undefined ? this.state.status : (this.props.status || 'free');
+    const start = Date.now() - (startSec || 0) * 1000;
+    this.setState({ cLive: { num: num, who: who || '' }, cStart: start, cSec: startSec || 0, cHold: false, cModal: null, cOpen: true, manualStatus: st === 'call' ? ((this.state || {}).manualStatus || 'free') : st, status: 'call' });
+    if (this.props.onStatusChange) this.props.onStatusChange('call');
+    this._ci = setInterval(() => this.setState({ cSec: Math.floor((Date.now() - ((this.state || {}).cStart || Date.now())) / 1000) }), 1000);
+  }
+  endCall(msg) {
+    clearInterval(this._ci); clearTimeout(this._ring);
+    if ((this.state || {}).cLive && this.state.cLive.ring) { this.setState({ cLive: null, cModal: null }); this.hdToast('Вызов отменён'); return; }
+    const s = this.state || {};
+    const back = s.manualStatus || 'free';
+    this.setState({ cLive: null, cHold: false, cModal: null, status: back });
+    if (this.props.onStatusChange) this.props.onStatusChange(back);
+    this.hdToast(msg || ('Звонок завершён · ' + fmtDur(s.cSec || 0)));
+  }
+  get(key, fallback) {
+    const s = this.state || {};
+    if (s[key] !== undefined) return s[key];
+    const p = this.props[key];
+    return p !== undefined && p !== null && p !== '' ? p : fallback;
+  }
+
+  renderVals() {
+    const s = this.state || {};
+    // Если страница управляет режимом (onModeChange), берём его из пропсов — иначе шапка хранит режим сама
+    const mode = this.props.onModeChange && this.props.mode ? this.props.mode : this.get('mode', 'multi');
+    const status = this.get('status', 'free');
+    const locked = !!this.props.locked;
+    const initialPanel = this.props.panel && this.props.panel !== 'none' ? this.props.panel : null;
+    const panel = s.panel !== undefined ? s.panel : initialPanel;
+    const open = !!panel;
+    const m = META[status] || META.free;
+    const online = status !== 'offline';
+    const isAuto = AUTO.indexOf(status) >= 0;
+
+    // draft selection inside «Изменить статус»
+    const pick = s.pick !== undefined ? s.pick : null;
+    const comment = s.comment !== undefined ? s.comment : '';
+    const tried = !!s.tried;
+    const needComment = pick === 'other';
+    let commentError = false;
+    if (needComment && tried) {
+      const len = comment.trim().length;
+      if (!len) commentError = 'Обязательное поле';
+      else if (len < 3) commentError = 'Минимум 3 символа';
+    }
+
+    const setMode = (next) => {
+      if (locked || next === mode) return;
+      this.setState({ mode: next });
+      if (this.props.onModeChange) this.props.onModeChange(next);
+    };
+    const setStatus = (next, note) => {
+      const patch = { status: next, note: next === 'other' ? (note || '') : '' };
+      if (!AUTO.includes(next)) patch.manualStatus = next;
+      this.setState(patch);
+      if (this.props.onStatusChange) this.props.onStatusChange(next);
+    };
+    const go = (p) => this.setState({ panel: p, pick: null, comment: '', tried: false });
+    const tile = (size, radius) =>
+      'width: ' + size + 'px; height: ' + size + 'px; border-radius: ' + radius + 'px; flex: 0 0 auto; ' +
+      'display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; ' +
+      'color: ' + m.fg + '; background: ' + m.tile + ';' +
+      (size === 32 ? ' box-shadow: 0 0 0 1px var(--color-neutral-translucent-200) inset;' : '');
+
+    const note = s.note !== undefined ? s.note : (status === 'other' ? 'Колет в боку, возможно аппендицит' : '');
+    const vals = {
+      yes: true,
+      fullWidth: true,
+      n24: 24, n32: 32, n33: 33, n40: 40,
+      q: s.q || '',
+      setQ: (e, p) => this.setState({ q: (p && p.value) || '' }),
+      clearQ: () => this.setState({ q: '' }),
+      setQRaw: (e) => this.setState({ q: (e && e.target && e.target.value) || '' }),
+
+      // Кнопка «Назад» всегда в шапке: самый глубокий уровень (стек от компонентов страницы) или уровень из props
+      showBack: (s.backStack || []).length > 0 || !!this.props.back,
+      goBack: () => { const st = (this.state || {}).backStack || []; const top = st[st.length - 1]; if (top && top.fn) { top.fn(); return; } if (this.props.onBack) this.props.onBack(); },
+
+      onCall: status === 'call',
+      phoneTip: s.cLive ? 'Идёт звонок' : 'Телефония',
+      togglePhoneOld: () => {
+        if (status === 'call') { setStatus(s.manualStatus || 'free'); return; }
+        this.setState({ manualStatus: status, status: 'call', note: '' });
+        if (this.props.onStatusChange) this.props.onStatusChange('call');
+      },
+
+      locked: locked,
+      isSingle: mode === 'single',
+      isMulti: mode === 'multi',
+      tipSingle: locked ? 'Режим: Одна задача · назначен администратором' : 'Режим: Одна задача',
+      tipMulti: locked ? 'Режим: Многозадачность · назначен администратором' : 'Режим: Многозадачность',
+      pickSingle: () => setMode('single'),
+      pickMulti: () => setMode('multi'),
+      modeLabel: mode === 'single' ? 'Одна задача' : 'Многозадачность',
+      modeCaption: 'Изменил: Пупкин И.В. 23.05.26',
+
+      online: online,
+      statusLabel: m.label,
+      tagColor: m.color,
+      tagView: m.view,
+      unavailable: m.na,
+      hasNote: status === 'other' && !!note,
+      note: note,
+      tile32Style: tile(32, 10),
+      tile24Style: tile(24, 8),
+
+      open: open,
+      closed: !open,
+      pProfile: panel === 'profile',
+      pStatus: panel === 'status',
+      pRoles: panel === 'roles',
+      pSkills: panel === 'skills',
+      toggle: () => go(open ? null : 'profile'),
+      close: () => go(null),
+      back: () => go('profile'),
+      onKey: (e) => { if (e && e.key === 'Escape') go(null); },
+      openStatus: () => go('status'),
+      openRoles: () => go('roles'),
+      openSkills: () => go('skills'),
+
+      needComment: needComment,
+      comment: comment,
+      commentError: commentError,
+      setComment: (e, p) => this.setState({ comment: ((p && p.value) || '').slice(0, 33) }),
+      save: () => {
+        if (!pick) { go('profile'); return; }
+        if (pick === 'other') {
+          const len = comment.trim().length;
+          if (len < 3) { this.setState({ tried: true }); return; }
+        }
+        setStatus(pick, comment.trim());
+        go('profile');
+      }
+    };
+
+    ALL.forEach((k) => {
+      vals['is_' + k] = status === k;
+      vals['cur_' + k] = status === k;
+    });
+    MANUAL.forEach((k) => {
+      const disabled = status === k;
+      vals['st_' + k + '_dis'] = disabled;
+      vals['st_' + k + '_on'] = disabled || pick === k;
+      vals['pick_' + k] = () => { if (!disabled) this.setState({ pick: k, tried: false }); };
+      vals['key_' + k] = (e) => { if (e && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); if (!disabled) this.setState({ pick: k, tried: false }); } };
+      vals['st_' + k + '_tab'] = disabled ? -1 : 0;
+      vals['st_' + k + '_chk'] = (pick || status) === k ? 'true' : 'false';
+    });
+
+    for (let i = 0; i < SKILL_GROUPS; i++) {
+      const openSet = s.skOpen || {};
+      vals['sk' + i + 'Open'] = !!openSet[i];
+      vals['skToggle' + i] = () => {
+        const next = Object.assign({}, openSet);
+        next[i] = !next[i];
+        this.setState({ skOpen: next });
+      };
+    }
+    // ===== Общий поиск
+    const sq = s.q || '';
+    const qt = sq.trim();
+    const sOpen = !!s.sOpen;
+    const lastQ = s.sLastQ;
+    const searched = lastQ != null && qt === String(lastQ).trim() && !s.sLoading;
+    const canSearch = qt.length >= MIN_Q;
+    const tag = s.sTag || 'all';
+    const res = (s.sRes || []).filter((r) => tag === 'all' || r.type === tag);
+    const shown = res.slice(0, s.sShown || 8);
+    const recent = s.sRecentList || RECENT0;
+    const doSearch = () => {
+      if (!canSearch || s.sLoading) return;
+      clearTimeout(this._sl);
+      this.setState({ sOpen: true, sLoading: true, sTag: 'all' });
+      this._sl = setTimeout(() => this.setState({ sLoading: false, sRes: searchPool(qt), sLastQ: qt, sShown: 8, sActive: 0 }), 600);
+    };
+    const sPickIt = (it) => {
+      const nr = [it].concat(recent.filter((r) => r.title !== it.title || r.type !== it.type)).slice(0, 5);
+      this.setState({ sOpen: false, sRecentList: nr });
+      if (it.type === 'task') { if (this.props.onOpenTask) this.props.onOpenTask(it.id, it.title); else this.hdToast('Открываем задачу ' + it.title + ' · ID ' + it.id); }
+      else if (it.type === 'section') { if (it.key === 'cap' || it.key === 'kb') this.hdToast('Откроется в новой вкладке: ' + it.title); else if (it.key === 'search' && this.props.onModuleSearch) this.props.onModuleSearch(); else if (this.props.onNavigate) this.props.onNavigate(it.key); else this.hdToast('Открываем раздел: ' + it.title); }
+      else if (it.type === 'ref') { if (this.props.onOpenRef) this.props.onOpenRef(it.ref); else this.hdToast('Открываем справочник: ' + it.title); }
+      else if (it.type === 'link') { this.hdToast('Откроется в новой вкладке: ' + it.title); }
+      else if (it.type === 'func') {
+        const a = it.act;
+        if (a === 'dial') this.setState({ cOpen: true, cModal: 'dial', dial: '', dialKind: 'city' });
+        else if (a === 'dir') this.setState({ cOpen: true, cModal: 'dir', dirQ: '' });
+        else if (a === 'status' || a === 'profile') this.setState({ panel: a === 'status' ? 'status' : 'roles', pick: null, sOpen: false });
+        else if (a === 'pause') { this.setState({ status: 'pause' }); if (this.props.onStatusChange) this.props.onStatusChange('pause'); this.hdToast('Статус: перерыв'); }
+        else if (a.indexOf('report:') === 0) { if (this.props.onOpenReport) this.props.onOpenReport(a.slice(7)); else this.hdToast('Открываем: ' + it.title); }
+        else if (a.indexOf('nav:') === 0) { if (this.props.onNavigate) this.props.onNavigate(a.slice(4)); else this.hdToast(it.title); }
+        else this.hdToast(it.title + ' — запускаем');
+      }
+      else { if (this.props.onOpenClient) this.props.onOpenClient(it.title); else this.hdToast('Открываем карточку клиента: ' + it.title); }
+    };
+    const mapItem = (list, hq) => (it, i) => Object.assign({}, it, hl(it.title, hq), {
+      isTask: it.type === 'task', isClient: it.type === 'client', isSection: it.type === 'section', isFunc: it.type === 'func', isRef: it.type === 'ref', isLink: it.type === 'link',
+      isCat: it.type !== 'task' && it.type !== 'client', isEnt: it.type === 'task' || it.type === 'client',
+      kind: it.type === 'task' ? 'Задача' : (it.type === 'client' ? 'Клиент' : (it.sub || '')),
+      k1: it.type === 'task' ? 'ID' : 'Пин', v1: it.type === 'task' ? it.id : it.pin,
+      k2: it.type === 'task' ? 'SLA' : 'ИНН', v2: it.type === 'task' ? it.sla : it.inn,
+      active: (s.sActive || 0) === i ? 'true' : 'false',
+      pick: () => sPickIt(it),
+      hover: () => { if ((s.sActive || 0) !== i) this.setState({ sActive: i }); }
+    });
+    const showRecent = sOpen && !qt && !s.sLoading;
+    const showRes = sOpen && searched && !!s.sRes;
+    const visibleList = showRecent ? recent : (showRes ? shown : []);
+    Object.assign(vals, {
+      q: sq,
+      setQRaw: (e) => { const v = (e && e.target && e.target.value) || ''; this.setState({ q: v, sOpen: true, sActive: 0 }); clearTimeout(this._live); clearTimeout(this._sl); if (!v.trim()) { this.setState({ sLoading: false, sRes: null, sLastQ: null }); return; } this._live = setTimeout(() => { this.setState({ sLoading: true, sTag: (this.state || {}).sTag || 'all' }); this._sl = setTimeout(() => this.setState({ sLoading: false, sRes: searchPool(v.trim()), sLastQ: v.trim(), sShown: 8, sActive: 0 }), 300); }, 250); },
+      clearQ: () => this.setState({ q: '', sOpen: true, sActive: 0, sLoading: false }),
+      sFocus: () => { if (!s.sOpen) this.setState({ sOpen: true }); },
+      sClose: () => this.setState({ sOpen: false }),
+      sOpen: sOpen,
+      sOpenStr: sOpen ? 'true' : 'false',
+      sPlaceholder: sOpen ? 'Клиенты, задачи, справочники, разделы, функции' : 'Поиск по SmartBackOffice',
+      sHasQ: !!sq && !s.sLoading,
+      sLoading: !!s.sLoading,
+      sShowFind: !!sq && !s.sLoading,
+      sShowVk: !sq && !sOpen,
+      sFindTone: searched ? 'secondary' : 'primary',
+      sFindDisabled: canSearch ? 'false' : 'true',
+      doSearch: doSearch,
+      sRecent: showRecent,
+      sRecentItems: recent.map(mapItem(recent, '')),
+      sHint: sOpen && !!qt && !searched && !s.sLoading,
+      sHintText: 'Ищем по клиентам, задачам, справочникам, разделам, функциям и ссылкам модуля — с первого символа. ИНН или ПИН нужно вводить полностью.',
+      sResults: showRes,
+      sTags: [['all', 'Все'], ['client', 'Клиенты'], ['task', 'Задачи'], ['ref', 'Справочники'], ['section', 'Разделы'], ['func', 'Функции'], ['link', 'Ссылки']].filter((t) => t[0] === 'all' || (s.sRes || []).some((r) => r.type === t[0])).map((t) => ({ label: t[1], on: tag === t[0] ? 'true' : 'false', pick: () => this.setState({ sTag: t[0], sShown: 8, sActive: 0 }) })),
+      sItems: shown.map(mapItem(shown, lastQ)),
+      sMore: !!s.sMoreLoading,
+      sNone: showRes && res.length === 0,
+      sScroll: (e) => {
+        const el = e && e.target; if (!el) return;
+        if (el.scrollTop + el.clientHeight < el.scrollHeight - 24) return;
+        if (s.sMoreLoading || shown.length >= res.length) return;
+        this.setState({ sMoreLoading: true });
+        clearTimeout(this._sm);
+        this._sm = setTimeout(() => this.setState({ sMoreLoading: false, sShown: ((this.state || {}).sShown || 8) + 6 }), 700);
+      },
+      sKey: (e) => {
+        if (!e) return;
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          if (showRes && visibleList.length) { sPickIt(visibleList[Math.min(s.sActive || 0, visibleList.length - 1)]); return; }
+          if (showRecent && visibleList.length) { sPickIt(visibleList[s.sActive || 0]); return; }
+          doSearch();
+        } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+          if (!visibleList.length) return;
+          e.preventDefault();
+          const n = visibleList.length, cur = s.sActive || 0;
+          this.setState({ sActive: e.key === 'ArrowDown' ? (cur + 1) % n : (cur - 1 + n) % n });
+        }
+      },
+      goModule: () => { if (this.props.onModuleSearch) this.props.onModuleSearch(); else this.hdToast('Открываем поиск по валютному контролю'); },
+      backText: ((s.backStack || []).length ? s.backStack[s.backStack.length - 1].label : '') || this.props.backLabel || 'К списку задач'
+    });
+    // ===== Виджет звонков
+    const live = s.cLive || null;
+    const sec = s.cSec || 0;
+    const dial = s.dial || '';
+    const dk = s.dialKind || 'city';
+    const dialMax = dk === 'intra' ? 5 : (dk === 'intl' ? 15 : 10);
+    const dialReady = dk === 'intra' ? dial.length >= 4 : (dk === 'intl' ? dial.length >= 8 : dial.length === 10);
+    const dialShown = dk === 'city' ? fmtPhone(dial) : (dk === 'intl' ? '+' + dial : dial);
+    const press = (d) => () => { const cur = (this.state || {}).dial || ''; if (cur.length < dialMax) this.setState({ dial: cur + d }); };
+    const dq = (s.dirQ || '').trim().toLowerCase();
+    const groups = DIR_GROUPS.filter((g) => !dq || g.name.toLowerCase().indexOf(dq) !== -1);
+    const dirOpen = s.dirOpen || { 1: true };
+    const modal = s.cModal || null;
+    Object.assign(vals, {
+      togglePhone: () => this.setState({ cOpen: !s.cOpen }),
+      stuckStr: s.stuck ? 'true' : 'false',
+      cPanel: !!s.cOpen,
+      cPanelStr: s.cOpen ? 'true' : 'false',
+      cLiveStr: live ? 'true' : 'false',
+      cAwp: s.cErr === 'awp',
+      cLoadErr: s.cErr === 'load',
+      cReady: !s.cErr,
+      cRetry: () => { clearTimeout(this._cr); this.setState({ cErr: null }); this.hdToast('Телефония подключена'); },
+      cLive: !!live,
+      cNotLive: !live,
+      cNotLiveStr: live ? 'false' : 'true',
+      cFwdLook: live ? 'ghost' : '',
+      cBookLook: live ? 'line' : '',
+      cDirLabel: 'Исходящий',
+      cRingStr: live && live.ring ? 'true' : 'false',
+      cTime: live && live.ring ? 'Вызов…' : fmtDur(sec, true),
+      cTimeShort: fmtDur(sec, false),
+      cWho: live ? live.who : '',
+      cNum: live ? live.num : '',
+      cLine2: s.cHold ? 'Удержание' : 'Свободная линия',
+      cHoldStr: s.cHold ? 'true' : 'false',
+      cHoldLabel: s.cHold ? 'Снять с удержания' : 'Поставить на удержание',
+      cHold: () => this.setState({ cHold: !s.cHold }),
+      cAskEnd: () => { if (live && live.ring) { this.endCall(); return; } this.setState({ cModal: 'end' }); },
+      cDoEnd: () => this.endCall(),
+      cTransfer: () => { if (live && !live.ring) this.setState({ cModal: 'transfer' }); },
+      cDoTransfer: () => this.endCall('Клиент переведён, звонок завершён'),
+      cIvrTitle: live ? 'Перевести на IVR' : 'Перевод на IVR — во время звонка',
+      cIvr: () => { if (live) this.endCall('Клиент переведён на IVR'); },
+      cDir: () => this.setState({ cModal: 'dir', dirQ: '' }),
+      cDial: () => this.setState({ cModal: 'dial', dial: '', dialKind: 'city' }),
+      cModal: !!modal,
+      cCloseModal: () => this.setState({ cModal: null }),
+      cModalTitle: { dial: 'Набор номера', dir: 'Телефонный справочник', transfer: 'Перевод клиента', end: 'Завершение звонка', info: 'Info Error' }[modal] || '',
+      cModalSize: modal === 'dir' ? 'l' : (modal === 'dial' ? 'm' : 's'),
+      mDial: modal === 'dial', mDir: modal === 'dir', mTransfer: modal === 'transfer', mEnd: modal === 'end', mInfo: modal === 'info',
+      dialKinds: [['city', 'Междугородный'], ['intra', 'Внутрибанковский'], ['intl', 'Международный']].map((k) => ({ label: k[1], on: dk === k[0] ? 'true' : 'false', pick: () => this.setState({ dialKind: k[0], dial: '' }) })),
+      dialShown: dialShown,
+      dialHas: dial.length > 0,
+      dialFilled: dial.length > 0 ? 'true' : 'false',
+      dialHint: dk === 'city' ? 'Введите 10 цифр после кода +7' : (dk === 'intra' ? 'Введите 4–5 цифр внутреннего номера' : 'Введите номер с кодом страны'),
+      dialInput: (e) => { let d = String((e && e.target && e.target.value) || '').replace(/\D/g, ''); if (dk === 'city' && d.charAt(0) === '7') d = d.slice(1); this.setState({ dial: d.slice(0, dialMax) }); },
+      dialClear: () => this.setState({ dial: '' }),
+      pad: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', 'del'].map((k) => ({ label: k === 'del' ? '' : k, isDel: k === 'del', blank: k === '' ? 'true' : 'false', aria: k === 'del' ? 'Стереть цифру' : (k || 'пусто'), press: k === 'del' ? () => this.setState({ dial: ((this.state || {}).dial || '').slice(0, -1) }) : (k ? press(k) : () => {}) })),
+      dialNotReady: dialReady ? 'false' : 'true',
+      dialCall: () => {
+        if (!dialReady) return;
+        if (this.props.callDemo === 'info-error' && !s.infoShown) { this.setState({ cModal: 'info', infoShown: true }); return; }
+        this.startCall(dialShown, '');
+      },
+      dirQ: s.dirQ || '',
+      dirSetQ: (e) => this.setState({ dirQ: (e && e.target && e.target.value) || '' }),
+      dirNone: groups.length === 0,
+      dirGroups: groups.map((g) => {
+        const gi = DIR_GROUPS.indexOf(g); const open = !!dirOpen[gi];
+        return { name: g.name, info: g.info, open: open, openStr: open ? 'true' : 'false', moreLabel: open ? 'Свернуть' : 'Когда обращаться',
+          toggle: () => this.setState({ dirOpen: Object.assign({}, dirOpen, { [gi]: !open }) }),
+          call: () => this.startCall(g.num, g.name),
+          transfer: () => { if (live) this.endCall('Клиент переведён: ' + g.name); else this.hdToast('Перевести можно во время звонка'); } };
+      }),
+      infoDate: (() => { const d = new Date(); return pad2(d.getDate()) + '.' + pad2(d.getMonth() + 1) + '.' + String(d.getFullYear()).slice(2) + ', ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()); })(),
+      hdToast: !!s.hdToast,
+      hdToastText: s.hdToast || ''
+    });
+    return vals;
+  }
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+tests/qa/
+tests/at/
+tests/chrome-*/
+.DS_Store

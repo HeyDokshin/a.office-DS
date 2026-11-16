@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Левое меню</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--bg-base-alt-primary)}
+.sm-cells{flex:1 1 auto;min-height:0;overflow-x:hidden;overflow-y:auto;position:relative;scrollbar-width:thin;scrollbar-color:var(--color-neutral-translucent-300) transparent}
+.sm-fade{position:sticky;bottom:0;height:56px;margin-top:-56px;pointer-events:none;background:linear-gradient(to bottom,transparent,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)));backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 100%);mask-image:linear-gradient(to bottom,transparent 0%,#000 100%)}
+.sm-cell{padding:4px 12px;box-sizing:border-box;position:relative}
+.sm-tip{position:fixed;z-index:1000;transform:translateY(-50%);width:max-content;max-width:240px;box-sizing:border-box;padding:10px 12px;border-radius:12px;background:var(--accent-secondary);color:var(--text-inverted-primary,#fff);font-family:var(--font-system);font-size:13px;line-height:18px;box-shadow:var(--shadow-m-hard,var(--shadow-m));pointer-events:none;animation:sm-tip-in .12s ease}
+.sm-tip::before{content:"";position:absolute;left:-4px;top:50%;margin-top:-4px;width:8px;height:8px;background:inherit;transform:rotate(45deg)}
+@keyframes sm-tip-in{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion: reduce){.sm-tip{animation:none}}
+.sm-cell .alfa-tooltip,.sm-foot-cell .alfa-tooltip{display:flex;width:100%}
+.sm-item{appearance:none;border:0;margin:0;background:transparent;width:100%;min-height:40px;display:flex;align-items:center;gap:8px;padding:4px 8px 4px 4px;border-radius:12px;cursor:pointer;font:inherit;font-size:14px;line-height:20px;font-weight:500;color:var(--text-primary);text-align:left;position:relative;box-sizing:border-box;transition:background-color .12s ease}
+.sm-item:hover{background:var(--color-neutral-translucent-100)}
+.sm-item:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.sm-item[aria-current="page"]{background:var(--color-neutral-300)}
+
+/* Вариант 2: меню — плавающая белая карточка */
+.sm-nav[data-look="card"] .sm-logo path:first-child{fill:var(--graphic-primary)}
+.sm-nav[data-look="card"] .sm-item[aria-current="page"]::before{background:var(--graphic-primary)}
+.sm-nav[data-look="card"] .sm-fade{background:linear-gradient(to bottom,transparent,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)))}
+.sm-nav[data-look="card"] .sm-cell{padding:2px 12px}
+.sm-nav[data-look="card"] .sm-item{min-height:48px;padding:4px 8px 4px 0;gap:12px;border-radius:16px}
+.sm-nav[data-look="card"] .sm-foot{border-radius:16px}
+.sm-nav[data-look="card"] .sm-ico{width:40px;height:40px;border-radius:99px;box-sizing:border-box}
+.sm-nav[data-look="card"] .sm-item[data-ext="true"] .sm-ico{border:1px dashed var(--color-neutral-translucent-300, var(--border-secondary))}
+.sm-nav[data-look="card"] .sm-ext{display:none}
+.sm-nav[data-look="card"] .sm-letter{width:40px;height:40px;border-radius:99px;font-size:12px}
+.sm-nav[data-look="card"] .sm-item[aria-current="page"]::before{left:-12px;width:3px;height:40px;border-radius:0 99px 99px 0;background:var(--accent-secondary, var(--graphic-primary))}
+.sm-nav[data-look="card"] .sm-div{padding:12px 12px}
+.sm-nav[data-look="card"] .sm-foot-wrap{padding:8px !important;gap:8px !important}
+.sm-nav[data-look="card"] .sm-foot-cell{padding:0 4px}
+.sm-nav[data-look="card"] .alfa-btn{min-height:56px;height:56px;border-radius:99px}
+.sm-cta{appearance:none;border:0;margin:0;width:100%;height:48px;padding:0 20px;box-sizing:border-box;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--color-neutral-translucent-100);color:var(--text-primary);font:500 16px/20px var(--font-system);cursor:pointer;transition:background-color .12s ease}
+.sm-cta:hover{background:var(--color-neutral-translucent-200)}
+.sm-cta:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.sm-cta--primary{background:var(--graphic-primary);color:var(--text-primary-inverted,#fff)}
+.sm-cta--primary:hover{background:var(--graphic-primary);opacity:.88}
+.sm-nav[data-look="card"] .sm-cta{height:56px;border-radius:99px}
+
+.sm-nav[data-look="card"] .alfa-iconbtn{border-radius:99px}
+/* Вариант 2, свёрнуто: колонка 64px, иконки 40px по центру, активный пункт — круг */
+.sm-nav[data-look="card"][data-collapsed="true"] .sm-item{width:40px;min-height:40px;height:40px;padding:0;border-radius:99px;justify-content:center}
+.sm-nav[data-look="card"][data-collapsed="true"] .sm-ico,.sm-nav[data-look="card"][data-collapsed="true"] .sm-letter{border-radius:99px}
+.sm-nav[data-look="card"][data-collapsed="true"] .sm-mini-btn{width:40px;height:40px;border-radius:99px}
+.sm-nav[data-look="card"][data-collapsed="true"] .sm-mini-wrap{padding:8px 0 !important}
+/* свёрнуто: строки той же высоты, что в развёрнутом (52px), чтобы иконки не прыгали при сворачивании */
+.sm-nav[data-look="card"][data-collapsed="true"] .sm-cell{padding:6px 12px}
+/* разделитель вместо заголовка «Закреплённые ссылки» — той же высоты, 40px */
+.sm-nav[data-look="card"][data-collapsed="true"] .sm-div--links{padding:20px 12px 19px}
+/* Ручка изменения ширины: тянуть — мини (64) или полное (240–360), двойной клик — переключить */
+.sm-resize{position:absolute;top:0;right:0;bottom:0;width:10px;z-index:6;cursor:col-resize;touch-action:none;outline:none}
+.sm-resize::after{content:"";position:absolute;top:50%;right:3px;width:4px;height:48px;transform:translateY(-50%);border-radius:99px;background:transparent;transition:background-color .12s ease,height .12s ease}
+.sm-resize:hover::after,.sm-resize:focus-visible::after{background:var(--color-neutral-translucent-500, var(--graphic-secondary))}
+.sm-nav[data-dragging="true"] .sm-resize::after{background:var(--status-info);height:64px}
+.sm-gtitle{padding:16px 12px 8px 16px;font-size:12px;line-height:16px;letter-spacing:1.25px;text-transform:uppercase;color:var(--text-secondary);white-space:nowrap}
+.sm-ext{display:inline-flex;color:var(--graphic-secondary);opacity:.6;flex:0 0 auto;margin-left:auto}
+.sm-tri{transition:transform .15s ease}
+.sm-tri[data-open="false"]{transform:rotate(180deg)}
+.sm-sub .sm-item{}
+.sm-nav:not([data-look="card"])[data-collapsed="true"] .sm-item{width:40px;min-height:40px;height:40px;padding:0;justify-content:center;border-radius:99px}
+.sm-item[aria-current="page"]::before{content:"";position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:2px;height:40px;border-radius:0 2px 2px 0;background:var(--accent-primary)}
+.sm-ico{width:40px;height:40px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary);opacity:.6;flex:0 0 auto;transition:opacity .12s ease}
+.sm-item:hover .sm-ico,.sm-item[aria-current="page"] .sm-ico{opacity:1}
+.sm-label{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sm-tri{display:inline-flex;color:var(--graphic-secondary);flex:0 0 auto}
+.sm-letter{width:40px;height:40px;border-radius:99px;display:inline-flex;align-items:center;justify-content:center;font-size:11px;line-height:16px;font-weight:700;flex:0 0 auto}
+.sm-div{padding:12px 16px}
+.sm-div::after{content:"";display:block;height:1px;background:var(--color-neutral-translucent-300)}
+.sm-group{appearance:none;border:0;margin:0;background:transparent;width:100%;display:flex;align-items:center;justify-content:space-between;padding:12px 12px 4px 16px;font:inherit;font-size:12px;line-height:16px;letter-spacing:1.25px;text-transform:uppercase;color:var(--text-secondary);cursor:pointer;box-sizing:border-box}
+.sm-foot{appearance:none;border:0;margin:0;background:transparent;width:100%;min-width:0;display:flex;align-items:center;gap:4px;padding:4px 0 4px 4px;box-sizing:border-box;border-radius:12px;font:inherit;font-size:14px;line-height:20px;font-weight:500;color:var(--text-secondary);cursor:pointer}
+.sm-foot .sm-fi{display:inline-flex;color:var(--graphic-primary);opacity:.6}
+.sm-foot:hover{color:var(--text-primary)}
+.sm-foot:hover .sm-fi{opacity:1}
+.sm-mini-btn{appearance:none;border:0;margin:0;background:transparent;width:40px;height:32px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--graphic-primary)}
+.sm-mini-btn span{display:inline-flex;opacity:.6}
+.sm-mini-btn:hover{background:var(--color-neutral-translucent-100)}
+.sm-mini-btn:hover span{opacity:1}
+.sm-foot:focus-visible,.sm-group:focus-visible,.sm-mini-btn:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+
+/* Нижняя подложка меню с кнопкой — прозрачный материал (как шапка и закреплённые части таблиц) */
+/* Нижняя плашка лежит ПОВЕРХ списка: пункты меню уезжают под прозрачную подложку с блюром, сверху — прогрессивный блюр */
+.sm-nav{--sm-fh:114px}
+.sm-nav[data-collapsed="true"]{--sm-fh:142px}
+.sm-nav[data-look="card"]{--sm-fh:112px}
+.sm-nav[data-look="card"][data-collapsed="true"]{--sm-fh:146px}
+.sm-cells{padding-bottom:var(--sm-fh)}
+.sm-fade{display:none}
+.sm-foot-wrap,.sm-mini-wrap{position:absolute !important;left:0;right:0;bottom:0;box-sizing:border-box;z-index:2;background:transparent;isolation:isolate}
+/* один общий слой: подложка + блюр, вверху плавно сходит на нет */
+.sm-foot-wrap::before,.sm-mini-wrap::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-40px;z-index:-1;pointer-events:none;background:linear-gradient(to bottom,transparent 0,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)) 40px);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 48px);mask-image:linear-gradient(to bottom,transparent 0,#000 48px)}
+
+/* Меню «Создать» */
+.sm-cwrap{position:relative}
+.sm-cmenu{position:absolute;left:0;bottom:calc(100% + 8px);z-index:60;min-width:240px;padding:8px 0;border-radius:16px;background:var(--bg-base-primary,#fff);box-shadow:0 12px 32px rgba(0,0,0,.16),0 0 0 1px rgba(15,25,55,.06);display:flex;flex-direction:column;animation:sm-cm-in .16s ease}
+.sm-cwrap--mini .sm-cmenu{left:4px}
+@keyframes sm-cm-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sm-cmenu-h{padding:8px 16px 6px;font:500 11px/16px var(--font-system);letter-spacing:.6px;text-transform:uppercase;color:var(--text-secondary)}
+.sm-cmenu button{appearance:none;border:0;margin:0;padding:10px 16px;background:transparent;text-align:left;font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.sm-cmenu button:hover{background:var(--color-neutral-translucent-100)}
+.sm-cmenu button:focus-visible{outline:2px solid var(--status-info);outline-offset:-2px}
+.sm-cscrim{position:fixed;inset:0;z-index:59;border:0;margin:0;padding:0;background:transparent;cursor:default}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.sm-item,
+.sm-cta,
+.sm-cta--primary,
+.sm-resize::after,
+.sm-item .sm-ico,
+.sm-foot,
+.sm-foot .sm-fi,
+.sm-mini-btn,
+.sm-mini-btn span,
+.sm-cmenu button{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.sm-item:hover,
+.sm-cta:hover,
+.sm-cta--primary:hover,
+.sm-resize:hover::after,
+.sm-item:hover .sm-ico,
+.sm-foot:hover,
+.sm-foot:hover .sm-fi,
+.sm-mini-btn:hover,
+.sm-mini-btn:hover span,
+.sm-cmenu button:hover{transition-delay:.3s}
+.sm-item:hover:active,
+.sm-cta:hover:active,
+.sm-cta--primary:hover:active,
+.sm-item:hover .sm-ico:active,
+.sm-foot:hover:active,
+.sm-foot:hover .sm-fi:active,
+.sm-mini-btn:hover:active,
+.sm-mini-btn:hover span:active,
+.sm-cmenu button:hover:active{transition-delay:0s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<nav class="sm-nav" data-look="{{look}}" data-collapsed="{{collapsedAttr}}" data-dragging="{{dragging}}" aria-label="Основное меню" style="{{rootStyle}}">
+<div style="display: flex; align-items: center; gap: 8px; padding: 12px; box-sizing: border-box; flex: 0 0 auto; padding-top: 8px; padding-right: 8px; padding-bottom: 8px; padding-left: 8px">
+<svg class="sm-logo" width="40" height="40" viewBox="0 0 40 40" role="img" aria-label="{{brand}}" style="flex: 0 0 auto; border-radius: 999px; width: 48px; height: 48px"><path fill="var(--accent-primary)" d="M.65 10.263C1.378 5.18 5.18 1.378 10.263.65 12.858.28 16.103 0 20 0c3.896 0 7.142.279 9.737.65 5.084.728 8.885 4.53 9.613 9.613.371 2.595.65 5.84.65 9.737 0 3.896-.279 7.142-.65 9.737-.728 5.084-4.53 8.885-9.613 9.613-2.595.371-5.84.65-9.737.65-3.896 0-7.142-.279-9.737-.65-5.084-.728-8.885-4.53-9.613-9.613C.28 27.142 0 23.897 0 20c0-3.896.279-7.142.65-9.737z" stroke-linecap="round"></path><path transform="translate(8 8)" fill="#fff" fill-rule="evenodd" clip-rule="evenodd" d="M12.103 2c-1.485 0-1.946.879-2.342 2l-4.08 11.557h2.706l.942-2.747h5.205l.874 2.747h2.877L14.397 4c-.376-1.117-.81-2-2.294-2zm-.071 3.01h-.069l-1.85 5.479h3.665L12.032 5.01zM18.593 22H5.407v-2.73h13.186V22z" stroke-linecap="round"></path></svg>
+<sc-if value="{{expanded}}" hint-placeholder-val="{{true}}"><span style="font-size: 18px; line-height: 24px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">{{brand}}</span></sc-if>
+</div>
+
+<div class="sm-cells">
+<sc-for list="{{main}}" as="it" hint-placeholder-count="4">
+<div class="sm-cell">
+<button class="sm-item" type="button" data-ext="{{it.extAttr}}" aria-current="{{it.current}}" aria-label="{{it.label}}" onClick="{{it.go}}" onMouseEnter="{{it.tipIn}}" onMouseLeave="{{tipOut}}" onFocus="{{it.tipIn}}" onBlur="{{tipOut}}">
+<span class="sm-ico">
+<sc-if value="{{it.i_queue}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M14 12H8v-2h6v2zm2-4H8V6h8v2z"></path><path d="M20 17.58l-7.504 4.288A1 1 0 0111 21v-2.277l-5.504 3.145A1 1 0 014 21V2h16v15.58zM6 19.276l5.504-3.144A1 1 0 0113 17v2.276l5-2.857V4H6v15.276z"></path></svg></sc-if>
+<sc-if value="{{it.i_clients}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M12 13c2.966 0 5.09.73 6.405 2.427C19.67 17.057 20 19.356 20 22h-2c0-2.584-.35-4.284-1.175-5.348-.697-.899-1.885-1.518-4.073-1.632l.748 6.48-1.5 1.066-1.5-1.066.747-6.48c-2.187.114-3.375.734-4.072 1.632C6.349 17.716 6 19.416 6 22H4c0-2.644.33-4.945 1.595-6.574C6.91 13.73 9.035 13 12 13zm0-11a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6z"></path></svg></sc-if>
+<sc-if value="{{it.i_book}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M8 4c1.636 0 3.088.786 4 2a4.992 4.992 0 014-2h6v14h-6a2.998 2.998 0 00-2.826 2h-2.348A2.999 2.999 0 008 18H2V4h6zM4 16h4c1.126 0 2.164.372 3 1V9a3 3 0 00-3-3H4v10zM16 6a3 3 0 00-3 3v8c.836-.628 1.874-1 3-1h4V6h-4z"></path></svg></sc-if>
+<sc-if value="{{it.i_admin}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M9.204 13.01A2 2 0 0111 15v4l-.01.204A2 2 0 019 21H5a2 2 0 01-2-2v-4a2 2 0 012-2h4l.204.01zM5 19h4v-4H5v4zm14.204-5.99A2 2 0 0121 15v4l-.01.204A2 2 0 0119 21h-4a2 2 0 01-2-2v-4a2 2 0 012-2h4l.204.01zM15 19h4v-4h-4v4zM9.204 3.01A2 2 0 0111 5v4l-.01.204A2 2 0 019 11H5a2 2 0 01-2-2V5a2 2 0 012-2h4l.204.01zM5 9h4V5H5v4zm14.204-5.99A2 2 0 0121 5v4l-.01.204A2 2 0 0119 11h-4a2 2 0 01-2-2V5a2 2 0 012-2h4l.204.01zM15 9h4V5h-4v4z"></path></svg></sc-if>
+<sc-if value="{{it.i_cap}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M21.447 7.605A1 1 0 0122 8.5V12h-2v-1.882l-1 .5v5.298c0 1.337-.71 2.573-1.864 3.246a10.193 10.193 0 01-10.272 0A3.758 3.758 0 015 15.916v-5.298L2.553 9.395a1 1 0 010-1.79L12 2.882l9.447 4.723zm-9 6.29l-.447.222-.447-.223L7 11.619v4.298c0 .625.332 1.204.872 1.519a8.193 8.193 0 008.256 0c.54-.315.872-.894.872-1.519v-4.298l-4.553 2.277zM5.237 8.5L12 11.882 18.764 8.5 12 5.118 5.236 8.5z"></path></svg></sc-if>
+<sc-if value="{{it.i_kb}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M18.065 13.9c.452 0 .757.138.976.374.213.23.335.546.443.875l2.286 6.95H19.9l-.505-1.62h-2.858l-.544 1.62H14.22l2.4-6.951c.114-.332.244-.645.462-.875.224-.235.532-.373.983-.373zm-1.007 5.01h1.84l-.894-2.867-.946 2.866z"></path><path d="M8 4c1.636 0 3.088.786 4 2a4.992 4.992 0 014-2h6v9h-2V6h-4a3 3 0 00-3 3v11h-2.174A2.999 2.999 0 008 18H2V4h6zM4 16h4c1.126 0 2.164.372 3 1V9a3 3 0 00-3-3H4v10z"></path></svg></sc-if>
+<sc-if value="{{it.i_vk}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M12 2c4.838 0 8.873 3.436 9.8 8 .078.386.131.78.164 1.182.022.27.036.542.036.818 0 5.523-4.477 10-10 10-.423 0-.839-.03-1.248-.081l-.036-.004a9.866 9.866 0 01-.47-.072l-.034-.006C5.542 20.994 2 16.912 2 12a9.957 9.957 0 011.172-4.7l.107-.194.087-.15a10 10 0 01.205-.335l.09-.14a10.05 10.05 0 01.546-.746A9.98 9.98 0 0112 2zm0 2c-2.094 0-4 .805-5.426 2.122a7.755 7.755 0 011.536.834l.305.214a3.55 3.55 0 01.804 5.038 1.55 1.55 0 00.22 2.097l.854.747A5.001 5.001 0 0112 18.815V20a8 8 0 008-8h-2.04a4.172 4.172 0 01-2.734-7.321A7.97 7.97 0 0012 4zM5.212 7.767A8.003 8.003 0 0010 19.747v-.932a3 3 0 00-1.024-2.257l-.855-.748a3.55 3.55 0 01-.502-4.802 1.55 1.55 0 00-.351-2.2l-.305-.213a5.778 5.778 0 00-1.751-.828zM16.57 6.16A2.172 2.172 0 0017.96 10h1.788a8.002 8.002 0 00-2.72-4.222l-.458.382z"></path></svg></sc-if>
+<sc-if value="{{it.i_search}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M17.5 13a4.5 4.5 0 013.809 6.895l1.898 1.898-1.414 1.414-1.898-1.898A4.5 4.5 0 1117.5 13zm0 2a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"></path><path d="M12 2c5.185 0 9.448 3.947 9.95 9h-4.99a4.17 4.17 0 01-3.228-6.81A8.026 8.026 0 0012 4a7.968 7.968 0 00-5.086 1.824c.066.043.132.087.196.132l.305.214a3.55 3.55 0 01.804 5.038 1.55 1.55 0 00.22 2.097l.854.747A5.001 5.001 0 0111 17.815V19.5c0 .146-.01.29-.021.433.007 0 .014 0 .021.002v2.014C5.947 21.447 2 17.185 2 12a9.96 9.96 0 012.581-6.706c.024-.027.05-.052.074-.078A9.968 9.968 0 0112 2zM5.517 7.314A8 8 0 009 19.416v-1.6a3 3 0 00-1.024-2.258l-.855-.748a3.55 3.55 0 01-.502-4.802 1.55 1.55 0 00-.351-2.2l-.305-.213a5.765 5.765 0 00-.446-.28zM15.57 5.16A2.172 2.172 0 0016.96 9h2.456a8.027 8.027 0 00-3.61-4.038l-.236.198z"></path></svg></sc-if>
+<sc-if value="{{it.i_money}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M16 12a2 2 0 110 4 2 2 0 010-4z"></path><path d="M12.567 3c2.607-.936 5.353.996 5.353 3.765V7H18a4 4 0 014 4v6a4 4 0 01-4 4H6a4 4 0 01-4-4V9.61a4 4 0 012.647-3.765l7.92-2.844zM6 9a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2H6zm9.92-2.235a2.001 2.001 0 00-2.677-1.883L7.35 7h8.57v-.235z"></path></svg></sc-if>
+<sc-if value="{{it.i_archive}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M16 12a2 2 0 110 4 2 2 0 010-4z"></path><path d="M12.567 3c2.607-.936 5.353.996 5.353 3.765V7H18a4 4 0 014 4v6a4 4 0 01-4 4H6a4 4 0 01-4-4V9.61a4 4 0 012.647-3.765l7.92-2.844zM6 9a2 2 0 00-2 2v6a2 2 0 002 2h12a2 2 0 002-2v-6a2 2 0 00-2-2H6zm9.92-2.235a2.001 2.001 0 00-2.677-1.883L7.35 7h8.57v-.235z"></path></svg></sc-if>
+<sc-if value="{{it.i_reports}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M5 3h10l4 4v14H5V3zm9 1.5V8h3.5L14 4.5zM8 11v2h8v-2H8zm0 4v2h8v-2H8z"></path></svg></sc-if><sc-if value="{{it.i_sign}}" hint-placeholder-val="{{false}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="24" height="24" viewBox="0 0 24 24"><path d="M9.03 4.188c.791-.721 1.792-1.164 2.95-1.045.95.098 1.717.54 2.22 1.271.477.695.655 1.56.662 2.431.014 1.74-.648 3.874-1.72 5.902-.986 1.864-2.364 3.722-4.023 5.204.177.233.364.402.553.514.346.205.83.296 1.572.03.775-.28 1.79-.942 3.049-2.202l.105-.09a1.001 1.001 0 011.587.625c.248 1.416.827 1.81 1.198 1.848.491.051 1.553-.324 3.017-2.275l1.6 1.2c-1.536 2.047-3.202 3.233-4.823 3.064-1.165-.12-1.962-.88-2.452-1.879-.918.764-1.783 1.295-2.603 1.59-1.196.43-2.318.372-3.268-.19a3.935 3.935 0 01-1.112-1.006c-1.643 1.1-3.52 1.821-5.542 1.821v-2c1.604 0 3.171-.602 4.617-1.613-.318-.929-.498-1.986-.565-3.072-.151-2.44.256-5.209 1.156-7.362.45-1.075 1.05-2.062 1.822-2.766zm2.744.944c-.475-.049-.932.11-1.397.534-.483.44-.94 1.141-1.324 2.06-.768 1.836-1.14 4.294-1.005 6.467.04.643.124 1.247.248 1.79 1.236-1.217 2.29-2.684 3.077-4.17.987-1.866 1.5-3.665 1.49-4.952-.006-.641-.139-1.065-.31-1.315-.147-.212-.367-.371-.779-.414z"></path></svg></sc-if>
+</span>
+<sc-if value="{{expanded}}" hint-placeholder-val="{{true}}"><span class="sm-label">{{it.label}}</span></sc-if>
+<sc-if value="{{it.showTri}}" hint-placeholder-val="{{false}}"><span class="sm-tri" data-open="{{it.triOpen}}"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M9.089 12.104C8.367 13.028 8.006 13.49 8 13.88c-.005.34.137.662.384.875.285.245.849.245 1.977.245h3.278c1.128 0 1.692 0 1.977-.245.247-.213.389-.536.384-.875-.006-.39-.367-.852-1.089-1.776l-1.639-2.097c-.437-.559-.655-.838-.917-.94a.975.975 0 00-.71 0c-.262.102-.48.381-.917.94l-1.64 2.098z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span></sc-if><sc-if value="{{it.showExt}}" hint-placeholder-val="{{false}}"><span class="sm-ext"><svg aria-hidden="true" focusable="false" fill="currentColor" width="16" height="16" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-2h2v2a4 4 0 01-4 4H7a4 4 0 01-4-4V7a4 4 0 014-4h2v2z"></path><path d="M21 11h-2V6.414l-6.293 6.293-1.414-1.414L17.586 5H13V3h8v8z"></path></svg></span></sc-if>
+</button>
+</div>
+<sc-if value="{{it.dividerAfter}}" hint-placeholder-val="{{false}}"><div class="sm-div" role="separator"></div></sc-if>
+</sc-for>
+
+<sc-if value="{{expanded}}" hint-placeholder-val="{{true}}"><div class="sm-gtitle">Закреплённые ссылки</div></sc-if>
+<sc-if value="{{collapsed}}" hint-placeholder-val="{{false}}"><div class="sm-div sm-div--links" role="separator"></div></sc-if>
+<sc-if value="{{showLinks}}" hint-placeholder-val="{{true}}">
+<sc-for list="{{links}}" as="ln" hint-placeholder-count="4">
+<div class="sm-cell">
+<button class="sm-item" type="button" aria-current="{{ln.current}}" aria-label="{{ln.label}}" onClick="{{ln.go}}" onMouseEnter="{{ln.tipIn}}" onMouseLeave="{{tipOut}}" onFocus="{{ln.tipIn}}" onBlur="{{tipOut}}">
+<span class="sm-letter" style="{{ln.style}}">{{ln.short}}</span>
+<sc-if value="{{expanded}}" hint-placeholder-val="{{true}}"><span class="sm-label">{{ln.label}}</span></sc-if>
+</button>
+</div>
+</sc-for>
+</sc-if>
+
+<div style="height: 16px"></div>
+<div class="sm-fade"></div>
+</div>
+
+<sc-if value="{{expanded}}" hint-placeholder-val="{{true}}">
+<div class="sm-foot-wrap" style="flex: 0 0 auto; padding: 8px 16px 16px; display: flex; flex-direction: column; gap: 10px">
+<div class="sm-foot-cell" style="display: grid; grid-template-columns: 1fr 1fr">
+<x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="Скрыть меню" position="top" style="display: block; min-width: 0">
+<button class="sm-foot" type="button" onClick="{{toggle}}"><span class="sm-fi"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zM8.086 12l5.707 5.707 1.414-1.414L10.914 12l4.293-4.293-1.414-1.414L8.086 12z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span>Скрыть</button>
+</x-import>
+<button class="sm-foot" type="button"><span class="sm-fi"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-9.998-3.605a1.28 1.28 0 00-.964.441l-.662.75L8.84 8.295l.661-.75a3.33 3.33 0 012.5-1.128c1.88 0 3.339 1.533 3.339 3.344a3.34 3.34 0 01-.874 2.256c-.162.178-.31.33-.446.47a8.48 8.48 0 00-.624.693c-.285.364-.38.618-.38.82h-2.028c0-.838.402-1.516.794-2.018.256-.328.593-.678.867-.961.115-.12.22-.23.302-.32.221-.242.36-.57.36-.94 0-.79-.622-1.366-1.31-1.366zM13 18v-2h-2v2h2z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span>Помощь</button>
+</div>
+<sc-if value="{{isCreate}}" hint-placeholder-val="{{true}}">
+<div class="sm-cwrap"><sc-if value="{{createOpen}}" hint-placeholder-val="{{false}}"><button type="button" class="sm-cscrim" aria-label="Закрыть меню" tabindex="-1" onClick="{{closeCreate}}"></button><div class="sm-cmenu" role="menu" aria-label="Создать"><span class="sm-cmenu-h">Создать</span><sc-for list="{{createItems}}" as="ci" hint-placeholder-count="6"><button type="button" role="menuitem" onClick="{{ci.pick}}">{{ci.label}}</button></sc-for></div></sc-if><button type="button" class="sm-cta" aria-haspopup="menu" aria-expanded="{{createStr}}" onClick="{{toggleCreate}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 11H5v2h6v6h2v-6h6v-2h-6V5h-2v6z"></path></svg>Создать</button></div>
+</sc-if>
+<sc-if value="{{isWork}}" hint-placeholder-val="{{false}}">
+<button type="button" class="sm-cta sm-cta--primary" onClick="{{toggleWork}}"><sc-if value="{{working}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zM8.5 8h2v8h-2V8zm5 0h2v8h-2V8z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{notWorking}}" hint-placeholder-val="{{true}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm4.055-9.367l-5.476 3.218c-.593.349-1.079.063-1.079-.633V8.782c0-.697.486-.982 1.08-.633l5.475 3.218c.593.348.593.918 0 1.266z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if>{{workLabel}}</button>
+</sc-if>
+</div>
+</sc-if>
+<sc-if value="{{collapsed}}" hint-placeholder-val="{{false}}">
+<div class="sm-mini-wrap" style="flex: 0 0 auto; padding: 6px 0 8px; display: flex; flex-direction: column; align-items: center; gap: 4px">
+<button class="sm-mini-btn" type="button" aria-label="Помощь" onMouseEnter="{{tipHelp}}" onMouseLeave="{{tipOut}}" onFocus="{{tipHelp}}" onBlur="{{tipOut}}"><span><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zm-9.998-3.605a1.28 1.28 0 00-.964.441l-.662.75L8.84 8.295l.661-.75a3.33 3.33 0 012.5-1.128c1.88 0 3.339 1.533 3.339 3.344a3.34 3.34 0 01-.874 2.256c-.162.178-.31.33-.446.47a8.48 8.48 0 00-.624.693c-.285.364-.38.618-.38.82h-2.028c0-.838.402-1.516.794-2.018.256-.328.593-.678.867-.961.115-.12.22-.23.302-.32.221-.242.36-.57.36-.94 0-.79-.622-1.366-1.31-1.366zM13 18v-2h-2v2h2z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span></button>
+<button class="sm-mini-btn" type="button" aria-label="Раскрыть меню" onClick="{{toggleFromTip}}" onMouseEnter="{{tipExpand}}" onMouseLeave="{{tipOut}}" onFocus="{{tipExpand}}" onBlur="{{tipOut}}"><span><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2c5.523 0 10 4.477 10 10s-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2zm4.414 10l-5.707 5.707-1.414-1.414L13.586 12 9.293 7.707l1.414-1.414L16.414 12z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></span></button>
+<div style="padding: 8px 8px 0">
+<sc-if value="{{isCreate}}" hint-placeholder-val="{{true}}">
+<span style="display: inline-flex" onMouseEnter="{{tipCreate}}" onMouseLeave="{{tipOut}}">
+<div class="sm-cwrap sm-cwrap--mini"><sc-if value="{{createOpen}}" hint-placeholder-val="{{false}}"><button type="button" class="sm-cscrim" aria-label="Закрыть меню" tabindex="-1" onClick="{{closeCreate}}"></button><div class="sm-cmenu" role="menu" aria-label="Создать"><span class="sm-cmenu-h">Создать</span><sc-for list="{{createItems}}" as="ci" hint-placeholder-count="6"><button type="button" role="menuitem" onClick="{{ci.pick}}">{{ci.label}}</button></sc-for></div></sc-if><x-import component-from-global-scope="DesignSystem_88b1f8.IconButton" view="secondary" size="{{n48}}" aria-label="Создать" aria-haspopup="menu" on-click="{{toggleCreate}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 11H5v2h6v6h2v-6h6v-2h-6V5h-2v6z"></path></svg></x-import></div>
+</span>
+</sc-if>
+<sc-if value="{{isWork}}" hint-placeholder-val="{{false}}">
+<span style="display: inline-flex" onMouseEnter="{{tipWork}}" onMouseLeave="{{tipOut}}">
+<x-import component-from-global-scope="DesignSystem_88b1f8.IconButton" view="primary" size="{{n48}}" aria-label="{{workLabel}}" on-click="{{toggleWork}}"><sc-if value="{{working}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10zM8.5 8h2v8h-2V8zm5 0h2v8h-2V8z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if><sc-if value="{{notWorking}}" hint-placeholder-val="{{true}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10zm4.055-9.367l-5.476 3.218c-.593.349-1.079.063-1.079-.633V8.782c0-.697.486-.982 1.08-.633l5.475 3.218c.593.348.593.918 0 1.266z" fill-rule="evenodd" clip-rule="evenodd"></path></svg></sc-if></x-import>
+</span>
+</sc-if>
+</div>
+</div>
+</sc-if>
+<div class="sm-resize" role="separator" aria-orientation="vertical" aria-label="Ширина меню" aria-valuemin="64" aria-valuemax="360" aria-valuenow="{{widthNow}}" aria-valuetext="{{widthText}}" tabindex="0" title="Потяните, чтобы изменить ширину. Двойной клик — свернуть или развернуть" onMouseDown="{{startResize}}" onDoubleClick="{{toggle}}" onKeyDown="{{resizeKey}}"></div>
+<sc-if value="{{tipShow}}" hint-placeholder-val="{{false}}"><div class="sm-tip" role="tooltip" style="{{tipStyle}}">{{tipLabel}}</div></sc-if>
+</nav>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;collapsed&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true},&quot;onNavigate&quot;:{&quot;editor&quot;:null},&quot;onCreate&quot;:{&quot;editor&quot;:null},&quot;createDemo&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false},&quot;active&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;queue&quot;,&quot;clients&quot;,&quot;book&quot;,&quot;admin&quot;,&quot;cap&quot;,&quot;kb&quot;,&quot;search&quot;,&quot;money&quot;,&quot;archive&quot;,&quot;sign&quot;,&quot;cb&quot;,&quot;eg&quot;,&quot;ko&quot;,&quot;tr&quot;],&quot;default&quot;:&quot;queue&quot;},&quot;admin&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true},&quot;action&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;create&quot;,&quot;finish&quot;,&quot;start&quot;],&quot;default&quot;:&quot;create&quot;},&quot;look&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;flat&quot;,&quot;card&quot;],&quot;default&quot;:&quot;card&quot;},&quot;$preview&quot;:{&quot;width&quot;:260,&quot;height&quot;:900}}">
+const MINI = 64, MIN = 240, MAX = 360, MID = (MINI + MIN) / 2;
+const clampW = (w) => Math.max(MIN, Math.min(MAX, Math.round(w)));
+const LS_KEY = 'sm-width-v1';
+
+class Component extends DCLogic {
+  componentDidMount() { if (this.props.createDemo) this.setState({ createOpen: true }); this._esc = (e) => { if (e.key === 'Escape' && (this.state || {}).createOpen) this.setState({ createOpen: false }); }; document.addEventListener('keydown', this._esc); }
+  componentWillUnmount() { document.removeEventListener('keydown', this._esc); clearTimeout(this._tipT); if (this._stopDrag) this._stopDrag(); }
+  saved(k) { try { const v = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); return v[k] != null ? String(v[k]) : null; } catch (e) { return null; } }
+  // запоминаем только ширину полного меню; мини/полное задаёт экран
+  save(collapsed, w) { try { localStorage.setItem(LS_KEY, JSON.stringify({ w: w })); } catch (e) {} }
+  fullWidth(card) {
+    const s = this.state || {};
+    const sw = this.saved('w');
+    return clampW(s.fullW != null ? s.fullW : (sw != null ? Number(sw) : (card ? 256 : 260)));
+  }
+  commit(collapsed, w) {
+    const next = { dragW: null, collapsed: collapsed, tip: null };
+    if (w != null) next.fullW = clampW(w);
+    this.setState(next);
+    const card = (this.props.look || 'flat') === 'card';
+    this.save(collapsed, w != null ? clampW(w) : this.fullWidth(card));
+  }
+  startResize(e) {
+    if (!e || e.button !== 0) return;
+    e.preventDefault();
+    const nav = e.currentTarget && e.currentTarget.closest('nav');
+    const startW = nav ? nav.getBoundingClientRect().width : MIN;
+    const x0 = e.clientX;
+    let moved = false;
+    const move = (ev) => {
+      const dx = ev.clientX - x0;
+      if (!moved && Math.abs(dx) < 3) return;
+      moved = true;
+      this.setState({ dragW: startW + dx, tip: null });
+    };
+    const stop = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', up);
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      this._stopDrag = null;
+    };
+    const up = () => {
+      stop();
+      const w = (this.state || {}).dragW;
+      if (!moved || w == null) { this.setState({ dragW: null }); return; }
+      if (w < MID) this.commit(true, null);
+      else this.commit(false, w);
+    };
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', up);
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    this._stopDrag = stop;
+  }
+  tipFor(getLabel) {
+    return (e) => {
+      const st = this.state || {};
+      const collapsed = st.dragW != null ? false : (st.collapsed != null ? st.collapsed : !!this.props.collapsed);
+      if (!collapsed) return;
+      const el = e && e.currentTarget;
+      if (!el || !el.getBoundingClientRect) return;
+      const r = el.getBoundingClientRect();
+      const nav = el.closest('nav');
+      const left = (nav ? nav.getBoundingClientRect().right : r.right) + 8;
+      const top = r.top + r.height / 2;
+      const label = typeof getLabel === 'function' ? getLabel() : getLabel;
+      clearTimeout(this._tipT);
+      this._tipT = setTimeout(() => this.setState({ tip: { label: label, left: left, top: top } }), 300);
+    };
+  }
+  hideTip() { clearTimeout(this._tipT); if ((this.state || {}).tip) this.setState({ tip: null }); }
+  renderVals() {
+    const s = this.state || {};
+    const baseCollapsed = s.collapsed != null ? s.collapsed : !!this.props.collapsed;
+    // во время перетаскивания состояние берём из текущей ширины
+    const collapsed = s.dragW != null ? s.dragW < MID : baseCollapsed;
+    const expanded = !collapsed;
+    const active = s.active || this.props.active || 'queue';
+    const admin = this.props.admin !== false;
+    const action = this.props.action || 'create';
+    const working = s.working != null ? s.working : action === 'finish';
+    const go = (key) => () => { this.setState({ active: key }); if (this.props.onNavigate) this.props.onNavigate(key); };
+    const vkOpen = s.vkOpen !== false;
+    const vkOpenNow = s.vkOpen !== false;
+    const defs = [
+      ['queue', 'Очередь задач'], ['clients', 'Клиенты'], ['book', 'Справочник'], ['admin', 'Администрирование'],
+      ['cap', 'Траектория развития', 'ext'], ['kb', 'База знаний', 'ext'],
+      ['vk', 'Валютный контроль', 'tri'], ['search', 'Поиск', 'sub'], ['reports', 'Отчёты', 'sub'], ['money', 'АЗОН ВНТ', 'ext sub'], ['archive', 'Электронный архив', 'ext sub'], ['sign', 'На подписание', 'ext sub']
+    ].filter((d) => (admin || d[0] !== 'admin') && (vkOpenNow || String(d[2] || '').indexOf('sub') === -1));
+    const lastTop = admin ? 'admin' : 'book';
+    const icons = ['queue', 'clients', 'book', 'admin', 'cap', 'kb', 'vk', 'search', 'reports', 'money', 'archive', 'sign'];
+    const main = defs.map((d) => {
+      const flags = String(d[2] || '');
+      const it = {
+        label: d[1],
+        tipIn: this.tipFor(d[1]),
+        current: active === d[0] ? 'page' : undefined,
+        go: d[0] === 'vk' ? () => this.setState({ vkOpen: !vkOpenNow }) : go(d[0]),
+        dividerAfter: d[0] === lastTop || d[0] === 'kb',
+        showTri: expanded && flags.indexOf('tri') !== -1,
+        triOpen: vkOpenNow ? 'true' : 'false',
+        showExt: expanded && flags.indexOf('ext') !== -1,
+        extAttr: flags.indexOf('ext') !== -1 ? 'true' : 'false'
+      };
+      icons.forEach((k) => { it['i_' + k] = false; });
+      it['i_' + d[0]] = true;
+      return it;
+    });
+    // фронт-ревью (сентябрь): цвета ссылок — токены decorative-soft
+    const badge = (c) => 'background: var(--decorative-soft-' + c + ', var(--decorative-muted-alt-' + c + ')); color: var(--decorative-' + c + ')';
+    const links = [
+      ['cb', 'ЦБ', 'ЦБ РФ', badge('pistachio')],
+      ['eg', 'ЕГ', 'ЕГРЮЛ', badge('indigo')],
+      ['ko', 'КО', 'Консультант +', 'background: var(--color-neutral-translucent-100); color: var(--text-secondary)'],
+      ['tr', 'ТР', 'Траектория развития', badge('purple')],
+      ['fns', 'ФН', 'ФНС России', badge('orange')],
+      ['rfm', 'РФ', 'Росфинмониторинг', badge('teal')]
+    ].map((l) => ({ short: l[1], label: l[2], style: l[3], current: active === l[0] ? 'page' : undefined, go: go(l[0]), tipIn: this.tipFor(l[2]) }));
+    const look = s.look || this.props.look || 'flat';
+    const card = look === 'card';
+    const fullW = this.fullWidth(card);
+    const dragging = s.dragW != null;
+    const width = collapsed ? MINI : (dragging ? clampW(s.dragW) : fullW);
+    return {
+      yes: true,
+      fullWidth: true,
+      n48: 48,
+      expanded: expanded,
+      collapsed: collapsed,
+      tip: expanded ? false : undefined,
+      look: look,
+      collapsedAttr: collapsed ? 'true' : 'false',
+      brand: card ? 'Альфа–Офис' : 'Smart BackOffice',
+      rootStyle: 'width: ' + width + 'px; min-width: ' + width + 'px; position: sticky; z-index: 40; box-sizing: border-box; display: flex; flex-direction: column; font-family: var(--font-system); color: var(--text-primary); ' + (dragging ? 'transition: none; ' : 'transition: width .15s ease, min-width .15s ease; ') + (card ? 'top: 8px; margin: 8px 0 8px 8px; height: calc(100vh - 16px); background: var(--bg-base-primary); border-radius: 28px; box-shadow: 0 0 1px rgba(0,0,0,.04), 0 4px 16px rgba(0,0,0,.04); overflow: hidden' : 'top: 0; height: 100vh; background: transparent'),
+      main: main,
+      links: links,
+      vkOpen: vkOpen,
+      vkClosed: !vkOpen,
+      showLinks: true,
+      toggleVk: () => this.setState({ vkOpen: !vkOpen }),
+      dir2Open: !!s.dir2Open,
+      dir2Closed: !s.dir2Open,
+      toggleDir2: () => this.setState({ dir2Open: !s.dir2Open }),
+      krStyle: badge('blue'),
+      krCurrent: active === 'kr' ? 'page' : undefined,
+      goKr: go('kr'),
+      toggle: () => this.commit(!collapsed, null),
+      dragging: dragging ? 'true' : 'false',
+      widthNow: width,
+      widthText: collapsed ? 'Мини, 64 пикселя' : 'Полное, ' + width + ' пикселей',
+      startResize: (e) => this.startResize(e),
+      resizeKey: (e) => {
+        const k = e && e.key;
+        if (k === 'Enter' || k === ' ') { e.preventDefault(); this.commit(!collapsed, null); return; }
+        if (k !== 'ArrowLeft' && k !== 'ArrowRight') return;
+        e.preventDefault();
+        const step = e.shiftKey ? 40 : 16;
+        if (k === 'ArrowRight') { if (collapsed) this.commit(false, fullW); else this.commit(false, fullW + step); }
+        else { if (collapsed) return; if (fullW - step < MIN) this.commit(true, null); else this.commit(false, fullW - step); }
+      },
+      toggleFromTip: () => { clearTimeout(this._tipT); this.setState({ collapsed: !collapsed, tip: null }); },
+      tipOut: () => this.hideTip(),
+      tipHelp: this.tipFor('Помощь'),
+      tipExpand: this.tipFor('Раскрыть меню'),
+      tipCreate: this.tipFor('Создать'),
+      tipWork: this.tipFor(() => ((this.state || {}).working != null ? this.state.working : (this.props.action || 'create') === 'finish') ? 'Завершить работу' : 'Начать работу'),
+      tipShow: collapsed && !!s.tip,
+      tipLabel: s.tip ? s.tip.label : '',
+      tipStyle: s.tip ? 'left: ' + Math.round(s.tip.left) + 'px; top: ' + Math.round(s.tip.top) + 'px' : '',
+      isCreate: action === 'create',
+      createOpen: !!s.createOpen, createStr: s.createOpen ? 'true' : 'false',
+      toggleCreate: () => this.setState({ createOpen: !s.createOpen }), closeCreate: () => this.setState({ createOpen: false }),
+      createItems: ['Контракт', 'СВО', 'СПД', 'Исходящее письмо', 'Исходящее письмо с ЭЦП', 'Запрос клиента'].map((l) => ({ label: l, pick: () => { this.setState({ createOpen: false }); if (this.props.onCreate) this.props.onCreate(l); else { try { window.dispatchEvent(new CustomEvent('sbo:create', { detail: { kind: l } })); } catch (e) {} } } })),
+      isWork: action !== 'create',
+      working: working,
+      notWorking: !working,
+      workLabel: working ? 'Завершить работу' : 'Начать работу',
+      toggleWork: () => this.setState({ working: !working })
+    };
+  }
+}
+</script>
+</body>
+</html>

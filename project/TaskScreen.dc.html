@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Окно задачи — экран</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>.sc-host:has(> .hd-bar){position:sticky;top:0;z-index:30}body{margin:0;background:var(--bg-base-alt-primary)}</style>
+</helmet>
+<div style="display: flex; align-items: stretch; min-height: 100vh; background-color: var(--bg-base-secondary, #f2f3f5); font-family: var(--font-system); color: var(--text-primary)">
+<dc-import name="SideMenu" active="queue" collapsed="{{yes}}" look="{{menuLook}}" hint-size="64px,900px"></dc-import>
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column">
+<dc-import name="Header" back="{{yes}}" on-back="{{goBack}}" hint-size="100%,64px"></dc-import>
+<div style="flex: 1 1 auto; display: flex; flex-direction: column; padding: 12px 40px 24px">
+<dc-import name="Task" status="{{status}}" view="{{view}}" tab="{{tab}}" title="{{title}}" scenario="{{scenario}}" close-state="{{closeState}}" demo="{{demo}}" fail-close="{{failClose}}" take-mode="{{takeMode}}" next-mode="{{nextMode}}" hold-modal="{{holdModal}}" hold-step="{{holdStep}}" fail-take="{{failTake}}" call-on="{{callOn}}" embed="{{embed}}" pending="{{pending}}" headless="{{headless}}" ready-timeout="{{readyTimeout}}" hint-size="100%,836px"></dc-import>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"status":{"editor":"enum","options":["work","work-soon","work-over","unassigned","assigned","done","done-late","rejected","draft","hold"],"default":"work"},"menuLook":{"editor":"enum","options":["flat","card"],"default":"flat"},"view":{"editor":"enum","options":["task","client"],"default":"task"},"tab":{"editor":"enum","options":["form","history"],"default":"form"},"title":{"editor":"string","default":""},"scenario":{"editor":"enum","options":["normal","other","taken","skeleton","skeleton-detailed","header-error","content-error","client-error","client-nodata","client-notfound","creating","missing","grabbed","waiting","copy-loading","external","action-required","forbidden","offline","server-error"],"default":"normal"},"takeMode":{"editor":"enum","options":["v2","v1"],"default":"v2"},"nextMode":{"editor":"enum","options":["link","none","seek"],"default":"link"},"holdModal":{"editor":"enum","options":["","error","reasons-error","forbidden"],"default":""},"holdStep":{"editor":"enum","options":["","holding","held"],"default":""},"failTake":{"editor":"boolean","default":false},"callOn":{"editor":"boolean","default":false},"pending":{"editor":"boolean","default":false},"headless":{"editor":"boolean","default":false},"embed":{"editor":"enum","options":["","loading","timeout","not-found","network","internal"],"default":""},"readyTimeout":{"editor":"number","default":10000},"closeState":{"editor":"enum","options":["","closing","closed","error"],"default":""},"demo":{"editor":"enum","options":["","taken","refresh","leave","hold","hold-error"],"default":""},"failClose":{"editor":"boolean","default":false},"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      yes: true,
+      status: this.props.status || 'work',
+      menuLook: this.props.menuLook || 'flat',
+      view: this.props.view || 'task',
+      tab: this.props.tab || 'form',
+      title: this.props.title || '',
+      scenario: this.props.scenario || 'normal',
+      closeState: this.props.closeState || '',
+      demo: this.props.demo || '',
+      failClose: !!this.props.failClose,
+      takeMode: this.props.takeMode || 'v2',
+      nextMode: this.props.nextMode || 'link',
+      holdModal: this.props.holdModal || '',
+      holdStep: this.props.holdStep || '',
+      failTake: !!this.props.failTake,
+      callOn: !!this.props.callOn,
+      pending: !!this.props.pending, headless: !!this.props.headless,
+      embed: this.props.embed || '', readyTimeout: this.props.readyTimeout || 10000,
+      goBack: () => {}
+    };
+  }
+}
+</script>
+</body>
+</html>

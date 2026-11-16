@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Покрытие макетов</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
+.cv{box-sizing:border-box;max-width:1360px;margin:0 auto;padding:48px 40px 64px;font-family:var(--font-system);color:var(--text-primary);display:flex;flex-direction:column;gap:24px}
+.cv h1{margin:0;font:700 40px/48px var(--font-system);letter-spacing:-.4px}
+.cv-lead{margin:8px 0 0;max-width:860px;font:400 17px/26px var(--font-system);color:var(--text-secondary)}
+.cv-sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.cv-n{background:var(--bg-base-primary, #fff);border-radius:20px;padding:20px 24px;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.cv-n b{display:block;font:700 32px/40px var(--font-system);color:var(--text-primary)}
+.cv-sec{background:var(--bg-base-primary, #fff);border-radius:24px;padding:24px 32px 16px}
+.cv-sec h2{margin:0 0 2px;font:700 22px/28px var(--font-system)}
+.cv-sec > p{margin:0 0 12px;font:400 13px/18px var(--font-system);color:var(--text-secondary)}
+.cv-t{width:100%;border-collapse:collapse;font:400 14px/20px var(--font-system)}
+.cv-t th{text-align:left;font:500 13px/18px var(--font-system);color:var(--text-secondary);padding:10px 12px;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.cv-t td{padding:12px;border-bottom:1px solid var(--color-neutral-translucent-200, rgba(30,43,68,.08));vertical-align:top}
+.cv-t tr:last-child td{border-bottom:0}
+.cv-t td:first-child{width:30%;font-weight:500}
+.cv-t td.st{width:150px}
+.cv-t small{display:block;margin-top:2px;color:var(--text-secondary);font:400 12px/16px ui-monospace,SFMono-Regular,Menlo,monospace}
+.cv-b{display:inline-flex;padding:2px 8px;border-radius:6px;font:500 12px/16px var(--font-system);white-space:nowrap}
+.cv-b[data-t="ok"]{background:var(--status-muted-positive, #e6f7ec);color:var(--text-positive, #0b8a3c)}
+.cv-b[data-t="part"]{background:var(--status-muted-alt-attention, #fde6c8);color:#a35600}
+.cv-b[data-t="no"]{background:var(--status-muted-negative, #fde9e7);color:var(--text-negative, #d91d0b)}
+.cv-b[data-t="out"]{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--text-secondary)}
+@media (max-width: 720px){.cv{padding:24px 16px}.cv-t td:first-child{width:auto}}
+</style>
+</helmet>
+<main class="cv">
+<header>
+<h1>Покрытие макетов</h1>
+<p class="cv-lead">Что из макетов Figma собрано в прототипе и что нет. Список файлов взят из спеки (Confluence, раздел 5.6 «Дизайн-ресурсы»). Админка в этот этап не входит. Если прототип и макет расходятся — правду говорит макет.</p>
+</header>
+<div class="cv-sum"><sc-for list="{{sum}}" as="n" hint-placeholder-count="4"><div class="cv-n"><b>{{n.v}}</b>{{n.k}}</div></sc-for></div>
+<sc-for list="{{sections}}" as="sec" hint-placeholder-count="10">
+<section class="cv-sec" aria-label="{{sec.title}}">
+<h2>{{sec.title}}</h2>
+<p>{{sec.file}}</p>
+<table class="cv-t"><thead><tr><th scope="col">Страница макета</th><th scope="col">Статус</th><th scope="col">Где в прототипе и что отличается</th></tr></thead>
+<tbody><sc-for list="{{sec.rows}}" as="r" hint-placeholder-count="3"><tr><td>{{r.page}}<small>{{r.node}}</small></td><td class="st"><span class="cv-b" data-t="{{r.t}}">{{r.label}}</span></td><td>{{r.note}}</td></tr></sc-for></tbody></table>
+</section>
+</sc-for>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4600}}'>
+const L = { ok: 'Собрано', part: 'Частично', no: 'Не собрано', out: 'Вне этапа' };
+const R = (page, node, t, note) => ({ page: page, node: node, t: t, label: L[t], note: note });
+const SECTIONS = [
+  { title: 'Список задач', file: 'Figma 7boNgcJJQe2NUEVghkadNz', rows: [
+    R('Список задач / ВК', '7188:43678', 'ok', 'Страница «Список задач»: Мои, Общие, Архив, тултипы, уведомления, состояния и ошибки, холд, одна задача. Шапка таблицы с общим блюром — узел 11234:62899.'),
+    R('Расширенный поиск и фильтры (Прод)', '10001:249643', 'ok', 'Шторка расширенного поиска и чипы фильтров в очереди.'),
+    R('Как всё работает (Прод)', '10001:249642', 'ok', 'Шторка «Как всё работает».'),
+    R('Переназначение задач', '10636:88343', 'part', 'Есть передача задачи сотруднику из окна задачи и из списка. С макетом переназначения по экранам не сверял.'),
+    R('История изменений', '10001:249641', 'ok', 'Вкладка «История изменений» в окне задачи с живой лентой.'),
+    R('Виджет задач (Прод)', '7160:116724', 'part', 'Над таблицей очереди есть виджет со счётчиками. С этой страницей макета по экранам не сверял.'),
+    R('Кредитование ЮЛ (МАСС, Принятие на обслуживание, ЭБГ), Кредитование ФЛ', '10407:187105 и др.', 'no', 'Списки задач других направлений не собирались — в прототипе только валютный контроль.'),
+    R('Мини-таблица, Анимации появления задач (концепты)', '6537:44379, 10007:76150', 'part', 'Анимации новой, перехваченной и закрытой задачи есть. Мини-таблица не собрана.')
+  ] },
+  { title: 'Окно задачи', file: 'Figma DTINqSIrEagsIllSXcSBXC', rows: [
+    R('Окно задачи (В разработке)', '7008:26060', 'ok', 'Страница «Окно задачи»: скелетоны, «Не получилось загрузить», недостаточно прав, нет интернета, 404, статусы в шапке, нет данных, нет задачи, модалки.'),
+    R('Окно / Редизайн 2026', '9994:96186', 'ok', 'Разделы 1–12: ошибки, переходы, холд, звонки, перехват.'),
+    R('Окно / Перехват задачи', '8867:5798', 'ok', 'Доски Take-*.'),
+    R('Окно / Кнопки в работу и холд', '7139:40382', 'ok', 'Доски Hold-*, шторка холда.'),
+    R('Окно / Переходы к следующей и копирование', '9542:25141', 'ok', 'Доски Close-*.'),
+    R('Окно / Звонки', '7963:46720', 'part', 'Звонок из задачи идёт через виджет в шапке. Отдельная панель звонка внутри окна убрана, чтобы не было двух виджетов.'),
+    R('Окно / Виджет задач', '4685:49882', 'no', 'Виджет задач в окне задачи не собран.'),
+    R('Встройка РК: протокол', 'спека 6.11.1, стр. 4121–4128', 'ok', 'Доски Task-embed-*: загрузка, таймаут 10 с, NOT_FOUND, NETWORK_ERROR, INTERNAL_ERROR, «Задача сохранена», «Обновить без сохранения?». Отличие от спеки: «Выйти без сохранения?» показывается только если в окне были изменения, а не всегда после 10 с.')
+  ] },
+  { title: 'Левое меню, встройка РК, создание задачи', file: 'Figma gSxyag01qabWllCtEFnBxM', rows: [
+    R('Основное (Прод), Меню / Редизайн 2026', '0:1, 5028:10632', 'ok', 'Страница «Навигация»: меню свёрнутое и развёрнутое, два варианта вида, закреплённые ссылки.'),
+    R('Встройка РК', '5272:17148', 'ok', 'Собран вариант 1: в «Валютном контроле» страницы «Поиск» (добавлен «Контроль представления документов») и «Отчёты» (три отчёта). Вариант 2 (все пункты списком в меню) не собирался.'),
+    R('Создание задачи', '5142:37208', 'ok', 'Доски Create-*: меню «Создать», форма, ветки «тикет в УО есть» и «тикета нет», уведомление «Задача создана».')
+  ] },
+  { title: 'Клиенты', file: 'Figma wZLWPuFeOzcrum4CVmQY1D, KBQFJN41QkQrrVcCLXtQjC', rows: [
+    R('Клиенты / Мои, Клиенты / Поиск', '0:1, 7008:22548', 'ok', 'Страница «Клиенты». Отличие: по вашему правилу поиск работает с 1 символа, подсказок «введите ИНН целиком» больше нет.'),
+    R('Закрепление за клиентом', 'KBQFJN41QkQrrVcCLXtQjC · 1:518', 'no', 'Единичная замена, удаление, групповое удаление, добавление — не собрано. В карточке есть только плашка «Закрепление в процессе».')
+  ] },
+  { title: 'Карточка клиента', file: 'Figma GJNiIkB2T8YpOAD5HhGtF8', rows: [
+    R('Редизайн 2026, Карточка клиента ФЛ', '10054:9911, 10168:22687', 'ok', 'Страница «Карточка клиента»: ЮЛ, ИП, ФЛ, шторки пинов, документа, адреса, связи, контактов, записи о смерти.'),
+    R('Задачи, Контакты, Счета, Операции, Особые категории, История звонков', '7001:271926 и др.', 'ok', 'Все вкладки с состояниями. Данные вымышленные.'),
+    R('Дозагрузка результатов', '7272:107714', 'part', 'Дозагрузка контактов есть. Логику скелетонов при дозагрузке по макету не сверял.'),
+    R('Добавление контакта из карточки звонка', '9521:30769', 'no', 'Относится к странице звонка — её не делаем.')
+  ] },
+  { title: 'Справочники', file: 'Figma i4FOEsGqq9xb8IayFqwOSS', rows: [
+    R('Справочники V2', '2393:8822', 'ok', 'Страница «Справочники». Состав разделов «Кредитование ЮЛ / ФЛ» придуман — в макете они пустые.')
+  ] },
+  { title: 'Шапка и поиск', file: 'Figma QNpLOxeBEek8cwJSNks5gL, HAnxsOcHR9I0vLpNlWFmh4', rows: [
+    R('Статусы, Роли и Скиллы, Режимы работы', '1750:141585 и др.', 'ok', 'Страница «Навигация», доски Header*.'),
+    R('Поиск внутри ЛК', '380:16320', 'ok', 'Отличие: по вашему решению ищет ещё по справочникам, разделам, функциям и ссылкам, с 1 символа.'),
+    R('Поиск по модулю', '1240:12572', 'ok', 'Страница «Поиск по модулю».')
+  ] },
+  { title: 'Звонки', file: 'Figma TkqLXE75sba8bol4MGZDCT', rows: [
+    R('Виджет в навигации', '3331:41176', 'ok', 'Доски HeaderCall*. Отличие: модалки звонка — шторки справа, а в макете по центру (ваше общее правило).'),
+    R('Уведомления', '5944:51034', 'part', 'Уведомления о звонках идут в общий стек. С макетом уведомлений не сверял.'),
+    R('Страница звонка, Звонок в архиве', '5056:25526, 5004:11999', 'no', 'Не делаем по вашему решению.')
+  ] },
+  { title: 'Виджет задач', file: 'Figma OAij9mvs9pLmEh3Hl7Ktos', rows: [
+    R('В задаче V1, Глобальный виджет V2', '11011:27724, 4685:49882', 'no', 'Не собрано.')
+  ] },
+  { title: 'Админка', file: 'Figma: список пользователей, карточка пользователя, правила, регулярные задачи, аналитика, ссылки в меню', rows: [
+    R('Все разделы админки', '—', 'out', 'Делаем отдельным этапом.')
+  ] },
+  { title: 'Замечания фронт-ревью (сентябрь)', file: 'Figma Ukpa3bJh50BLHHNL4gBdla · 1076:27368, 987:8385', rows: [
+    R('Шапка закреплена при прокрутке', 'Шапка', 'ok', 'Закреплена на всех страницах.'),
+    R('Детали БВО: нет данных — скрывать сумму', 'Карточка БВО', 'ok', 'Исправлено в карточке операции.'),
+    R('Цвета ссылок — токены decorative-soft', 'Навигация', 'ok', 'Исправлено в меню.'),
+    R('Порядок пунктов меню и ссылок', 'Навигация', 'ok', '«Траектория развития» перед «Базой знаний», «ЦБ РФ» выше «ЕГРЮЛ» — везде одинаково.'),
+    R('Роли: «Бессрочно», срок «С … до …»', 'Роли', 'ok', 'Так и сделано.'),
+    R('Заголовок таблицы без вертикальных разделителей', 'Карточка клиента', 'part', 'В таблицах карточки разделителей нет. В очереди, клиентах и справочниках они есть — так нарисовано в макете списка задач.'),
+    R('Плейсхолдер поиска «Поиск по клиентам и задачам»', 'Шапка', 'part', 'Оставлен «Поиск по SmartBackOffice»: поиск теперь шире клиентов и задач.'),
+    R('Высота тегов 24 px, чёрный текст тегов, Пин и ИНН в одну строку, поля фильтров 48 px', 'Страница задач, Фильтры', 'part', 'Не перепроверял по пикселям — стоит пройти при фронт-ревью реализации.')
+  ] }
+];
+class Component extends DCLogic {
+  renderVals() {
+    const all = SECTIONS.reduce((a, s) => a.concat(s.rows), []);
+    const c = (t) => all.filter((r) => r.t === t).length;
+    return { sections: SECTIONS, sum: [{ v: c('ok'), k: 'страниц и замечаний собрано' }, { v: c('part'), k: 'собрано частично' }, { v: c('no'), k: 'не собрано' }, { v: c('out'), k: 'вне этапа' }] };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Справочники и ссылки</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+.rf{box-sizing:border-box;width:100%;padding:16px 40px 48px;display:flex;flex-direction:column;gap:20px;font-family:var(--font-system);color:var(--text-primary)}
+.rf h1{margin:0;font:700 32px/40px var(--font-system);letter-spacing:-.2px}
+.rf-back{appearance:none;border:0;margin:0 0 -8px;padding:0;background:transparent;display:inline-flex;align-items:center;gap:4px;font:400 14px/20px var(--font-system);color:var(--text-secondary);cursor:pointer;align-self:flex-start}
+.rf-tabs{display:flex;flex-wrap:wrap;gap:8px}
+.rf-tab{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:10px;background:var(--bg-base-primary, #fff);font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.rf-tab[aria-pressed="true"]{background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.rf-search{display:flex;align-items:center;gap:12px;height:56px;padding:0 16px;border-radius:12px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1));color:var(--graphic-secondary)}
+.rf-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:400 16px/22px var(--font-system);color:var(--text-primary)}
+.rf-search input::placeholder{color:var(--text-secondary)}
+.rf-search:focus-within{box-shadow:inset 0 0 0 2px var(--status-info, #2a77ef)}
+.rf-clr{appearance:none;border:0;margin:0;padding:0;width:20px;height:20px;border-radius:50%;background:var(--graphic-secondary, #898991);color:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
+.rf-h2{margin:4px 0 -4px;font:700 18px/24px var(--font-system)}
+.rf-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.rf-card{background:var(--bg-base-primary, #fff);border-radius:20px;padding:24px 28px 20px}
+.rf-card h3{margin:0 0 12px;font:700 18px/24px var(--font-system)}
+.rf-item{appearance:none;border:0;margin:0 -12px;padding:12px;width:calc(100% + 24px);background:transparent;border-radius:12px;display:flex;align-items:center;gap:16px;text-align:left;font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.rf-item:hover{background:var(--color-neutral-translucent-100, rgba(30,43,68,.04))}
+.rf-item span.t{flex:1;min-width:0}
+.rf-item mark,.rf-tbl mark{background:#fde6c8;color:inherit;border-radius:3px}
+.rf-ico{flex:0 0 40px;width:40px;height:40px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary)}
+.rf-go{color:var(--graphic-secondary);display:inline-flex}
+.rf-total{font:400 14px/20px var(--font-system);color:var(--text-secondary);margin:-4px 0 -4px 4px}
+.rf-total b{color:var(--text-primary);font-weight:600;margin-left:6px}
+.rf-tbl{background:var(--bg-base-primary, #fff);border-radius:20px;padding:12px 16px 8px}
+.rf-tbl table{border-collapse:collapse;width:100%;font:400 14px/20px var(--font-system)}
+.rf-tbl th{text-align:left;font:600 14px/20px var(--font-system);padding:16px 12px;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));white-space:nowrap;position:relative}
+.rf-tbl th + th::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:1px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.rf-tbl td{padding:24px 12px;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));vertical-align:top}
+.rf-tbl tr:last-child td{border-bottom:0}
+.rf-sort{appearance:none;border:0;margin:0;padding:0;background:transparent;font:inherit;color:inherit;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.rf-sort svg{color:var(--graphic-secondary)}
+.rf-cl{appearance:none;border:0;margin:0;padding:0;background:transparent;font:inherit;color:inherit;text-align:left;cursor:copy;border-radius:4px}
+.rf-cl:hover{text-decoration:underline;text-decoration-color:var(--color-neutral-translucent-500, rgba(4,4,19,.3));text-underline-offset:3px}
+.rf-chip{display:inline-flex;padding:1px 6px;border-radius:6px;font:600 10px/16px var(--font-system);letter-spacing:.3px;text-transform:uppercase;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--text-secondary)}
+.rf-chip[data-t="ok"]{background:var(--status-muted-positive, #e6f7ec);color:var(--text-positive, #0b8a3c)}
+.rf-chip[data-t="blue"]{background:var(--status-muted-info, #e8f1fe);color:var(--text-info, #2a77ef)}
+.rf-state{background:var(--bg-base-primary, #fff);border-radius:20px;display:flex;flex-direction:column;align-items:center;gap:8px;padding:56px 24px;text-align:center;font:400 14px/20px var(--font-system)}
+.rf-state b{font:700 18px/24px var(--font-system);margin-top:8px}
+.rf-state-i{width:48px;height:48px;border-radius:14px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;justify-content:center}
+.rf-btn{appearance:none;border:0;margin:8px 0 0;height:40px;padding:0 16px;border-radius:10px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.rf-sk{display:block;border-radius:12px;background:linear-gradient(90deg,rgba(30,43,68,.06),rgba(30,43,68,.11),rgba(30,43,68,.06));background-size:200% 100%;animation:rf-sk 1.2s linear infinite}
+@keyframes rf-sk{from{background-position:200% 0}to{background-position:-200% 0}}
+.rf-skrow{display:flex;gap:24px;padding:22px 12px;border-bottom:1px solid var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.rf-skrow .rf-sk{height:14px}
+.rf-toast{position:fixed;top:72px;right:24px;z-index:50;display:flex;align-items:center;gap:10px;padding:12px 12px 12px 16px;border-radius:14px;background:#1c1c1e;color:#fff;font:500 14px/20px var(--font-system)}
+.rf-toast button{display:inline-flex;align-items:center;justify-content:center;appearance:none;border:0;margin:0;background:transparent;color:rgba(255,255,255,.6);cursor:pointer;width:24px;height:24px}
+.rf-back:focus-visible,.rf-tab:focus-visible,.rf-item:focus-visible,.rf-clr:focus-visible,.rf-sort:focus-visible,.rf-cl:focus-visible,.rf-btn:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+@media (max-width: 1100px){.rf-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width: 720px){.rf{padding:16px}.rf-grid{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){.rf-sk{animation-duration:3s}}
+
+.rf-tbl thead th{position:sticky;top:64px;z-index:7;background:transparent;border-bottom:0;box-shadow:inset 0 -1px 0 var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+@media (max-width: 1000px){.rf-tbl{overflow-x:auto}.rf-tbl thead th{position:static}}
+
+/* Первый результат поиска подсвечен — Enter откроет (скопирует) его */
+.rf-item[data-first="true"]{background:color-mix(in srgb,var(--status-info, #2a77ef) 8%,transparent)}
+.rf-tbl tr[data-first="true"] td{background:color-mix(in srgb,var(--status-info, #2a77ef) 6%,var(--bg-base-primary, #fff))}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.rf-item,
+.rf-cl{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.rf-item:hover,
+.rf-cl:hover{transition-delay:.3s}
+.rf-item:hover:active,
+.rf-cl:hover:active{transition-delay:0s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<div class="rf">
+
+<sc-if value="{{isMain}}" hint-placeholder-val="{{true}}">
+<h1>Справочники и ссылки</h1>
+<label class="rf-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg><input type="text" placeholder="Поиск по справочникам и ссылкам" aria-label="Поиск по справочникам и ссылкам" value="{{mq}}" onChange="{{setMq}}" onKeyDown="{{mqKey}}"><sc-if value="{{hasMq}}" hint-placeholder-val="{{false}}"><button type="button" class="rf-clr" aria-label="Очистить поиск" onClick="{{clearMq}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.4 4.2L12 10.6 5.6 4.2 4.2 5.6l6.4 6.4-6.4 6.4 1.4 1.4 6.4-6.4 6.4 6.4 1.4-1.4-6.4-6.4 6.4-6.4z"/></svg></button></sc-if></label>
+<sc-if value="{{showTabs}}" hint-placeholder-val="{{true}}"><div class="rf-tabs" role="group" aria-label="Направление"><sc-for list="{{dirTabs}}" as="dt" hint-placeholder-count="4"><button type="button" class="rf-tab" aria-pressed="{{dt.on}}" onClick="{{dt.pick}}">{{dt.label}}</button></sc-for></div></sc-if>
+<sc-if value="{{mSkel}}" hint-placeholder-val="{{false}}"><div aria-busy="true" aria-label="Загружаем справочники" style="display: flex; flex-direction: column; gap: 20px"><span class="rf-sk" style="height: 14px; width: 120px"></span><div class="rf-grid"><span class="rf-sk" style="height: 300px; border-radius: 20px"></span><span class="rf-sk" style="height: 300px; border-radius: 20px"></span><span class="rf-sk" style="height: 300px; border-radius: 20px"></span><span class="rf-sk" style="height: 300px; border-radius: 20px"></span><span class="rf-sk" style="height: 300px; border-radius: 20px"></span><span class="rf-sk" style="height: 300px; border-radius: 20px"></span></div></div></sc-if>
+<sc-if value="{{mErr}}" hint-placeholder-val="{{false}}"><div class="rf-state" role="alert"><span class="rf-state-i" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm-.5 8h4l-.5 12H7l-.5-12zM15 2h2l2 3-1 3v14h-4V8l-1-3 2-3z"/></svg></span><b>Не получилось загрузить</b><span>Уже исправляем. Попробуйте ещё раз или зайдите позже</span><button type="button" class="rf-btn" onClick="{{retry}}">Попробовать ещё раз</button></div></sc-if>
+<sc-if value="{{mNone}}" hint-placeholder-val="{{false}}"><div class="rf-state" role="status"><span class="rf-state-i" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg></span><b>Ничего не нашлось</b><button type="button" class="rf-btn" onClick="{{clearMq}}">Сбросить поиск</button></div></sc-if>
+<sc-if value="{{mOk}}" hint-placeholder-val="{{true}}"><sc-for list="{{sections}}" as="sec" hint-placeholder-count="1"><h2 class="rf-h2">{{sec.title}}</h2><div class="rf-grid"><sc-for list="{{sec.cards}}" as="cd" hint-placeholder-count="4"><section class="rf-card" aria-label="{{cd.title}}"><h3>{{cd.title}}</h3><sc-for list="{{cd.items}}" as="it" hint-placeholder-count="4"><button type="button" class="rf-item" data-first="{{it.first}}" aria-label="{{it.aria}}" onClick="{{it.open}}"><span class="rf-ico" aria-hidden="true"><sc-if value="{{it.iBolt}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></sc-if><sc-if value="{{it.iStar}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M11 2h2v7.3l6.3-3.6 1 1.7L14 11l6.3 3.6-1 1.7-6.3-3.6V22h-2v-7.3l-6.3 3.6-1-1.7L10 11 3.7 7.4l1-1.7L11 9.3V2z"/></svg></sc-if><sc-if value="{{it.iBook}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 2h12a1 1 0 011 1v18a1 1 0 01-1 1H6a1 1 0 01-1-1V3a1 1 0 011-1zm2 3v2h8V5H8z"/></svg></sc-if><sc-if value="{{it.iEuro}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M17 6.5A7 7 0 1017 17.5M4 10h9M4 14h9"/></svg></sc-if><sc-if value="{{it.iSwap}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h14l-4-4M20 16H6l4 4"/></svg></sc-if><sc-if value="{{it.iCheck}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2l8 3v6c0 5-3.4 9.4-8 11-4.6-1.6-8-6-8-11V5l8-3zm-1.2 13.4l5.6-5.6-1.4-1.4-4.2 4.2-2-2-1.4 1.4 3.4 3.4z"/></svg></sc-if><sc-if value="{{it.iFlag}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h2v18H4V3zm3 1h13l-3 5 3 5H7V4z"/></svg></sc-if></span><span class="t">{{it.t1}}<mark>{{it.t2}}</mark>{{it.t3}}</span><span class="rf-go" aria-hidden="true"><sc-if value="{{it.ext}}" hint-placeholder-val="{{false}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg></sc-if><sc-if value="{{it.int}}" hint-placeholder-val="{{true}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M9 6l6 6-6 6-1.4-1.4 4.6-4.6-4.6-4.6L9 6z"/></svg></sc-if></span></button></sc-for></section></sc-for></div></sc-for></sc-if>
+</sc-if>
+
+<sc-if value="{{isRef}}" hint-placeholder-val="{{false}}">
+
+<h1>{{refTitle}}</h1>
+<label class="rf-search"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg><input type="text" placeholder="Поиск по справочнику" aria-label="Поиск по справочнику" value="{{rq}}" onChange="{{setRq}}" onKeyDown="{{rqKey}}"><sc-if value="{{hasRq}}" hint-placeholder-val="{{false}}"><button type="button" class="rf-clr" aria-label="Очистить поиск" onClick="{{clearRq}}"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.4 4.2L12 10.6 5.6 4.2 4.2 5.6l6.4 6.4-6.4 6.4 1.4 1.4 6.4-6.4 6.4 6.4 1.4-1.4-6.4-6.4 6.4-6.4z"/></svg></button></sc-if></label>
+<sc-if value="{{rTotalOn}}" hint-placeholder-val="{{true}}"><div class="rf-total">Всего<b>{{rTotal}}</b></div></sc-if>
+<sc-if value="{{rErr}}" hint-placeholder-val="{{false}}"><div class="rf-state" role="alert"><span class="rf-state-i" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm-.5 8h4l-.5 12H7l-.5-12zM15 2h2l2 3-1 3v14h-4V8l-1-3 2-3z"/></svg></span><b>Не получилось загрузить</b><span>Уже исправляем. Попробуйте ещё раз или зайдите позже</span><button type="button" class="rf-btn" onClick="{{retry}}">Попробовать ещё раз</button></div></sc-if>
+<sc-if value="{{rNone}}" hint-placeholder-val="{{false}}"><div class="rf-state" role="status"><span class="rf-state-i" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg></span><b>Ничего не нашлось</b><span>Попробуйте изменить запрос</span><button type="button" class="rf-btn" onClick="{{clearRq}}">Сбросить поиск</button></div></sc-if>
+<sc-if value="{{rTable}}" hint-placeholder-val="{{true}}"><div class="rf-tbl"><table><thead><tr><sc-for list="{{cols}}" as="c" hint-placeholder-count="4"><th scope="col" style="{{c.style}}" aria-sort="{{c.ariaSort}}"><sc-if value="{{c.sortable}}" hint-placeholder-val="{{true}}"><button type="button" class="rf-sort" aria-label="{{c.sortLabel}}" onClick="{{c.sort}}">{{c.label}}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="{{c.iconStyle}}"><path d="M4 6h16v2H4V6zm0 5h11v2H4v-2zm0 5h6v2H4v-2z"/></svg></button></sc-if><sc-if value="{{c.plain}}" hint-placeholder-val="{{false}}">{{c.label}}</sc-if></th></sc-for></tr></thead><tbody>
+<sc-if value="{{rSkel}}" hint-placeholder-val="{{false}}"><sc-for list="{{skRows}}" as="sk" hint-placeholder-count="6"><tr aria-hidden="true"><sc-for list="{{cols}}" as="c2" hint-placeholder-count="4"><td><span class="rf-sk" style="height: 14px; width: 80%"></span></td></sc-for></tr></sc-for></sc-if>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="5"><tr data-first="{{r.first}}"><sc-for list="{{r.cells}}" as="ce" hint-placeholder-count="4"><td><sc-if value="{{ce.chip}}" hint-placeholder-val="{{false}}"><span class="rf-chip" data-t="{{ce.chipT}}">{{ce.v}}</span></sc-if><sc-if value="{{ce.text}}" hint-placeholder-val="{{true}}"><button type="button" class="rf-cl" aria-label="{{ce.cpLabel}}" title="Скопировать" onClick="{{ce.copy}}">{{ce.a}}<mark>{{ce.b}}</mark>{{ce.c}}</button></sc-if></td></sc-for></tr></sc-for>
+</tbody></table></div></sc-if>
+</sc-if>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}"><div class="rf-toast" role="status"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-positive, #0cc44d)"/><path d="M10.5 14.6l-3.1-3.1-1.4 1.4 4.5 4.5 7.5-7.5-1.4-1.4-6.1 6.1z" fill="#fff"/></svg>{{toast}}<button type="button" aria-label="Закрыть уведомление" onClick="{{closeToast}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.4 4.2L12 10.6 5.6 4.2 4.2 5.6l6.4 6.4-6.4 6.4 1.4 1.4 6.4-6.4 6.4 6.4 1.4-1.4-6.4-6.4 6.4-6.4z"/></svg></button></div></sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"refId":{"editor":"enum","options":["","supply","pay","compl","oblig","contract","term","libor","unusual","swift","bik","offshore"],"default":""},"dir":{"editor":"enum","options":["all","vk","credul","credfl"],"default":"all"},"scenario":{"editor":"enum","options":["normal","loading","error"],"default":"normal"},"demoQ":{"editor":"string","default":""},"$preview":{"width":1376,"height":1000}}'>
+const CARDS = [
+  { dir: 'vk', section: 'Модуль ВК', title: 'Признаки', items: [['supply', 'Признаки поставки', 'bolt'], ['pay', 'Признаки платежа', 'bolt'], ['compl', 'Признаки комплаенса', 'bolt'], ['oblig', 'Признаки обязательного контроля', 'bolt']] },
+  { dir: 'vk', section: 'Модуль ВК', title: 'Коды', items: [['contract', 'Коды видов контракта', 'star'], ['term', 'Коды срока привлечения', 'star'], ['libor', 'Коды ЛИБОР', 'star'], ['unusual', 'Коды необычных операций', 'star']] },
+  { dir: 'vk', section: 'Модуль ВК', title: 'Справочники', items: [['swift', 'Справочник SWIFT', 'book'], ['bik', 'Справочник БИК', 'book'], ['ext:kvo', 'Справочник КВО', 'book'], ['ext:kvpd', 'Справочник КВПД', 'book']] },
+  { dir: 'vk', section: 'Модуль ВК', title: 'Прочие', items: [['ext:cur', 'Валюты', 'euro'], ['ext:rates', 'Курсы валют', 'swap'], ['ext:status', 'Статусы', 'check'], ['offshore', 'Запрещённый офшор', 'flag']] },
+  { dir: 'credul', section: 'Кредитование ЮЛ', title: 'Справочники', items: [['ext:okved', 'ОКВЭД — виды деятельности', 'book'], ['ext:key', 'Ключевая ставка ЦБ', 'swap'], ['bik', 'Справочник БИК', 'book']] },
+  { dir: 'credul', section: 'Кредитование ЮЛ', title: 'Ссылки', items: [['ext:kb', 'Кредитный конвейер', 'check'], ['ext:rules', 'Регламенты кредитования', 'book']] },
+  { dir: 'credfl', section: 'Кредитование ФЛ', title: 'Справочники', items: [['ext:prod', 'Кредитные продукты ФЛ', 'book'], ['ext:bki', 'Бюро кредитных историй', 'check'], ['ext:rates2', 'Курсы валют', 'swap']] }
+];
+const L = (n) => n;
+const REFS = {
+  supply: { title: 'Признаки поставки', cols: ['Код', 'Наименование', 'Описание', 'Подробное описание'], rows: [
+    ['1', 'Товар ввезён на территорию РФ', 'Поставка товара резиденту с таможенным оформлением', 'Товар ввезён на территорию Российской Федерации с оформлением декларации на товары, дата выпуска — дата поставки'],
+    ['2', 'Товар вывезен с территории РФ', 'Поставка товара нерезиденту с таможенным оформлением', 'Товар вывезен с территории РФ, дата поставки — дата выпуска товара в соответствии с заявленной таможенной процедурой'],
+    ['3', 'Зачисление на счёт клиента денежных средств', 'Зачисление или списание средств, поступивших от/в пользу резидентов государств или территорий (офшоров — п.2, п.3 прил.)', 'Зачисление на счёт клиента денежных средств, поступивших от резидентов государств или территорий, указанных в пунктах 2, 3 приложения'],
+    ['4', 'Поставка без таможенного оформления', 'Товар передан без декларирования', 'Поставка товара без таможенного декларирования, подтверждается документами по поставке'],
+    ['5', 'Товар передан на территории иностранного государства', 'Поставка вне территории РФ', 'Товар передан нерезиденту на территории иностранного государства без ввоза на территорию РФ'],
+    ['6', 'Зачисление в счёт оплаты работ, услуг', 'Расчёты по контрактам на выполнение работ', 'Зачисление денежных средств в счёт оплаты выполненных работ, оказанных услуг, переданной информации']] },
+  pay: { title: 'Признаки платежа', cols: ['Код', 'Описание', 'Подробное описание'], rows: [
+    ['А', 'Авансовый платёж', 'Платёж до исполнения нерезидентом обязательств по поставке товаров, выполнению работ, оказанию услуг'],
+    ['Б', 'Платёж после исполнения обязательств', 'Платёж после исполнения нерезидентом обязательств по поставке товаров'],
+    ['В', 'Возврат авансового платежа', 'Возврат ранее перечисленного авансового платежа в связи с неисполнением обязательств'],
+    ['Г', 'Платёж в рамках аккредитива', 'Платёж по документарному аккредитиву в пользу нерезидента'],
+    ['Д', 'Зачисление на счёт клиента денежных средств', 'Зачисление или списание средств, поступивших от/в пользу резидентов государств или территорий (офшоров — п.2, п.3 прил.)']] },
+  compl: { title: 'Признаки комплаенса', cols: ['Код', 'Описание'], rows: [['К1', 'Требует проверки комплаенс-контролем'], ['К2', 'Операция с санкционным контрагентом'], ['К3', 'Контрагент из перечня недружественных государств'], ['К4', 'Повышенный риск по ПОД/ФТ'], ['К5', 'Проверка не требуется']] },
+  oblig: { title: 'Признаки обязательного контроля', cols: ['Код', 'Описание', 'Основание'], rows: [['1001', 'Операции с наличными денежными средствами свыше 1 000 000 ₽', 'Ст. 6 115-ФЗ'], ['3011', 'Зачисление на счёт денежных средств, поступивших из офшорной зоны', 'Ст. 6 115-ФЗ'], ['5001', 'Операции с недвижимым имуществом свыше 3 000 000 ₽', 'Ст. 6 115-ФЗ'], ['6001', 'Получение некоммерческой организацией средств от иностранного государства', 'Ст. 6 115-ФЗ']] },
+  contract: { title: 'Коды видов контракта', cols: ['Код', 'Описание'], rows: [['1', 'Экспорт товаров'], ['2', 'Импорт товаров'], ['3', 'Экспорт работ, услуг, информации, результатов интеллектуальной деятельности'], ['4', 'Импорт работ, услуг, информации, результатов интеллектуальной деятельности'], ['5', 'Кредитный договор (договор займа)'], ['9', 'Прочие контракты']] },
+  term: { title: 'Коды срока привлечения', cols: ['Код', 'Описание'], rows: [['0', 'До 30 дней включительно'], ['1', 'От 31 до 90 дней'], ['2', 'От 91 до 180 дней'], ['3', 'От 181 дня до 1 года'], ['4', 'От 1 года до 3 лет'], ['5', 'Свыше 3 лет'], ['9', 'До востребования']] },
+  libor: { title: 'Коды ЛИБОР', cols: ['Код', 'Валюта', 'Срок'], rows: [['LUSD1M', 'Доллар США', '1 месяц'], ['LUSD3M', 'Доллар США', '3 месяца'], ['LUSD6M', 'Доллар США', '6 месяцев'], ['LEUR3M', 'Евро', '3 месяца'], ['LGBP3M', 'Фунт стерлингов', '3 месяца'], ['LJPY6M', 'Японская иена', '6 месяцев']] },
+  unusual: { title: 'Коды необычных операций', cols: ['Код', 'Описание', 'Подробное описание'], rows: [['1101', 'Запутанный характер операции', 'Операция не имеет очевидного экономического смысла или законной цели'], ['1102', 'Несоответствие деятельности клиента', 'Операция не соответствует виду деятельности клиента по ОКВЭД'], ['1201', 'Транзитный характер операций', 'Денежные средства списываются в течение 1–2 дней после зачисления'], ['1301', 'Дробление платежей', 'Регулярные платежи суммой чуть ниже порога обязательного контроля']] },
+  swift: { title: 'Справочник SWIFT', cols: ['BIC', 'Банк', 'Город', 'Страна', 'Статус'], chip: 4, rows: [['ALFARUMM', 'АО «АЛЬФА-БАНК»', 'Москва', 'Россия', 'Активен'], ['SABRRUMM', 'ПАО Сбербанк', 'Москва', 'Россия', 'Активен'], ['DEUTDEFF', 'Deutsche Bank AG', 'Франкфурт', 'Германия', 'Ограничен'], ['BKCHCNBJ', 'Bank of China', 'Пекин', 'Китай', 'Активен'], ['ICBKCNBJ', 'Industrial and Commercial Bank of China', 'Пекин', 'Китай', 'Активен'], ['TCZBTR2A', 'T.C. Ziraat Bankası', 'Анкара', 'Турция', 'Активен']] },
+  bik: { title: 'Справочник БИК', cols: ['БИК', 'Наименование', 'Корр. счёт', 'Город'], rows: [['044525593', 'АО «АЛЬФА-БАНК»', '30101810200000000593', 'Москва'], ['044525225', 'ПАО Сбербанк', '30101810400000000225', 'Москва'], ['044030786', 'Филиал «Санкт-Петербургский» АО «АЛЬФА-БАНК»', '30101810600000000786', 'Санкт-Петербург'], ['046577964', 'Филиал «Екатеринбургский» АО «АЛЬФА-БАНК»', '30101810100000000964', 'Екатеринбург'], ['045004774', 'Филиал «Новосибирский» АО «АЛЬФА-БАНК»', '30101810600000000774', 'Новосибирск']] },
+  offshore: { title: 'Запрещённый офшор', cols: ['Цифровой код', 'Краткое имя', 'Код Альфа-2', 'Код Альфа-3', 'Бывш. СССР?'], chip: 4, rows: [['020', 'Андорра', 'AD', 'AND', 'Нет'], ['092', 'Виргинские острова (Британские)', 'VG', 'VGB', 'Нет'], ['136', 'Острова Кайман', 'KY', 'CYM', 'Нет'], ['492', 'Монако', 'MC', 'MCO', 'Нет'], ['584', 'Маршалловы острова', 'MH', 'MHL', 'Нет'], ['690', 'Сейшелы', 'SC', 'SYC', 'Нет']] }
+};
+const EXT = { 'ext:kvo': 'Справочник КВО', 'ext:kvpd': 'Справочник КВПД', 'ext:cur': 'Валюты', 'ext:rates': 'Курсы валют', 'ext:status': 'Статусы' };
+const split3 = (text, q) => { const t = String(text); if (!q) return [t, '', '']; const i = t.toLowerCase().indexOf(q); return i < 0 ? [t, '', ''] : [t.slice(0, i), t.slice(i, i + q.length), t.slice(i + q.length)]; };
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  componentDidMount() {
+    if (this.props.demoQ) this.setState(this.props.refId ? { rq: this.props.demoQ } : { mq: this.props.demoQ });
+    this._key = (e) => { if (e.key === 'Escape' && this.st().ref) this.setState({ ref: '', rq: '' }); };
+    document.addEventListener('keydown', this._key);
+    this._refEv = (e) => { const id = e && e.detail && e.detail.id; if (id) { this.load({ ref: id, rq: '', sort: null }); try { window.scrollTo(0, 0); } catch (err) {} } };
+    window.addEventListener('sbo:ref', this._refEv);
+  }
+  componentWillUnmount() { this.backClear(); window.removeEventListener('sbo:ref', this._refEv); document.removeEventListener('keydown', this._key); clearTimeout(this._t); clearTimeout(this._l); }
+  // «Назад» в шапке: регистрируем уровень, когда он есть, и снимаем, когда его нет
+  backSync(id, label, fn) { this._bkFn = this._bkFn || {}; this._bkFn[id] = fn; this._bk = this._bk || {}; const key = label || ''; if (this._bk[id] === key) return; this._bk[id] = key; setTimeout(() => { try { window.dispatchEvent(new CustomEvent('sbo:back', { detail: { id: id, label: label, fn: label ? () => { const f = this._bkFn[id]; if (f) f(); } : null } })); } catch (e) {} }, 0); }
+  backClear() { Object.keys(this._bk || {}).forEach((id) => { try { window.dispatchEvent(new CustomEvent('sbo:back', { detail: { id: id, fn: null } })); } catch (e) {} }); this._bk = {}; }
+  toast(m) { if (window.__sboToast) { window.__sboToast(m); return; } clearTimeout(this._t); this.setState({ toast: m }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
+  copy(v) { try { navigator.clipboard.writeText(String(v)).catch(() => {}); } catch (e) {} this.toast('Данные скопированы'); }
+  load(patch) { clearTimeout(this._l); this.setState(Object.assign({ scn: 'loading' }, patch || {})); this._l = setTimeout(() => this.setState({ scn: 'normal' }), 700); }
+  renderVals() {
+    const s = this.st(); const p = this.props;
+    const scn = s.scn || p.scenario || 'normal';
+    const refId = s.ref !== undefined ? s.ref : (p.refId || '');
+    const ref = REFS[refId];
+    const dir = s.dir || p.dir || 'all';
+    const mq = (s.mq || '').trim().toLowerCase();
+    const open = (id, title) => {
+      if (id.indexOf('ext:') === 0) { this.toast('Откроется в новой вкладке: ' + title); return; }
+      if (this.props.onOpenRef) this.props.onOpenRef(id);
+      this.load({ ref: id, rq: '', sort: null }); try { window.scrollTo(0, 0); } catch (e) {}
+    };
+    const cards = CARDS.filter((c) => (dir === 'all' || c.dir === dir)).map((c) => ({ title: c.title, section: c.section, items: c.items.filter((it) => !mq || it[1].toLowerCase().indexOf(mq) >= 0) })).filter((c) => c.items.length);
+    const secNames = []; cards.forEach((c) => { if (secNames.indexOf(c.section) < 0) secNames.push(c.section); });
+    const sections = secNames.map((n) => ({ title: n, cards: cards.filter((c) => c.section === n).map((c) => ({ title: c.title, items: c.items.map((it) => { const ext = it[0].indexOf('ext:') === 0; const sp = split3(it[1], mq); return { first: 'false', t1: sp[0], t2: sp[1], t3: sp[2], ext: ext, int: !ext, aria: it[1] + (ext ? ' — откроется в новой вкладке' : ''), open: () => open(it[0], it[1]), iBolt: it[2] === 'bolt', iStar: it[2] === 'star', iBook: it[2] === 'book', iEuro: it[2] === 'euro', iSwap: it[2] === 'swap', iCheck: it[2] === 'check', iFlag: it[2] === 'flag' }; }) })) }));
+    let firstItem = null;
+    if (mq) { for (const sec of sections) { for (const cd of sec.cards) { if (cd.items.length) { firstItem = cd.items[0]; firstItem.first = 'true'; break; } } if (firstItem) break; } }
+    this.backSync('rf-ref', ref ? 'К справочникам' : '', () => { this.setState({ ref: '', rq: '' }); try { window.scrollTo(0, 0); } catch (e) {} });
+    const v = {
+      isMain: !ref, isRef: !!ref,
+      mqKey: (e) => { if (e && e.key === 'Enter' && firstItem) { e.preventDefault(); firstItem.open(); } },
+      mq: s.mq || '', hasMq: !!mq, setMq: (e) => this.setState({ mq: (e && e.target && e.target.value) || '' }), clearMq: () => this.setState({ mq: '' }),
+      showTabs: !mq,
+      dirTabs: [['all', 'Все'], ['vk', 'Валютный контроль'], ['credul', 'Кредитование ЮЛ'], ['credfl', 'Кредитование ФЛ']].map((d) => ({ label: d[1], on: dir === d[0] ? 'true' : 'false', pick: () => this.load({ dir: d[0] }) })),
+      mSkel: !ref && scn === 'loading', mErr: !ref && scn === 'error', mNone: !ref && scn === 'normal' && sections.length === 0, mOk: !ref && scn === 'normal' && sections.length > 0,
+      sections: sections,
+      retry: () => this.load(),
+      hasToast: !!s.toast, toast: s.toast || '', closeToast: () => this.setState({ toast: '' })
+    };
+    if (ref) {
+      const rq = (s.rq || '').trim().toLowerCase();
+      let rows = ref.rows.filter((r) => !rq || r.join(' ').toLowerCase().indexOf(rq) >= 0);
+      const sort = s.sort || null;
+      if (sort) { const k = sort.col; rows = rows.slice().sort((a, b) => { const x = a[k], y = b[k]; const nx = parseFloat(x), ny = parseFloat(y); const c = !isNaN(nx) && !isNaN(ny) ? nx - ny : String(x).localeCompare(String(y), 'ru'); return sort.dir === 'asc' ? c : -c; }); }
+      const n = ref.cols.length;
+      const widths = { 2: ['160px', ''], 3: ['140px', '40%', ''], 4: ['120px', '28%', '30%', ''], 5: ['150px', '', '', '', '140px'] }[n] || [];
+      Object.assign(v, {
+        refTitle: ref.title, back: () => { this.setState({ ref: '', rq: '' }); try { window.scrollTo(0, 0); } catch (e) {} },
+        rq: s.rq || '', hasRq: !!rq, setRq: (e) => this.setState({ rq: (e && e.target && e.target.value) || '' }), clearRq: () => this.setState({ rq: '' }),
+        rErr: scn === 'error', rSkel: scn === 'loading', rNone: scn === 'normal' && rows.length === 0, rTable: scn === 'loading' || (scn === 'normal' && rows.length > 0),
+        rTotalOn: scn === 'normal' && rows.length > 0, rTotal: rows.length,
+        skRows: [1, 2, 3, 4, 5, 6],
+        cols: ref.cols.map((c, i) => { const on = sort && sort.col === i; return { label: c, style: widths[i] ? 'width: ' + widths[i] : '', sortable: i < 2, plain: i >= 2, ariaSort: on ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none', sortLabel: 'Сортировать по столбцу «' + c + '»', iconStyle: on ? 'color: var(--graphic-primary)' + (sort.dir === 'desc' ? '; transform: scaleY(-1)' : '') : '', sort: () => this.setState({ sort: { col: i, dir: on && sort.dir === 'asc' ? 'desc' : 'asc' } }) }; }),
+        rqKey: (e) => { if (e && e.key === 'Enter' && rq && rows.length) { e.preventDefault(); this.copy(rows[0][0]); } },
+        rows: scn === 'normal' ? rows.map((r, ri) => ({ first: rq && ri === 0 ? 'true' : 'false', cells: r.map((x, i) => { const sp = split3(x, rq); const chip = ref.chip === i; return { v: x, chip: chip, text: !chip, chipT: x === 'Активен' ? 'ok' : (x === 'Да' ? 'blue' : ''), a: sp[0], b: sp[1], c: sp[2], cpLabel: 'Скопировать: ' + x, copy: () => this.copy(x) }; }) })) : []
+      });
+    } else {
+      Object.assign(v, { rqKey: null, refTitle: '', rows: [], cols: [], skRows: [], rErr: false, rSkel: false, rNone: false, rTable: false, rTotalOn: false });
+    }
+    return v;
+  }
+}
+</script>
+</body>
+</html>

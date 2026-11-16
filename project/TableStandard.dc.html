@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Эталон таблицы</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
+.ts{box-sizing:border-box;max-width:1360px;margin:0 auto;padding:48px 40px 64px;font-family:var(--font-system);color:var(--text-primary);display:flex;flex-direction:column;gap:32px}
+.ts-h1{margin:0;font:700 40px/48px var(--font-system);letter-spacing:-.4px}
+.ts-lead{margin:8px 0 0;max-width:820px;font:400 17px/26px var(--font-system);color:var(--text-secondary)}
+.ts-legend{display:flex;flex-wrap:wrap;gap:16px;margin-top:16px;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.ts-sec{background:var(--bg-base-primary, #fff);border-radius:24px;padding:28px 32px 20px}
+.ts-sec h2{margin:0 0 4px;font:700 22px/28px var(--font-system);display:flex;align-items:center;gap:12px}
+.ts-n{display:inline-flex;width:28px;height:28px;border-radius:8px;background:#212124;color:#fff;font:700 14px/28px var(--font-system);justify-content:center}
+.ts-sec > p{margin:0 0 12px;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.ts-t{width:100%;border-collapse:collapse;font:400 14px/20px var(--font-system)}
+.ts-t th{text-align:left;font:500 13px/18px var(--font-system);color:var(--text-secondary);padding:10px 12px;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.ts-t td{padding:12px;border-bottom:1px solid var(--color-neutral-translucent-200, rgba(30,43,68,.08));vertical-align:top}
+.ts-t tr:last-child td{border-bottom:0}
+.ts-t td:first-child{width:36%;font-weight:500}
+.ts-t td.st{width:96px;text-align:center}
+.ts-t small{display:block;margin-top:4px;color:var(--text-secondary);font-size:13px}
+.ts-ok,.ts-part,.ts-no{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:6px;font:500 12px/16px var(--font-system);white-space:nowrap}
+.ts-ok{background:var(--status-muted-positive, #e6f7ec);color:var(--text-positive, #0b8a3c)}
+.ts-part{background:var(--status-muted-alt-attention, #fde6c8);color:#a35600}
+.ts-no{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--text-secondary)}
+.ts-ref{color:var(--text-info, #2a77ef);font-weight:500}
+code{font:500 12.5px/18px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--color-neutral-translucent-100, rgba(30,43,68,.05));padding:1px 5px;border-radius:5px}
+.ts-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.ts-card{border-radius:16px;background:var(--bg-base-secondary, #f2f3f5);padding:16px;font:400 14px/20px var(--font-system)}
+.ts-card b{display:block;margin-bottom:4px}
+@media (max-width: 720px){.ts{padding:24px 16px}.ts-t td:first-child{width:auto}}
+</style>
+</helmet>
+<main class="ts">
+<header>
+<h1 class="ts-h1">Эталон таблицы</h1>
+<p class="ts-lead">Как делаем таблицы в SmartBackOffice. Эталон — таблица «Умной очереди» (борд Main): всё ниже в ней реализовано и покрыто автотестами. Новая таблица (клиенты, поиск по модулю, вкладки карточки) проходит этот чеклист до показа.</p>
+<div class="ts-legend"><span><span class="ts-ok">✓ есть</span> сделано и проверено тестом</span><span><span class="ts-part">◐ частично</span> есть, но упрощено</span><span><span class="ts-no">— нет</span> не нужно или ещё не сделано</span></div>
+</header>
+
+<sc-for list="{{sections}}" as="sec" hint-placeholder-count="10">
+<section class="ts-sec" aria-labelledby="{{sec.id}}">
+<h2 id="{{sec.id}}"><span class="ts-n">{{sec.n}}</span>{{sec.title}}</h2>
+<p>{{sec.lead}}</p>
+<table class="ts-t"><thead><tr><th scope="col">Правило</th><th scope="col">Как сделано в эталоне</th><th scope="col" style="text-align: center">Очередь</th><th scope="col" style="text-align: center">Клиенты</th></tr></thead>
+<tbody><sc-for list="{{sec.rules}}" as="r" hint-placeholder-count="4"><tr><td>{{r.rule}}</td><td>{{r.how}}<sc-if value="{{r.hasRef}}" hint-placeholder-val="{{false}}"><small>Пример: <span class="ts-ref">{{r.ref}}</span></small></sc-if></td><td class="st"><span class="{{r.qCls}}">{{r.qLabel}}</span></td><td class="st"><span class="{{r.cCls}}">{{r.cLabel}}</span></td></tr></sc-for></tbody></table>
+</section>
+</sc-for>
+
+<section class="ts-sec" aria-labelledby="ts-tests">
+<h2 id="ts-tests"><span class="ts-n">✓</span>Как проверяем</h2>
+<p>Каждое правило закреплено автотестом в headless Chrome. Прогон всех тестов — <code>run-all.sh</code>. Что собрано из макетов и что нет — на доске «Покрытие макетов».</p>
+<div class="ts-grid">
+<div class="ts-card"><b>autotest — 2 893 проверки</b>Каждый тултип: появился, ≤ 12 px от текста, не за экраном, не перекрыт. Фильтры, поповеры, иконки, колонки, фон и разделитель закреплённых ячеек — во всех размерах и режимах, на 1440 и 1100 px.</div>
+<div class="ts-card"><b>uitest, taskflow, navtest, opentest</b>Очередь, окно задачи, навигация между разделами, общий поиск, «Назад», открытие карточек и задач из всех мест.</div>
+<div class="ts-card"><b>clienttest, cardtest, refstest, reportstest</b>Клиенты, карточка клиента со всеми вкладками и шторками, справочники, отчёты ВК.</div>
+<div class="ts-card"><b>embedtest, createtest</b>Встройка РК по протоколу из спеки (готовность, таймаут, высота, сохранение, ошибки), размер и наезд окна задачи, путь создания задачи с обеими ветками.</div>
+<div class="ts-card"><b>modaltest, hovertest</b>Каждая модалка — шторка справа 8/8/8 без скачков; у ховеров и тултипов пауза 0,3 с.</div>
+<div class="ts-card"><b>notifytest, livecalltest, stucktest</b>Уведомления только на своих страницах, поток звонков, общий блюр шапки и заголовка таблицы.</div>
+<div class="ts-card"><b>smoke</b>Все доски канваса рендерятся без исключений и плашек ошибок рантайма.</div>
+</div>
+</section>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4200}}'>
+const OK = ['ts-ok', '✓ есть'], PART = ['ts-part', '◐ частично'], NO = ['ts-no', '— нет'];
+const R = (rule, how, q, c, ref) => ({ rule: rule, how: how, ref: ref || '', hasRef: !!ref, qCls: q[0], qLabel: q[1], cCls: c[0], cLabel: c[1] });
+const SECTIONS = [
+  { title: 'Прозрачный интерфейс: всё закреплённое', lead: 'Единый паттерн для всей системы: всё, что закреплено поверх прокручиваемого контента, — один материал, контент под ним размывается.', rules: [
+    R('Один материал для закреплённых частей', 'Шапка страницы, прилипший заголовок таблицы, нижняя панель таблицы (пагинация, массовые действия), нижняя подложка меню с кнопкой — фон var(--color-light-neutral-translucent-400-inverted) + backdrop-filter: blur(16px)', OK, OK, 'Главная, Клиенты, Карточка, Справочники, Меню'),
+    R('Один общий блюр, а не два', 'Когда заголовок таблицы прилипает под шапку, шапка и заголовок лежат на ОДНОЙ общей подложке (слой выше контента, высота — до низа заголовка, ширина — вся область контента); у самих шапки и заголовка своего блюра нет', OK, OK),
+    R('Края прокрутки — прогрессивный блюр, а не фейд', 'Наверху страницы шапка — градиент + блюр, сходящие на нет за 8 px; низ списка меню — блюр, нарастающий к подложке. Переход в ровную подложку — плавный, 0,3 с', OK, OK),
+    R('Линия под шапкой таблицы есть всегда', '1 px var(--border-secondary) — и в обычном положении, и когда шапка прилипла', OK, OK),
+    R('По 10 строк на странице', 'Пагинация с «Показывать по 10 / 20 / 50» и «Всего N» во всех таблицах', OK, OK),
+    R('Поиск — с 1 символа, сразу', 'Результаты при вводе; первый результат подсвечен; Enter открывает его', OK, OK),
+    R('Ховеры — с паузой 0,3 с', 'Реакция на наведение (фон, цвет, тень) и тултипы начинаются через 0,3 с после остановки курсора; уход, нажатие и фокус с клавиатуры — без задержки', OK, OK, 'Правило генерируется для всех :hover-стилей'),
+    R('Любая модалка — шторка справа', 'На всю высоту, отступ 8 px, ширина 500 px, выезжает справа, Esc закрывает. Выпадающие меню и поповеры модалками не считаются', OK, OK),
+    R('Кнопка «Назад» — только в шапке', 'Ведёт на предыдущий раздел, если он известен, иначе — на раздел выше. Внутри страниц своих кнопок «Назад» нет', OK, OK)
+  ] },
+  { title: 'Анатомия', lead: 'Порядок блоков сверху вниз один для всех таблиц.', rules: [
+    R('TopBar над таблицей, а не внутри', '«Всего N» слева, «Группировка» и «Настройки» справа; отступ 16 px до таблицы', OK, PART, 'Список задач — Main'),
+    R('Таблица на белой подложке со скруглением 20 px', 'BackgroundPlate; строки не вылезают за подложку ни в одном режиме', OK, OK),
+    R('Шапка колонок: заголовок, сортировка, меню колонки', 'Разделители 1 px между заголовками, иконка сортировки только у сортируемых колонок', OK, OK),
+    R('Нижняя липкая панель', 'Пагинация и «Показывать по N» прилипают к низу экрана', OK, PART),
+    R('Одинаковые отступы 16 px', 'Между фильтрами, виджетом, TopBar и таблицей', OK, OK)
+  ] },
+  { title: 'Ячейки и текст', lead: 'Любая строка текста в ячейке — отдельная единица: её можно прочитать целиком и скопировать.', rules: [
+    R('У каждой строки текста — свой тултип', 'Тултип объясняет, что это за значение (не дублирует текст); 6 px от текста, по центру, не уходит за край экрана и прокрутки', OK, OK, 'Main — наведите на любую строку'),
+    R('Каждая строка копируется по клику', 'Курсор copy, пунктирное подчёркивание при наведении; клик по строке не открывает запись', OK, OK),
+    R('Уведомление «Данные скопированы»', 'Тёмная плашка справа сверху с текстом, 2,5 с; одно уведомление — следующее копирование заменяет предыдущее; тултип на 1,5 с меняется на «Скопировано»', OK, OK),
+    R('Длинный текст обрезается многоточием', 'Полный текст — в тултипе; перенос только там, где строк заранее ограниченное число', OK, OK),
+    R('Пустое значение — «—» третичным цветом', 'Не пустая ячейка и не «нет данных»', PART, OK),
+    R('Теги не раздувают строку', 'В маленьком размере — «+N» с полным списком в тултипе; теги переносятся в одну общую строку', OK, NO, 'Список задач — компактный вид')
+  ] },
+  { title: 'Строка', lead: 'Строка — кликабельная область, но не ловушка: действия внутри не открывают запись.', rules: [
+    R('Hover и focus-within подсвечивают всю строку', 'Один цвет на всю строку, включая закреплённые ячейки; без задержки между ячейками', OK, OK),
+    R('Разделитель строк поверх закреплённых ячеек', 'Линия 1 px не прячется под чекбоксом и кнопками действий', OK, NO),
+    R('Скругление выделенной строки 16 px', 'И в обычном, и в расширенном режиме, включая закреплённые края', OK, NO),
+    R('Действия строки: ▶ и «⋯»', 'Иконки-кнопки с aria-label; меню не перекрывается соседними строками', OK, NO),
+    R('Анимации событий', 'Новая строка — вспышка; перехват — серая плашка на строку; закрытие — схлопывание; prefers-reduced-motion отключает', OK, NO)
+  ] },
+  { title: 'Колонки', lead: 'Пользователь собирает таблицу под себя, и это переживает перезагрузку.', rules: [
+    R('Сортировка по возрастанию / убыванию', 'Через меню колонки; aria-sort у заголовка', OK, OK),
+    R('Ресайз колонок мышью', 'Минимальная ширина у каждой колонки; «Сбросить ширину столбца / всех столбцов»', OK, PART),
+    R('Закрепление колонок', 'В расширенном режиме; закреплённые ячейки липкие, с непрозрачным фоном строки', OK, PART),
+    R('Показ, скрытие и порядок колонок', '«Настройки»: переключатели и перетаскивание; обязательные колонки заблокированы; «Сбросить всё»', OK, PART),
+    R('Настройки сохраняются', 'localStorage per-viewer, с безопасным fallback', OK, NO)
+  ] },
+  { title: 'Режимы и плотность', lead: 'Одна таблица — три плотности и два режима ширины.', rules: [
+    R('Размеры S / M / L', 'S — задача в одну строку; M — стандарт; L — крупный шрифт', OK, NO),
+    R('Обычный и расширенный режим', 'Расширенный: горизонтальная прокрутка, закрепление, группировка', OK, NO),
+    R('Узкий экран (≈1100 px)', 'Обычный режим сжимает колонки до минимума и не вылезает за подложку; таблица клиентов скроллится в своём контейнере', OK, OK)
+  ] },
+  { title: 'Выбор и массовые действия', lead: '', rules: [
+    R('Чекбокс у строки и «выбрать всё на странице»', 'Indeterminate-состояние, подписанные чекбоксы (aria-label)', OK, NO),
+    R('Панель массовых действий', 'Появляется при выборе; «Снять выделение»; меню «Ещё» поверх липких элементов', OK, NO)
+  ] },
+  { title: 'Пагинация', lead: '', rules: [
+    R('По умолчанию 10 строк', 'Варианты 10 / 20 / 30 / 40 / 50', OK, PART),
+    R('Номера страниц и стрелки', 'Текущая страница выделена; стрелки недоступны на краях', OK, OK)
+  ] },
+  { title: 'Фильтры и поиск', lead: 'Фильтр — это чип: пустой белый, выбранный серый с «Название: значение» и крестиком.', rules: [
+    R('Чипы фильтров', 'Меню под чипом, не уходит за экран; множественный выбор — «Выбрано N»', OK, OK),
+    R('«Сбросить» появляется, когда есть что сбрасывать', '', OK, OK),
+    R('Поиск — с 1 символа и сразу', 'Результаты при вводе (ФИО, ИНН, ПИН — по совпадению части); первый результат подсвечен; Enter открывает его', OK, OK, 'Клиенты, очередь, справочники, шапка')
+  ] },
+  { title: 'Состояния', lead: 'Каждое состояние нарисовано и доступно отдельным бордом.', rules: [
+    R('Загрузка — скелетон строк', 'Повторяет колонки таблицы', OK, OK),
+    R('Пусто', 'Иконка, заголовок, пояснение, действие', OK, OK),
+    R('Ничего не нашлось', 'Кнопка сброса фильтров', OK, OK),
+    R('Ошибка загрузки, нет связи, нет прав', 'Сообщение с повтором вместо таблицы', OK, OK)
+  ] },
+  { title: 'Доступность', lead: '', rules: [
+    R('Только настоящие кнопки, ссылки и поля', 'Никаких кликабельных div; видимый focus-visible', OK, OK),
+    R('Подписи', 'aria-label у иконок-кнопок и чекбоксов; aria-sort, aria-expanded, aria-pressed', OK, OK),
+    R('Клавиатура', 'Tab по строкам, Enter/Space, Esc закрывает меню и модалки', OK, OK)
+  ] }
+];
+class Component extends DCLogic {
+  renderVals() { return { sections: SECTIONS.map((s, i) => Object.assign({}, s, { n: i + 1, id: 'ts-s' + (i + 1) })) }; }
+}
+</script>
+</body>
+</html>

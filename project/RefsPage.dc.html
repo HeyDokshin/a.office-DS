@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Справочники</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>.sc-host:has(> .hd-bar){position:sticky;top:0;z-index:30}body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}</style>
+</helmet>
+<div style="display: flex; align-items: stretch; min-height: 100vh; background-color: var(--bg-base-secondary, #f2f3f5); font-family: var(--font-system); color: var(--text-primary)">
+<dc-import name="SideMenu" active="book" collapsed="{{yes}}" hint-size="64px,900px"></dc-import>
+<div style="flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column">
+<dc-import name="Header" hint-size="100%,64px"></dc-import>
+<dc-import name="Refs" ref-id="{{refId}}" dir="{{dir}}" scenario="{{scenario}}" demo-q="{{demoQ}}" hint-size="100%,1000px"></dc-import>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"refId":{"editor":"enum","options":["","supply","pay","compl","oblig","contract","term","libor","unusual","swift","bik","offshore"],"default":""},"dir":{"editor":"enum","options":["all","vk","credul","credfl"],"default":"all"},"scenario":{"editor":"enum","options":["normal","loading","error"],"default":"normal"},"demoQ":{"editor":"string","default":""},"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { const p = this.props; return { yes: true, refId: p.refId || '', dir: p.dir || 'all', scenario: p.scenario || 'normal', demoQ: p.demoQ || '' }; }
+}
+</script>
+</body>
+</html>

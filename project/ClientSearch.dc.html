@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Клиенты — поиск и мои</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
+.cs{box-sizing:border-box;width:100%;padding:16px 40px 40px;display:flex;flex-direction:column;gap:24px;font-family:var(--font-system);color:var(--text-primary)}
+.cs-h1{margin:0;font:700 30px/36px var(--font-system);letter-spacing:.1px}
+.cs-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.cs-btn{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:10px;background:var(--bg-base-primary, #fff);display:inline-flex;align-items:center;gap:6px;font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;white-space:nowrap}
+.cs-btn:hover{background:color-mix(in srgb,rgb(30,43,68) 4%,var(--bg-base-primary))}
+.cs-btn[aria-disabled="true"]{color:var(--text-tertiary, rgba(5,8,29,.38));cursor:default}
+.cs-btn--grey{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-btn--dark{background:#212124;color:#fff}
+.cs-btn--dark:hover{background:#000}
+.cs-ibtn{appearance:none;border:0;margin:0;position:relative;width:40px;height:40px;border-radius:10px;background:var(--bg-base-primary, #fff);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--graphic-primary)}
+.cs-ibtn[aria-pressed="true"]{background:var(--neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-cnt{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 5px;box-sizing:border-box;border-radius:99px;background:#212124;color:#fff;font:600 11px/18px var(--font-system);text-align:center}
+.cs-seg{display:inline-flex;align-items:center;padding:2px;border-radius:10px;background:var(--bg-base-primary, #fff);height:40px;box-sizing:border-box}
+.cs-seg button{appearance:none;border:0;margin:0;height:36px;min-width:52px;padding:0 14px;border-radius:8px;background:transparent;font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.cs-seg button[aria-pressed="true"]{background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.cs-seg button[aria-disabled="true"]{color:var(--text-tertiary, rgba(5,8,29,.38));cursor:default}
+.cs-field{position:relative;display:inline-flex;align-items:center;width:280px;height:40px;box-sizing:border-box;padding:0 8px 0 12px;gap:8px;border-radius:10px;background:var(--bg-base-primary, #fff);border:1.5px solid transparent;color:var(--graphic-secondary)}
+.cs-field:focus-within{border-color:var(--text-primary)}
+.cs-field[data-err="true"]{border-color:var(--status-negative, #ef3124);background:var(--status-muted-negative, #fdecec)}
+.cs-field input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:400 14px/18px var(--font-system);color:var(--text-primary)}
+.cs-field input::placeholder{color:var(--text-secondary)}
+.cs-clr{appearance:none;border:0;margin:0;width:24px;height:24px;border-radius:99px;background:transparent;color:var(--graphic-tertiary, #b8bcc3);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.cs-fcw{position:relative;display:inline-flex}
+.cs-fc{display:inline-flex;align-items:center;height:40px;border-radius:10px;background:var(--bg-base-primary, #fff)}
+.cs-fc.is-on{background:var(--neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-fc-btn{appearance:none;border:0;margin:0;background:transparent;height:40px;padding:0 12px 0 16px;display:inline-flex;align-items:center;gap:4px;font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;white-space:nowrap}
+.cs-fc.is-on .cs-fc-btn{padding-right:4px}
+.cs-fc-x{appearance:none;border:0;margin:0;background:transparent;width:30px;height:40px;padding:0 10px 0 2px;color:#747474;cursor:pointer;display:inline-flex;align-items:center}
+.cs-menu{position:absolute;top:calc(100% + 4px);left:0;z-index:30;min-width:240px;padding:8px 0;display:flex;flex-direction:column;background:var(--bg-base-primary, #fff);border-radius:16px;box-shadow:0 20px 24px rgba(0,0,0,.08),0 4px 8px rgba(0,0,0,.04),0 0 1px rgba(0,0,0,.08)}
+.cs-menu.is-right{left:auto;right:0}
+.cs-opt{appearance:none;border:0;margin:0;background:transparent;display:flex;align-items:center;gap:12px;padding:10px 16px;font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;text-align:left;white-space:nowrap}
+.cs-opt:hover{background:var(--color-neutral-translucent-100, rgba(30,43,68,.04))}
+.cs-opt[aria-checked="true"]{font-weight:500}
+.cs-opt-sep{height:1px;margin:4px 0;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-cb{width:18px;height:18px;border-radius:5px;box-shadow:inset 0 0 0 1.5px var(--graphic-tertiary, #b8bcc3);display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;color:transparent}
+[aria-checked="true"] > .cs-cb{background:#212124;box-shadow:none;color:#fff}
+.cs-scrim{position:fixed;inset:0;z-index:20;border:0;margin:0;padding:0;background:transparent;cursor:default}
+.cs-bar.is-pop{position:relative;z-index:25}
+/* Таблица */
+.cs-tw{position:relative}
+.cs-table{background:var(--bg-base-primary, #fff);border-radius:20px;padding:0 0 4px;overflow:visible}
+.cs-grid{display:grid;grid-template-columns:56px minmax(220px,1fr) 170px 144px 144px 180px 144px 4px;align-items:start}
+.cs-head{position:relative}
+.cs-head::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.cs-hc{position:relative;display:flex;align-items:center;gap:8px;padding:24px 6px 12px 12px;font:500 14px/20px var(--font-system);white-space:nowrap}
+.cs-hc + .cs-hc::before{content:"";position:absolute;left:0;top:28px;height:32px;width:1px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.cs-hc-t{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis}
+.cs-hc-b{appearance:none;border:0;margin:0;width:24px;height:24px;border-radius:6px;background:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-secondary);cursor:pointer;flex:0 0 auto}
+.cs-hc-b:hover,.cs-hc-b[aria-expanded="true"]{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--graphic-primary)}
+.cs-sorti{color:var(--graphic-primary)}
+.cs-grp{grid-column:1 / -1;margin:8px 12px 4px;padding:6px 12px;border-radius:12px;background:var(--bg-base-secondary, #f2f3f5);font:500 14px/20px var(--font-system)}
+.cs-row{display:contents;cursor:pointer}
+.cs-row > .cs-c{position:relative;padding:20px 12px 20px 10px;font:400 14px/20px var(--font-system);min-width:0;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));align-self:stretch;transition:background-color .12s}
+.cs-row:hover > .cs-c,.cs-row:focus-within > .cs-c{background:color-mix(in srgb,rgb(38,55,88) 4%,var(--bg-base-primary, #fff))}
+.cs-c-sub{color:var(--text-secondary)}
+.cs-c-dim{color:var(--text-tertiary, rgba(5,8,29,.38))}
+.cs-open{appearance:none;border:0;margin:0;padding:0;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer;display:block;width:100%}
+.cs-open:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:4px;border-radius:4px}
+.cs-more{appearance:none;border:0;margin:0 0 0 6px;padding:0;background:transparent;font:700 14px/20px var(--font-system);color:var(--text-info, #2a77ef);cursor:pointer}
+.cs-chip{display:inline-flex;padding:2px 8px;border-radius:6px;background:var(--neutral-translucent-200, rgba(30,43,68,.08));font:500 12px/16px var(--font-system);color:var(--text-secondary);letter-spacing:.19px}
+mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding:0}
+.cs-sk{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,rgba(30,43,68,.06),rgba(30,43,68,.11),rgba(30,43,68,.06));background-size:200% 100%;animation:cs-sk 1.2s linear infinite}
+@keyframes cs-sk{from{background-position:200% 0}to{background-position:-200% 0}}
+.cs-msg{grid-column:1 / -1;display:flex;flex-direction:column;align-items:center;gap:8px;padding:48px 24px 56px;text-align:center;font:400 14px/20px var(--font-system)}
+.cs-msg b{font:700 20px/24px var(--font-system);margin-top:8px}
+.cs-msg-i{width:48px;height:48px;border-radius:14px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary)}
+.cs-msg .cs-btn{margin-top:12px}
+.cs-msg .cs-btn--grey{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px;position:sticky;bottom:0;z-index:6;border-radius:0 0 20px 20px;isolation:isolate;margin-bottom:-4px}
+/* Футер таблицы прилипает к низу экрана: фейд с прогрессивным блюром, шириной в таблицу */
+.cs-top::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0%,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)) 45%,color-mix(in srgb,var(--bg-base-primary, #fff) 78%,transparent) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 55%);mask-image:linear-gradient(to bottom,transparent 0%,#000 55%)}
+/* Чекбокс 24 px: выбор клиентов для закрепления и открепления */
+.cs-ck{appearance:none;border:0;margin:0;padding:0;width:24px;height:24px;border-radius:6px;background:transparent;box-shadow:inset 0 0 0 2px var(--graphic-tertiary, #b8bcc3);display:inline-flex;align-items:center;justify-content:center;color:transparent;cursor:pointer;flex:0 0 auto}
+.cs-ck:hover{box-shadow:inset 0 0 0 2px var(--graphic-secondary, #86868a)}
+.cs-ck[aria-checked="true"],.cs-ck[aria-checked="mixed"]{background:var(--graphic-primary, #0e0e0e);box-shadow:none;color:#fff}
+.cs-ck:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.cs-row > .cs-c.cs-ckc{padding:18px 0 0 16px;cursor:default}
+.cs-hc.cs-ckc{padding:24px 0 12px 16px}
+.cs-hc.cs-ckc + .cs-hc::before{display:none}
+.cs-row[data-sel="true"] > .cs-c{background:color-mix(in srgb,rgb(38,55,88) 6%,var(--bg-base-primary, #fff))}
+.cs-sel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:500 14px/20px var(--font-system)}
+.cs-sel .cs-btn{height:32px;padding:0 12px}
+.cs-total{font:500 14px/20px var(--font-system);color:var(--text-secondary)}
+.cs-total b{color:var(--text-primary);font-weight:500;margin-left:4px}
+.cs-pg{display:flex;align-items:center;gap:4px}
+.cs-pg button{appearance:none;border:0;margin:0;min-width:32px;height:32px;padding:0 8px;border-radius:8px;background:transparent;font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.cs-pg button[aria-current="page"]{background:#212124;color:#fff}
+.cs-pg button[aria-disabled="true"]{color:var(--text-tertiary, rgba(5,8,29,.38));cursor:default}
+.cs-set{position:relative}
+.cs-btn:focus-visible,.cs-ibtn:focus-visible,.cs-seg button:focus-visible,.cs-fc-btn:focus-visible,.cs-fc-x:focus-visible,.cs-opt:focus-visible,.cs-hc-b:focus-visible,.cs-more:focus-visible,.cs-pg button:focus-visible,.cs-clr:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+/* Расширенный поиск */
+.cs-mback{position:fixed;inset:0;z-index:40;border:0;margin:0;padding:0;background:rgba(0,0,0,.4);cursor:default}
+.cs-modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:41;width:min(500px,calc(100vw - 32px));max-height:calc(100vh - 32px);display:flex;flex-direction:column;background:var(--bg-base-primary, #fff);border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.2)}
+.cs-mh{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 24px 16px 32px;border-bottom:1px solid var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-mh h2{margin:0;font:700 24px/30px var(--font-system)}
+.cs-mx{appearance:none;border:0;margin:0;width:40px;height:40px;border-radius:12px;background:transparent;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--graphic-primary)}
+.cs-mb{padding:16px 32px 8px;overflow:auto;display:flex;flex-direction:column;gap:16px}
+.cs-mb .cs-seg{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));align-self:flex-start}
+.cs-mb .cs-seg button[aria-pressed="true"]{background:var(--bg-base-primary, #fff);box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.cs-mnote{font:500 14px/20px var(--font-system)}
+.cs-msec{font:700 16px/22px var(--font-system);margin-top:8px}
+.cs-mdiv{height:1px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-in{display:flex;flex-direction:column;gap:6px}
+.cs-in > span{font:400 13px/16px var(--font-system);color:var(--text-secondary)}
+.cs-in-w{position:relative;display:flex;align-items:center;height:48px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));border:1.5px solid transparent;padding:0 14px;gap:8px}
+.cs-in-w:focus-within{border-color:var(--text-primary);background:var(--bg-base-primary, #fff)}
+.cs-in-w[data-lock="true"]{opacity:.55}
+.cs-in-w input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.cs-in-w input::placeholder{color:var(--text-secondary)}
+.cs-in small{font:400 13px/16px var(--font-system);color:var(--text-secondary)}
+.cs-lock{color:var(--graphic-secondary);display:inline-flex}
+.cs-mf{display:flex;gap:12px;padding:20px 32px 28px;border-top:1px solid var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.cs-mf .cs-btn{flex:1 1 0;height:48px;justify-content:center;font-size:15px}
+.cs-mf .cs-btn--grey[aria-disabled="true"]{background:var(--color-neutral-translucent-100, rgba(30,43,68,.04))}
+.cs-toast{position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:50;padding:12px 16px;border-radius:14px;background:#1c1c1e;color:#fff;font:500 14px/20px var(--font-system);white-space:nowrap}
+@media (max-width: 1100px){.cs{padding:16px 16px 32px}.cs-tw{overflow-x:auto}.cs-grid{min-width:1000px}}
+@media (prefers-reduced-motion: reduce){.cs-sk{animation-duration:3s}}
+
+/* Копирование строк: как в таблице очереди */
+.cs-ln{display:block;min-width:0}
+.cs-ln .alfa-tooltip{max-width:100%}
+.cs-cl{appearance:none;border:0;margin:0;padding:0;background:transparent;font:inherit;color:inherit;text-align:left;cursor:copy;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:top;border-radius:4px}
+.cs-cl:hover{text-decoration:underline dotted;text-underline-offset:3px}
+.cs-cl:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.cs-cl.cs-c-sub{color:var(--text-secondary)}
+.alfa-tooltip__pop{white-space:pre-line;text-align:center}
+.alfa-tooltip__pop--top{bottom:calc(100% + 6px)!important}
+.cs-ntf{position:fixed;top:72px;right:24px;z-index:50;display:flex;align-items:flex-start;gap:12px;min-width:260px;max-width:380px;padding:14px 12px 14px 16px;border-radius:16px;background:#1c1c1e;color:#fff;box-shadow:0 8px 24px rgba(0,0,0,.18)}
+.cs-ntf-b{flex:1;display:flex;flex-direction:column;gap:2px;font:400 14px/20px var(--font-system);color:rgba(255,255,255,.72);min-width:0;overflow:hidden;text-overflow:ellipsis}
+.cs-ntf-b b{font:500 15px/20px var(--font-system);color:#fff}
+.cs-ntf button{appearance:none;border:0;margin:0;background:transparent;color:rgba(255,255,255,.6);width:24px;height:24px;cursor:pointer}
+
+/* Вариант 3: шапка как у очереди «Работа в системе начата» */
+.v3-head{display:flex;flex-direction:column;align-items:flex-start;gap:8px;position:relative;z-index:26}
+.v3-tl{display:flex;align-items:center;justify-content:space-between;gap:16px;width:100%}
+.v3-h1{margin:0;display:inline-flex;align-items:center;gap:12px;font:700 30px/36px var(--font-system)}
+.v3-bot{width:40px;height:40px;border-radius:99px;background:var(--bg-base-primary, #fff);display:inline-flex;align-items:center;justify-content:center;color:var(--status-info, #2a77ef)}
+.v3-how{appearance:none;border:0;margin:0;background:transparent;display:inline-flex;align-items:center;gap:6px;font:500 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.v3-dirw{position:relative}
+.v3-dir{appearance:none;border:0;margin:0;padding:0;background:transparent;display:inline-flex;align-items:center;gap:4px;font:400 15px/22px var(--font-system);color:var(--text-primary);cursor:pointer}
+.v3-dir b{font-weight:500}
+.v3-sub{font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.v3-cur{margin-top:12px;padding:2px 0 2px 12px;border-left:3px solid var(--graphic-tertiary, #b8bcc3);display:flex;flex-direction:column;gap:4px;font:400 17px/24px var(--font-system)}
+.v3-cur b{font-weight:600}
+.v3-cur small{font:400 13px/18px var(--font-system)}
+.v3-acts{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 8px}
+.v3-btn{appearance:none;border:0;margin:0;height:48px;padding:0 20px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;gap:8px;font:500 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.v3-btn:hover{background:var(--color-neutral-translucent-300, rgba(15,25,55,.12))}
+.v3-btn--dark{background:#212124;color:#fff}
+.v3-btn--dark:hover{background:#000}
+.v3-btn--icon{width:48px;padding:0;justify-content:center}
+.v3-i{display:inline-flex;width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.3);color:#fff;font:700 12px/18px var(--font-system);justify-content:center;margin-left:4px}
+.v3-how:focus-visible,.v3-dir:focus-visible,.v3-btn:focus-visible{outline:2px solid var(--status-info);outline-offset:2px}
+.cs-bar--v3 .cs-dl{order:3;height:40px}
+.cs-bar--v3 .cs-seg{order:1}.cs-bar--v3 .cs-field{order:2}.cs-bar--v3 .cs-fcw{order:4}.cs-bar--v3 .cs-ibtn{order:5}.cs-bar--v3 > .cs-btn:not(.cs-dl){order:6}
+
+/* Все модалки — правые шторки на всю высоту */
+.cs-modal{position:fixed;top:8px;right:8px;bottom:8px;left:auto;transform:none;max-height:none;width:min(500px,calc(100vw - 16px));animation:sheet-in .2s ease}
+.cs-modal .cs-mb{flex:1 1 auto}
+@keyframes sheet-in{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion: reduce){.cc-modal,.cs-modal,.tk-dlg{animation:none !important}}
+
+/* Заголовок таблицы прилипает под шапку */
+.cs-head > *{position:sticky !important;top:64px;z-index:7;align-self:stretch;background:transparent;box-shadow:inset 0 -1px 0 var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.cs-head > *:has([aria-expanded="true"]){z-index:9}
+@media (max-width: 1100px){.cs-head > *{position:relative !important}}
+
+/* Первый результат поиска подсвечен — Enter откроет его */
+.cs-row[data-first="true"] > .cs-c{background:color-mix(in srgb,var(--status-info, #2a77ef) 7%,var(--bg-base-primary, #fff))}
+
+/* Единое правило: любая модалка — шторка справа на всю высоту, выезжает справа (side-in) */
+.cs-modal{animation:sbo-sheet-in .22s ease}
+@media (prefers-reduced-motion: reduce){.cs-modal{animation:none !important}}
+@keyframes sbo-sheet-in{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
+/* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.cs-btn,
+.cs-btn--dark,
+.cs-opt,
+.cs-hc-b,
+.cs-row > .cs-c,
+.cs-ck,
+.cs-cl,
+.v3-btn,
+.v3-btn--dark{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.cs-btn:hover,
+.cs-btn--dark:hover,
+.cs-opt:hover,
+.cs-hc-b:hover,
+.cs-row:hover > .cs-c,
+.cs-ck:hover,
+.cs-cl:hover,
+.v3-btn:hover,
+.v3-btn--dark:hover{transition-delay:.3s}
+.cs-btn:hover:active,
+.cs-btn--dark:hover:active,
+.cs-opt:hover:active,
+.cs-hc-b:hover:active,
+.cs-row:hover > .cs-c:active,
+.cs-ck:hover:active,
+.cs-cl:hover:active,
+.v3-btn:hover:active,
+.v3-btn--dark:hover:active{transition-delay:0s}
+.cs-row > .cs-c{transition:background-color .15s ease}
+.cs-row:hover > .cs-c{transition-delay:.3s}
+/* === /HOVER-DELAY === */
+</style>
+</helmet>
+<sc-if value="{{cardOpen}}" hint-placeholder-val="{{false}}"><dc-import name="ClientCard" kind="{{card.kind}}" client-name="{{card.name}}" pin="{{card.pin}}" inn="{{card.inn}}" seg="{{card.seg}}" scenario="{{card.scn}}" on-open-task="{{cardOpenTask}}" hint-size="100%,1400px"></dc-import></sc-if>
+<sc-if value="{{listOpen}}" hint-placeholder-val="{{true}}">
+<div class="cs">
+<sc-if value="{{classic}}" hint-placeholder-val="{{true}}"><h1 class="cs-h1">Клиенты</h1></sc-if>
+<sc-if value="{{v3}}" hint-placeholder-val="{{false}}"><div class="v3-head">
+<div class="v3-tl"><h1 class="v3-h1">Клиенты<span class="v3-bot" role="img" aria-label="Клиентов закрепляет робот"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 2h2v3h4a3 3 0 013 3v8a3 3 0 01-3 3H7a3 3 0 01-3-3V8a3 3 0 013-3h4V2zm-2 8a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm6 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3zM9 15v1h6v-1H9zM1 10h2v4H1v-4zm20 0h2v4h-2v-4z"/></svg></span></h1><button type="button" class="v3-how" onClick="{{howTo}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 22a10 10 0 100-20 10 10 0 000 20zm-1-11h2v6h-2v-6zm0-4h2v2h-2V7z"/></svg>Как это работает?</button></div>
+<div class="v3-dirw"><button type="button" class="v3-dir" aria-haspopup="menu" aria-expanded="{{dirOpenStr}}" onClick="{{toggleDir}}">Направление: <b>{{dirLabel}}</b><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></button>
+<sc-if value="{{dirOpen}}" hint-placeholder-val="{{false}}"><div class="cs-menu" role="menu" aria-label="Направления"><sc-for list="{{dirs}}" as="dd" hint-placeholder-count="3"><button type="button" class="cs-opt" role="menuitemcheckbox" aria-checked="{{dd.on}}" onClick="{{dd.pick}}"><span class="cs-cb" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>{{dd.label}}</button></sc-for></div></sc-if></div>
+<div class="v3-sub">{{pinnedLabel}}</div>
+<div class="v3-cur"><span><b>Клиент текущей задачи:</b> ООО «Даниэль Спаниэльевич Государевич»</span><small>Задача: Официальное письмо ID 9000-01</small></div>
+<div class="v3-acts"><button type="button" class="v3-btn v3-btn--dark" onClick="{{goCurClient}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 8l4 4-4 4" stroke-linecap="round" stroke-linejoin="round"/></svg>К текущему клиенту<x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="Клиент задачи, которая сейчас у вас в работе" position="bottom"><span class="v3-i" role="img" aria-label="Клиент задачи, которая сейчас у вас в работе">i</span></x-import></button><button type="button" class="v3-btn" onClick="{{reassign}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 3-5.5 6.5-5.5 1.2 0 2.3.2 3.3.6M16 13l3 3-3 3M13 16h6" stroke-linecap="round" stroke-linejoin="round"/></svg>Переназначить исполнителя</button><button type="button" class="v3-btn" onClick="{{download}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M11 3h2v10.586l3.293-3.293 1.414 1.414L12 17.414l-5.707-5.707 1.414-1.414L11 13.586V3zM4 19h16v2H4v-2z"/></svg>Скачать таблицу</button><button type="button" class="v3-btn v3-btn--icon" aria-label="Ещё действия" onClick="{{moreActs}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 10a2 2 0 110 4 2 2 0 010-4zm7 0a2 2 0 110 4 2 2 0 010-4zm7 0a2 2 0 110 4 2 2 0 010-4z"/></svg></button></div>
+</div></sc-if>
+
+<sc-if value="{{pageErr}}" hint-placeholder-val="{{false}}">
+<div class="cs-table"><div class="cs-grid"><div class="cs-msg"><span class="cs-msg-i" aria-hidden="true">
+<sc-if value="{{errOffline}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M3.3 2l18.7 18.7-1.4 1.4-6.2-6.2a3 3 0 00-4.3 1.4L8.6 15.8a6 6 0 014.4-2.6l-2.5-2.5a9 9 0 00-4.7 2.8L4.3 12a12 12 0 014.4-3.1L6.4 6.6A15 15 0 002.2 9.4L.8 8a17 17 0 013.9-2.8L1.9 3.4 3.3 2zM12 6a15 15 0 0110.8 4.4l-1.4 1.4a13 13 0 00-6.8-3.6L12 6zm0 12a2 2 0 110 4 2 2 0 010-4z"/></svg></sc-if>
+<sc-if value="{{errLoad}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm-.5 8h4l-.5 12H7l-.5-12zM15 2h2l2 3-1 3v14h-4V8l-1-3 2-3z"/></svg></sc-if>
+<sc-if value="{{errForbidden}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a5 5 0 110 10 5 5 0 010-10zm0 11c4.4 0 8 1.8 8 5v3H4v-3c0-3.2 3.6-5 8-5z"/></svg></sc-if>
+</span><b>{{errTitle}}</b><span>{{errText}}</span><button type="button" class="cs-btn cs-btn--grey" onClick="{{errAct}}">{{errBtn}}</button></div></div></div>
+</sc-if>
+
+<sc-if value="{{pageOk}}" hint-placeholder-val="{{true}}">
+<div class="{{barCls}}" role="search" aria-label="Поиск клиентов">
+<button type="button" class="cs-btn cs-dl" onClick="{{download}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 20h14"/></svg>Скачать таблицу</button>
+<div class="cs-seg" role="group" aria-label="Вид клиента"><sc-for list="{{kinds}}" as="k" hint-placeholder-count="4"><button type="button" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for></div>
+<label class="cs-field" data-err="{{fieldErr}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg><input type="text" value="{{q}}" placeholder="{{searchPh}}" aria-label="Поиск по клиентам: ПИН, ИНН или ФИО" aria-invalid="{{fieldErr}}" onChange="{{setQ}}" onKeyDown="{{qKey}}"><sc-if value="{{hasQ}}" hint-placeholder-val="{{false}}"><button type="button" class="cs-clr" aria-label="Очистить поиск" onClick="{{clearQ}}"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.667A6.667 6.667 0 108 1.333a6.667 6.667 0 000 13.334zm-2.667-5L7.057 8 5.333 6.333l1-1L8 7.057l1.667-1.724 1 1L8.943 8l1.724 1.667-1 1L8 8.943l-1.667 1.724-1-1z"/></svg></button></sc-if></label>
+<sc-for list="{{chips}}" as="fc" hint-placeholder-count="2"><div class="cs-fcw"><div class="{{fc.cls}}"><button type="button" class="cs-fc-btn" aria-haspopup="menu" aria-expanded="{{fc.openStr}}" onClick="{{fc.toggle}}">{{fc.text}}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></button><sc-if value="{{fc.on}}" hint-placeholder-val="{{false}}"><button type="button" class="cs-fc-x" aria-label="{{fc.clearLabel}}" onClick="{{fc.clear}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.667A6.667 6.667 0 108 1.333a6.667 6.667 0 000 13.334zm-2.667-5L7.057 8 5.333 6.333l1-1L8 7.057l1.667-1.724 1 1L8.943 8l1.724 1.667-1 1L8 8.943l-1.667 1.724-1-1z"/></svg></button></sc-if></div>
+<sc-if value="{{fc.open}}" hint-placeholder-val="{{false}}"><div class="cs-menu" role="menu" aria-label="{{fc.label}}"><sc-for list="{{fc.opts}}" as="o" hint-placeholder-count="4"><button type="button" class="cs-opt" role="menuitemcheckbox" aria-checked="{{o.on}}" onClick="{{o.pick}}"><span class="cs-cb" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>{{o.label}}</button></sc-for></div></sc-if></div></sc-for>
+<button type="button" class="cs-ibtn" aria-pressed="{{advOnStr}}" aria-label="{{advLabel}}" title="Расширенный поиск" onClick="{{openAdv}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 13a4.002 4.002 0 013.874 3H22v2h-4.126A4.002 4.002 0 0114 21l-.206-.005A4.001 4.001 0 0110.127 18H2v-2h8.127a4.002 4.002 0 013.667-2.995L14 13zm0 2a2 2 0 100 4 2 2 0 000-4zM10 3a4.002 4.002 0 013.874 3H22v2h-8.126A4.002 4.002 0 0110 11l-.206-.005A4.002 4.002 0 016.127 8H2V6h4.127a4.002 4.002 0 013.667-2.995L10 3zm0 2a2 2 0 100 4 2 2 0 000-4z"/></svg><sc-if value="{{advOn}}" hint-placeholder-val="{{false}}"><span class="cs-cnt" aria-hidden="true">{{advCount}}</span></sc-if></button>
+<sc-if value="{{canReset}}" hint-placeholder-val="{{false}}"><button type="button" class="cs-btn" onClick="{{resetAll}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="#747474" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.667A6.667 6.667 0 108 1.333a6.667 6.667 0 000 13.334zm-2.667-5L7.057 8 5.333 6.333l1-1L8 7.057l1.667-1.724 1 1L8.943 8l1.724 1.667-1 1L8 8.943l-1.667 1.724-1-1z"/></svg>Сбросить</button></sc-if>
+</div>
+
+<div class="cs-tw">
+<div class="cs-table" role="table" aria-label="{{tableLabel}}" aria-busy="{{busyStr}}">
+<div class="cs-grid">
+<div class="cs-head" role="row" style="display: contents">
+<span class="cs-hc cs-ckc" role="columnheader"><button type="button" class="cs-ck" role="checkbox" aria-checked="{{allSel}}" aria-label="Выбрать всех клиентов на странице" onClick="{{toggleAll}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></span>
+<sc-for list="{{cols}}" as="c" hint-placeholder-count="6"><div class="cs-hc" role="columnheader" aria-sort="{{c.ariaSort}}"><span class="cs-hc-t">{{c.label}}</span><sc-if value="{{c.sorted}}" hint-placeholder-val="{{false}}"><svg class="cs-sorti" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="{{c.sortStyle}}"><path d="M4 6h16v2H4V6zm0 5h11v2H4v-2zm0 5h6v2H4v-2z"/></svg></sc-if><button type="button" class="cs-hc-b" aria-haspopup="menu" aria-expanded="{{c.openStr}}" aria-label="{{c.menuLabel}}" onClick="{{c.toggle}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></button>
+<sc-if value="{{c.open}}" hint-placeholder-val="{{false}}"><div class="{{c.menuCls}}" role="menu" aria-label="{{c.label}}"><button type="button" class="cs-opt" role="menuitem" onClick="{{c.asc}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 16h16v2H4v-2zm0-5h11v2H4v-2zm0-5h6v2H4V6z"/></svg>Сортировать по возрастанию</button><button type="button" class="cs-opt" role="menuitem" onClick="{{c.desc}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 6h16v2H4V6zm0 5h11v2H4v-2zm0 5h6v2H4v-2z"/></svg>Сортировать по убыванию</button><span class="cs-opt-sep" aria-hidden="true"></span><button type="button" class="cs-opt" role="menuitemcheckbox" aria-checked="{{c.pinStr}}" onClick="{{c.pin}}"><span class="cs-cb" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Закрепить столбец</button><span class="cs-opt-sep" aria-hidden="true"></span><button type="button" class="cs-opt" role="menuitem" onClick="{{c.resetW}}">Сбросить ширину столбца</button><button type="button" class="cs-opt" role="menuitem" onClick="{{c.resetAllW}}">Сбросить ширину всех столбцов</button></div></sc-if>
+</div></sc-for>
+<span class="cs-hc" aria-hidden="true" style="padding: 0"></span>
+</div>
+
+<sc-if value="{{loading}}" hint-placeholder-val="{{false}}"><sc-for list="{{skRows}}" as="sk" hint-placeholder-count="5"><div class="cs-row" role="row" aria-hidden="true"><span class="cs-c" style="padding: 0"></span><span class="cs-c"><span class="cs-sk" style="width: 80%"></span><span class="cs-sk" style="width: 50%; margin-top: 8px"></span></span><span class="cs-c"><span class="cs-sk" style="width: 70%"></span></span><span class="cs-c"><span class="cs-sk" style="width: 80%"></span></span><span class="cs-c"><span class="cs-sk" style="width: 70%"></span></span><span class="cs-c"><span class="cs-sk" style="width: 80%"></span><span class="cs-sk" style="width: 60%; margin-top: 8px"></span></span><span class="cs-c"><span class="cs-sk" style="width: 60%"></span></span><span class="cs-c" style="padding: 0"></span></div></sc-for></sc-if>
+
+<sc-if value="{{showMsg}}" hint-placeholder-val="{{false}}"><div class="cs-msg" role="status"><span class="cs-msg-i" aria-hidden="true">
+<sc-if value="{{msgSearchIco}}" hint-placeholder-val="{{true}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg></sc-if>
+<sc-if value="{{msgBoxIco}}" hint-placeholder-val="{{false}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4 3h16a1 1 0 011 1v16a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1zm1 10v6h14v-6h-4a3 3 0 01-6 0H5z"/></svg></sc-if>
+</span><b>{{msgTitle}}</b><span>{{msgText1}}<br>{{msgText2}}</span><sc-if value="{{msgHasBtn}}" hint-placeholder-val="{{false}}"><button type="button" class="cs-btn cs-btn--grey" onClick="{{msgAct}}">{{msgBtn}}</button></sc-if></div></sc-if>
+
+<sc-if value="{{showRows}}" hint-placeholder-val="{{true}}"><sc-for list="{{groups}}" as="g" hint-placeholder-count="1">
+<sc-if value="{{g.titled}}" hint-placeholder-val="{{false}}"><div class="cs-grp" role="rowgroup" aria-label="{{g.title}}">{{g.title}}</div></sc-if>
+<sc-for list="{{g.rows}}" as="r" hint-placeholder-count="5"><div class="cs-row" role="row" data-first="{{r.firstStr}}" data-sel="{{r.selStr}}">
+<span class="cs-c cs-ckc" role="cell"><button type="button" class="cs-ck" role="checkbox" aria-checked="{{r.selStr}}" aria-label="{{r.selLabel}}" onClick="{{r.toggleSel}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></span>
+<span class="cs-c" role="cell" onClick="{{r.open}}"><button type="button" class="cs-open" aria-label="{{r.openLabel}}" title="Открыть карточку клиента"><span style="display: block">{{r.n1}}<mark>{{r.n2}}</mark>{{r.n3}}</span></button><span class="cs-ln"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{r.subTip}}" position="top"><button type="button" class="cs-cl cs-c-sub" aria-label="{{r.subLabel}}" onClick="{{r.subCopy}}">{{r.sub}}</button></x-import></span></span>
+<span class="cs-c" role="cell" onClick="{{r.open}}"><span class="cs-ln"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{r.pinTip}}" position="top"><button type="button" class="cs-cl" aria-label="{{r.pinLabel}}" onClick="{{r.pinCopy}}">{{r.p1}}<mark>{{r.p2}}</mark>{{r.p3}}</button></x-import></span><sc-if value="{{r.hasMorePins}}" hint-placeholder-val="{{false}}"><button type="button" class="cs-more" onClick="{{r.morePins}}">Ещё {{r.morePinsN}}</button></sc-if></span>
+<span class="cs-c" role="cell" onClick="{{r.open}}"><span class="cs-ln"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{r.innTip}}" position="top"><button type="button" class="cs-cl" aria-label="{{r.innLabel}}" onClick="{{r.innCopy}}">{{r.i1}}<mark>{{r.i2}}</mark>{{r.i3}}</button></x-import></span></span>
+<span class="cs-c" role="cell" onClick="{{r.open}}"><sc-if value="{{r.hasKpp}}" hint-placeholder-val="{{true}}"><span class="cs-ln"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{r.kppTip}}" position="top"><button type="button" class="cs-cl" aria-label="{{r.kppLabel}}" onClick="{{r.kppCopy}}">{{r.kpp}}</button></x-import></span></sc-if><sc-if value="{{r.noKpp}}" hint-placeholder-val="{{false}}"><span class="cs-c-dim">—</span></sc-if></span>
+<span class="cs-c" role="cell" onClick="{{r.open}}"><span class="cs-ln"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{r.dateTip}}" position="top"><button type="button" class="cs-cl" aria-label="{{r.dateLabel}}" onClick="{{r.dateCopy}}">{{r.date}}</button></x-import></span><span class="cs-ln"><x-import component-from-global-scope="DesignSystem_88b1f8.Tooltip" content="{{r.sinceTip}}" position="top"><button type="button" class="cs-cl cs-c-sub" aria-label="{{r.sinceLabel}}" onClick="{{r.sinceCopy}}">{{r.since}}</button></x-import></span></span>
+<span class="cs-c" role="cell" onClick="{{r.open}}"><span class="cs-chip">{{r.seg}}</span></span>
+<span class="cs-c" style="padding: 0" onClick="{{r.open}}"></span>
+</div></sc-for>
+</sc-for></sc-if>
+</div>
+<div class="cs-top">
+<sc-if value="{{noSel}}" hint-placeholder-val="{{true}}"><span class="cs-total">Всего<b>{{total}}</b></span></sc-if><sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}"><div class="cs-sel" role="group" aria-label="Действия с выбранными клиентами"><span>Выбрано {{selN}}</span><button type="button" class="cs-btn cs-btn--grey" onClick="{{pinSel}}">Закрепить за мной</button><button type="button" class="cs-btn cs-btn--grey" onClick="{{unpinSel}}">Открепить</button><button type="button" class="cs-btn" style="background: transparent" onClick="{{clearSel}}">Сбросить</button></div></sc-if>
+<sc-if value="{{hasPages}}" hint-placeholder-val="{{false}}"><nav class="cs-pg" aria-label="Страницы"><button type="button" aria-label="Предыдущая страница" aria-disabled="{{noPrev}}" onClick="{{prev}}">‹</button><sc-for list="{{pages}}" as="pg" hint-placeholder-count="3"><button type="button" aria-current="{{pg.cur}}" onClick="{{pg.go}}">{{pg.n}}</button></sc-for><button type="button" aria-label="Следующая страница" aria-disabled="{{noNext}}" onClick="{{next}}">›</button></nav></sc-if>
+<div class="cs-set"><button type="button" class="cs-btn" style="background: transparent; height: 32px; padding: 0 12px" aria-haspopup="menu" aria-expanded="{{setOpenStr}}" onClick="{{toggleSet}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 110-7.2 3.6 3.6 0 010 7.2z"/></svg>Настройки</button>
+<sc-if value="{{setOpen}}" hint-placeholder-val="{{false}}"><div class="cs-menu is-right" role="menu" aria-label="Столбцы таблицы" style="top: auto; bottom: calc(100% + 4px)"><sc-for list="{{colToggles}}" as="ct" hint-placeholder-count="5"><button type="button" class="cs-opt" role="menuitemcheckbox" aria-checked="{{ct.on}}" aria-disabled="{{ct.lock}}" onClick="{{ct.toggle}}"><span class="cs-cb" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>{{ct.label}}</button></sc-for></div></sc-if></div>
+</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{anyPop}}" hint-placeholder-val="{{false}}"><button type="button" class="cs-scrim" aria-label="Закрыть меню" tabindex="-1" onClick="{{closePops}}"></button></sc-if>
+
+<sc-if value="{{advOpen}}" hint-placeholder-val="{{false}}">
+<button type="button" class="cs-mback" aria-label="Закрыть" onClick="{{closeAdv}}"></button>
+<div class="cs-modal" role="dialog" aria-modal="true" aria-label="Расширенный поиск">
+<div class="cs-mh"><h2>Расширенный поиск</h2><button type="button" class="cs-mx" aria-label="Закрыть" onClick="{{closeAdv}}"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.707 5.707l-1.414-1.414L12 10.586 5.707 4.293 4.293 5.707 10.586 12l-6.293 6.293 1.414 1.414L12 13.414l6.293 6.293 1.414-1.414L13.414 12l6.293-6.293z"/></svg></button></div>
+<div class="cs-mb">
+<div class="cs-seg" role="group" aria-label="Тип клиента"><sc-for list="{{advKinds}}" as="ak" hint-placeholder-count="4"><button type="button" aria-pressed="{{ak.on}}" onClick="{{ak.pick}}">{{ak.label}}</button></sc-for></div>
+<div class="cs-mnote">При поиске по ПИН или номеру счёта остальные поля поиска будут недоступны</div>
+<sc-for list="{{advFields}}" as="af" hint-placeholder-count="8">
+<sc-if value="{{af.isSec}}" hint-placeholder-val="{{false}}"><div class="cs-mdiv" aria-hidden="true"></div><div class="cs-msec">{{af.label}}</div></sc-if>
+<sc-if value="{{af.isField}}" hint-placeholder-val="{{true}}"><label class="cs-in"><span>{{af.label}}</span><span class="cs-in-w" data-lock="{{af.lockStr}}"><input type="text" inputmode="{{af.mode}}" placeholder="{{af.ph}}" value="{{af.value}}" disabled="{{af.lock}}" aria-describedby="{{af.hintId}}" onChange="{{af.set}}"><sc-if value="{{af.lock}}" hint-placeholder-val="{{false}}"><span class="cs-lock" title="{{af.lockWhy}}"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M7 10V7a5 5 0 0110 0v3h1a1 1 0 011 1v9a1 1 0 01-1 1H6a1 1 0 01-1-1v-9a1 1 0 011-1h1zm2 0h6V7a3 3 0 00-6 0v3z"/></svg></span></sc-if></span><sc-if value="{{af.hasHint}}" hint-placeholder-val="{{false}}"><small id="{{af.hintId}}">{{af.hint}}</small></sc-if></label></sc-if>
+</sc-for>
+</div>
+<div class="cs-mf"><button type="button" class="cs-btn cs-btn--dark" aria-disabled="{{advEmptyStr}}" onClick="{{applyAdv}}">Применить</button><button type="button" class="cs-btn cs-btn--grey" aria-disabled="{{advEmptyStr}}" onClick="{{resetAdv}}">Сбросить</button></div>
+</div>
+</sc-if>
+
+<sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}"><sc-if value="{{toastOk}}" hint-placeholder-val="{{false}}"><div class="cs-ntf" role="status"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="var(--status-positive, #0cc44d)"/><path d="M10.5 14.6l-3.1-3.1-1.4 1.4 4.5 4.5 7.5-7.5-1.4-1.4-6.1 6.1z" fill="#fff"/></svg><span class="cs-ntf-b"><b>Данные скопированы</b><span>{{toast}}</span></span><button type="button" aria-label="Закрыть уведомление" onClick="{{closeToast}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.4 4.2L12 10.6 5.6 4.2 4.2 5.6l6.4 6.4-6.4 6.4 1.4 1.4 6.4-6.4 6.4 6.4 1.4-1.4-6.4-6.4 6.4-6.4z"/></svg></button></div></sc-if><sc-if value="{{toastPlain}}" hint-placeholder-val="{{true}}"><div class="cs-toast" role="status">{{toast}}</div></sc-if></sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"scenario":{"editor":"enum","options":["mine","mine-empty","loading","offline","load-error","forbidden"],"default":"mine"},"demoQ":{"editor":"string","default":""},"demoEnter":{"editor":"boolean","default":false},"demoAdv":{"editor":"enum","options":["","all","fl","ip","ul","pin"],"default":""},"demoMenu":{"editor":"enum","options":["","column","segment"],"default":""},"layout":{"editor":"enum","options":["classic","v3"],"default":"classic"},"onOpenClient":{"editor":null},"$preview":{"width":1180,"height":836}}'>
+const KIND = { fl: 'ФЛ', ip: 'ИП', ul: 'ЮЛ' };
+const SEGS = ['МАСС100', 'КИБ100', 'СБ500', 'МСБ300', 'ПБ1000'];
+const TYPES = ['Клиент', 'Представитель', 'Третье лицо', 'Банк'];
+const MINE = [
+  { id: 'm1', kind: 'fl', name: 'Соколов Андрей Викторович', city: 'Москва', pin: '2ZZBTS8', inn: '771234567805', kpp: '', date: '18.08.1980', since: '01.10.2015', seg: 'МАСС100', type: 'Клиент', pins: 0 },
+  { id: 'm2', kind: 'ip', name: 'ИП Соколов Андрей Викторович', city: 'АВИЛОН ВОЛГОГРАДСКИЙ ПРОСПЕКТ 3', pin: '1ZZ6A1G', inn: '7712345678', kpp: '772501001', date: '18.08.1980', since: '01.10.2015', seg: 'КИБ100', type: 'Клиент', pins: 0 },
+  { id: 'm3', kind: 'ul', name: 'ООО «Вектор»', city: 'ЮЛ ООО · АВИЛОН ВОЛГОГРАДСКИЙ ПРОСПЕКТ 3', pin: '1Z5F1P3', inn: '772512341234', kpp: '772501001', date: '18.08.1980', since: '01.10.2015', seg: 'СБ500', type: 'Клиент', pins: 130 },
+  { id: 'm4', kind: 'ul', name: 'АО «Пушистая долина»', city: 'ЮЛ АО · Москва', pin: 'UAUSZ1J', inn: '192000000001', kpp: '192000001', date: '22.09.2003', since: '22.09.2023', seg: 'МАСС100', type: 'Клиент', pins: 2 },
+  { id: 'm5', kind: 'ul', name: 'АО «Вертикаль»', city: 'ЮЛ АО · Санкт-Петербург', pin: 'UVRT7K2', inn: '783456789012', kpp: '784501001', date: '04.03.1999', since: '12.05.2019', seg: 'КИБ100', type: 'Клиент', pins: 0 },
+  { id: 'm6', kind: 'fl', name: 'Иванова Мария Петровна', city: 'Казань', pin: '3MPI8Q1', inn: '165512349876', kpp: '', date: '02.11.1991', since: '15.06.2021', seg: 'МАСС100', type: 'Представитель', pins: 0 },
+  { id: 'm7', kind: 'ip', name: 'ИП Гусельников Дониёр', city: 'Екатеринбург', pin: 'UALERY1', inn: '6612345678', kpp: '', date: '30.01.2012', since: '01.02.2012', seg: 'МСБ300', type: 'Клиент', pins: 1 },
+  { id: 'm8', kind: 'ul', name: 'ООО «Метроном-Механикс»', city: 'ЮЛ ООО · Санкт-Петербург', pin: 'UMTR4X9', inn: '772756377812', kpp: '770401001', date: '17.07.2008', since: '03.03.2014', seg: 'ПБ1000', type: 'Клиент', pins: 4 },
+  { id: 'm9', kind: 'ul', name: 'ООО «Терем»', city: 'ЮЛ ООО · Москва', pin: 'UABBDX0', inn: '770273407600', kpp: '770201001', date: '10.10.2010', since: '11.11.2011', seg: 'СБ500', type: 'Клиент', pins: 0 },
+  { id: 'm10', kind: 'fl', name: 'Константинопольский Константин Константинович', city: 'Москва', pin: '4KKK2Z0', inn: '771999888777', kpp: '', date: '01.01.1975', since: '05.05.2005', seg: 'ПБ1000', type: 'Третье лицо', pins: 0 },
+  { id: 'm11', kind: 'ip', name: 'ИП Набоков Алексей Андреевич', city: 'Тверь', pin: '5NAB7Y3', inn: '6901234567', kpp: '', date: '12.12.2016', since: '20.12.2016', seg: 'МСБ300', type: 'Клиент', pins: 0 },
+  { id: 'm12', kind: 'ul', name: 'ООО «ВОСТОК ОИЛ»', city: 'ЮЛ ООО · Владимир', pin: 'UEQAUS1', inn: '332800499005', kpp: '332801001', date: '09.09.2009', since: '01.04.2018', seg: 'КИБ100', type: 'Банк', pins: 0 }
+];
+const LAST = ['Соколов', 'Соколова', 'Иванов', 'Петров', 'Смирнов', 'Кузнецов', 'Попов', 'Волков', 'Морозов', 'Лебедев'];
+const FIRST = ['Андрей Владимирович', 'Ирина Сергеевна', 'Олег Петрович', 'Анна Игоревна', 'Сергей Андреевич'];
+const ORGS = ['Вектор-Строй', 'Метроном', 'Северный ветер', 'Альфа-Логистик', 'Пушистая долина', 'Сокол Трейд', 'Восток Ойл', 'Терем-Сервис'];
+const POOL = [];
+for (let i = 0; i < 48; i++) {
+  const k = ['fl', 'ip', 'ul'][i % 3];
+  const ln = LAST[i % LAST.length], fn = FIRST[i % FIRST.length];
+  const name = k === 'fl' ? ln + ' ' + fn : (k === 'ip' ? 'ИП ' + ln + ' ' + fn : 'ООО «' + ORGS[i % ORGS.length] + '»');
+  POOL.push({ id: 'p' + i, kind: k, name: name, city: k === 'fl' ? ['Москва', 'Казань', 'Самара'][i % 3] : (k === 'ip' ? 'ИП · Москва' : 'ЮЛ ООО · Москва'), pin: (k === 'ul' ? 'U' : String(2 + i % 7)) + ['ZR8Q4K', 'BX19PL', 'QW7E2R', 'TY6U1I', 'OP5A3S'][i % 5].slice(0, 6), inn: k === 'ul' ? String(770000000000 + i * 1311717) : (k === 'ip' ? String(7700000000 + i * 131171) : String(165500000000 + i * 977531)), kpp: k === 'ul' ? '7725010' + String(i % 100).padStart(2, '0') : '', date: String(1 + i % 28).padStart(2, '0') + '.0' + (1 + i % 9) + '.' + (1970 + i % 40), since: '01.' + String(1 + i % 12).padStart(2, '0') + '.' + (2005 + i % 18), seg: SEGS[i % SEGS.length], type: TYPES[i % 4 === 3 ? 1 : 0], pins: i % 5 === 0 ? 3 + i : 0 });
+}
+const COLS = [['name', 'Клиент'], ['pin', 'ПИН'], ['inn', 'ИНН'], ['kpp', 'КПП'], ['date', 'Дата рожд. или рег.'], ['seg', 'Сегмент']];
+// Ключ запроса по первым символам: латиница → ПИН, цифры → ИНН, кириллица → ФИО/наименование
+const keyOf = (q) => { const t = q.trim(); if (!t) return ''; if (/^\d/.test(t)) return 'inn'; if (/^[a-z0-9]/i.test(t)) return 'pin'; return 'name'; };
+const PIN_LEN = 7;
+const maskInn = (c) => c.kind === 'fl' ? c.inn.slice(0, 4) + ' •••• •• ' + c.inn.slice(-2) : c.inn;
+const split = (text, q) => { const i = q ? text.toLowerCase().indexOf(q.toLowerCase()) : -1; return i < 0 ? [text, '', ''] : [text.slice(0, i), text.slice(i, i + q.length), text.slice(i + q.length)]; };
+const ADV0 = { pin: '', acc: '', fio: '', birth: '', inn: '', pass: '', phone: '', okpp: '', ogrn: '' };
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  componentDidMount() {
+    const p = this.props;
+    if (p.demoQ) { this.setState({ q: p.demoQ }); if (p.demoEnter) setTimeout(() => this.runSearch(p.demoQ, true), 0); }
+    if (p.demoAdv) this.setState({ advOpen: true, advKind: p.demoAdv === 'pin' ? 'all' : p.demoAdv, advDraft: p.demoAdv === 'pin' ? Object.assign({}, ADV0, { pin: 'UAU' }) : Object.assign({}, ADV0) });
+    if (p.demoMenu === 'column') this.setState({ colMenu: 'inn' });
+    if (p.demoMenu === 'segment') this.setState({ chipOpen: 'seg' });
+    this._key = (e) => { if (e.key !== 'Escape') return; const s = this.st(); if (s.advOpen) this.setState({ advOpen: false }); else if (s.colMenu || s.chipOpen || s.setOpen) this.setState({ colMenu: null, chipOpen: null, setOpen: false }); };
+    document.addEventListener('keydown', this._key);
+  }
+  componentWillUnmount() { this.backClear(); document.removeEventListener('keydown', this._key); clearTimeout(this._d); clearTimeout(this._s); clearTimeout(this._t); }
+  // «Назад» в шапке: регистрируем уровень, когда он есть, и снимаем, когда его нет
+  backSync(id, label, fn) { this._bkFn = this._bkFn || {}; this._bkFn[id] = fn; this._bk = this._bk || {}; const key = label || ''; if (this._bk[id] === key) return; this._bk[id] = key; setTimeout(() => { try { window.dispatchEvent(new CustomEvent('sbo:back', { detail: { id: id, label: label, fn: label ? () => { const f = this._bkFn[id]; if (f) f(); } : null } })); } catch (e) {} }, 0); }
+  backClear() { Object.keys(this._bk || {}).forEach((id) => { try { window.dispatchEvent(new CustomEvent('sbo:back', { detail: { id: id, fn: null } })); } catch (e) {} }); this._bk = {}; }
+  toast(m) { if (window.__sboToast) { window.__sboToast(m); return; } clearTimeout(this._t); this.setState({ toast: m, toastOk: false }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
+  copy(val, key) {
+    try { navigator.clipboard.writeText(String(val)).catch(() => {}); } catch (e) {}
+    clearTimeout(this._t); clearTimeout(this._ck);
+    this.setState({ toast: String(val).length > 48 ? String(val).slice(0, 47) + '…' : String(val), toastOk: true, copiedKey: key });
+    this._t = setTimeout(() => this.setState({ toast: '' }), 2500);
+    this._ck = setTimeout(() => this.setState({ copiedKey: null }), 1500);
+  }
+  validate(q) {
+    return null; // Единое правило поиска: с 1 символа и сразу, без проверки длины ИНН/ПИН
+    const t = q.trim().replace(/\s/g, ''); const k = keyOf(t);
+    if (k === 'inn' && t.length !== 10 && t.length !== 12) return { kind: 'inn', n: t.length };
+    if (k === 'pin' && t.length !== PIN_LEN) return { kind: 'pin', n: t.length };
+    return null;
+  }
+  runSearch(q, enter) {
+    const t = (q != null ? q : (this.st().q || '')).trim();
+    if (!t) { this.setState({ applied: '', enterErr: false }); return; }
+    const bad = this.validate(t);
+    if (bad) { this.setState({ applied: '', enterErr: !!enter }); return; }
+    clearTimeout(this._s);
+    this.setState({ loading: true, enterErr: false, page: 0 });
+    this._s = setTimeout(() => this.setState({ loading: false, applied: t }), 300);
+  }
+  renderVals() {
+    const s = this.st();
+    this.backSync('cs-card', s.card ? 'К клиентам' : '', () => this.setState({ card: null }));
+    const scn = s.scn || this.props.scenario || 'mine';
+    const q = s.q != null ? s.q : '';
+    const qt = q.trim();
+    const kind = s.kind || 'all';
+    const segF = s.segF || [], typeF = s.typeF || [];
+    const adv = s.adv || null;
+    const advCount = adv ? Object.keys(adv).filter((k) => adv[k]).length : 0;
+    const applied = s.applied || '';
+    const searching = !!applied || advCount > 0;
+    const mine = scn === 'mine-empty' ? [] : MINE.filter((c) => !(s.unpinned || {})[c.id]);
+    const sort = s.sort || { col: 'name', dir: '' };
+    const flt = (c) => (kind === 'all' || c.kind === kind) && (!segF.length || segF.indexOf(c.seg) >= 0) && (!typeF.length || typeF.indexOf(c.type) >= 0);
+    const match = (c) => {
+      if (adv) {
+        if (adv.pin && c.pin.toLowerCase() !== adv.pin.toLowerCase()) return false;
+        if (adv.acc && !c.id.endsWith(adv.acc.slice(-1))) return false;
+        if (adv.fio && c.name.toLowerCase().indexOf(adv.fio.toLowerCase()) < 0) return false;
+        if (adv.inn && c.inn.indexOf(adv.inn) < 0) return false;
+        if (adv.ogrn && !/\d/.test(adv.ogrn)) return false;
+      }
+      if (!applied) return true;
+      const k = keyOf(applied); const t = applied.replace(/\s/g, '').toLowerCase();
+      if (k === 'inn') return c.inn.indexOf(t) >= 0;
+      if (k === 'pin') return c.pin.toLowerCase().indexOf(t) >= 0;
+      return c.name.toLowerCase().indexOf(applied.toLowerCase()) >= 0;
+    };
+    const cmp = (a, b) => {
+      if (!sort.dir) return 0;
+      const key = sort.col === 'date' ? (x) => x.date.split('.').reverse().join('') : (x) => String(x[sort.col] || '');
+      const r = key(a) < key(b) ? -1 : key(a) > key(b) ? 1 : 0;
+      return sort.dir === 'asc' ? r : -r;
+    };
+    let groups = [];
+    let total = 0;
+    if (searching) {
+      const pinnedHits = mine.filter(flt).filter(match).sort(cmp);
+      const found = POOL.filter(flt).filter(match).sort(cmp);
+      // для поиска по ФИО добавляем ещё совпадения из «найденных»
+      groups = [];
+      if (pinnedHits.length) groups.push({ title: 'Закреплённые клиенты', list: pinnedHits });
+      if (found.length) groups.push({ title: 'Найденные', list: found.slice(0, 20) });
+      total = pinnedHits.length + Math.min(found.length, 20);
+    } else {
+      const list = mine.filter(flt).sort(cmp);
+      groups = [{ title: '', list: list }];
+      total = list.length;
+    }
+    const size = 10;
+    const flat = [];
+    groups.forEach((g) => g.list.forEach((c) => flat.push({ g: g.title, c: c })));
+    const pageCount = Math.max(1, Math.ceil(flat.length / size));
+    const page = Math.min(s.page || 0, pageCount - 1);
+    const pageItems = flat.slice(page * size, page * size + size);
+    const hlQ = applied && keyOf(applied) === 'name' ? applied : (applied && keyOf(applied) === 'pin' ? applied : (applied && keyOf(applied) === 'inn' ? applied : ''));
+    const keyHL = keyOf(hlQ);
+    const sel = s.sel || {};
+    const selN = Object.keys(sel).length;
+    const pagePins = pageItems.map((it) => it.c.pin);
+    const pageSelN = pagePins.filter((x) => sel[x]).length;
+    const plural = (n) => n + (n % 10 === 1 && n % 100 !== 11 ? ' клиент' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? ' клиента' : ' клиентов'));
+    const viewGroups = [];
+    pageItems.forEach((it) => {
+      let g = viewGroups[viewGroups.length - 1];
+      if (!g || g.title !== it.g) { g = { title: it.g, titled: !!it.g, rows: [] }; viewGroups.push(g); }
+      const c = it.c;
+      const n = split(c.name, keyHL === 'name' ? hlQ : '');
+      const pp = split(c.pin, keyHL === 'pin' ? hlQ : '');
+      const innShown = maskInn(c);
+      const ii = keyHL === 'inn' && c.kind !== 'fl' ? split(innShown, hlQ) : [innShown, '', ''];
+      g.rows.push({
+        firstStr: applied && pageItems[0] === it ? 'true' : 'false',
+        selStr: sel[c.pin] ? 'true' : 'false', selLabel: 'Выбрать клиента ' + c.name,
+        toggleSel: (e) => { if (e && e.stopPropagation) e.stopPropagation(); const n = Object.assign({}, this.st().sel || {}); if (n[c.pin]) delete n[c.pin]; else n[c.pin] = true; this.setState({ sel: n }); },
+        n1: n[0], n2: n[1], n3: n[2], sub: c.kind === 'fl' ? 'ФЛ · ' + c.city : (c.kind === 'ip' ? 'ИП · ' + c.city.replace(/^ИП · /, '') : c.city),
+        p1: pp[0], p2: pp[1], p3: pp[2], hasMorePins: c.pins > 0, morePinsN: c.pins, morePins: (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.toast('Ещё ' + c.pins + ' ПИН — покажем в карточке клиента'); },
+        i1: ii[0], i2: ii[1], i3: ii[2], hasKpp: !!c.kpp, noKpp: !c.kpp, kpp: c.kpp,
+        date: c.date + (c.kind === 'fl' ? ' рожд.' : ' рег.'), since: 'с ' + c.since + ' в банке', seg: c.seg,
+        openLabel: 'Открыть карточку клиента ' + c.name,
+        ...(() => { const o = {}; const add = (k, val, tip) => { o[k + 'Tip'] = (s.copiedKey === c.id + k ? 'Скопировано' : tip); o[k + 'Label'] = 'Скопировать: ' + val; o[k + 'Copy'] = (e) => { if (e && e.stopPropagation) e.stopPropagation(); this.copy(val, c.id + k); }; };
+          add('sub', c.kind === 'fl' ? 'ФЛ · ' + c.city : c.city, 'Тип клиента и город'); add('pin', c.pin, 'ПИН клиента'); add('inn', c.kind === 'fl' ? maskInn(c) : c.inn, c.kind === 'fl' ? 'ИНН скрыт — полный в карточке' : 'ИНН'); add('kpp', c.kpp, 'КПП'); add('date', c.date, c.kind === 'fl' ? 'Дата рождения' : 'Дата регистрации'); add('since', c.since, 'Клиент банка с этой даты'); return o; })(),
+        open: () => { if (this.props.onOpenClient) { this.props.onOpenClient(c); return; } this.setState({ card: { kind: c.kind, name: c.name, pin: c.pin, inn: maskInn(c), seg: c.seg.replace(/(\D+)(\d+)/, '$1 $2'), scn: 'skeleton' } }); clearTimeout(this._cs); this._cs = setTimeout(() => { const cd = this.st().card; if (cd) this.setState({ card: Object.assign({}, cd, { scn: 'normal' }) }); }, 700); try { window.scrollTo(0, 0); } catch (err) {} }
+      });
+    });
+    // сообщения
+    const bad = qt && !applied && !s.loading ? this.validate(qt) : null;
+    let msg = null;
+    if (!s.loading) {
+      if (bad && bad.kind === 'inn') msg = { ico: 'search', title: 'Ищете клиента по ИНН?', t1: 'Он состоит из 10 цифр для ИП или 12 для ЮЛ,', t2: 'введено в поле поиска — ' + bad.n };
+      else if (bad && bad.kind === 'pin') msg = { ico: 'search', title: 'Ищете клиента по ПИНу?', t1: 'Он состоит из ' + PIN_LEN + ' символов, только латиница и цифры,', t2: 'введено в поле поиска — ' + bad.n };
+      else if (searching && total === 0) msg = { ico: 'search', title: 'Никого не нашли', t1: 'Проверьте ПИН, ИНН или ФИО —', t2: 'ИНН и ПИН нужно вводить полностью', btn: 'Сбросить поиск', act: () => this.setState({ q: '', applied: '', adv: null, enterErr: false, kind: 'all', segF: [], typeF: [] }) };
+      else if (!searching && mine.length === 0) msg = { ico: 'box', title: 'Нет закреплённых клиентов', t1: 'Закрепите клиента сами или спросите своего руководителя.', t2: 'Задачи клиента поступят закреплённому сотруднику', btn: 'Найти клиента', act: () => { this.toast('Введите ПИН, ИНН или ФИО в поле поиска'); try { const el = document.querySelector('input[aria-label^="Поиск по клиентам"]'); if (el) el.focus(); } catch (err) {} } };
+      else if (!searching && total === 0) msg = { ico: 'search', title: 'Среди закреплённых таких нет', t1: 'Измените фильтры', t2: 'или найдите клиента по ПИН, ИНН или ФИО', btn: 'Сбросить фильтры', act: () => this.setState({ kind: 'all', segF: [], typeF: [] }) };
+    }
+    const chipDefs = [{ k: 'type', label: 'Тип клиента', opts: TYPES, val: typeF }, { k: 'seg', label: 'Сегмент', opts: SEGS, val: segF }];
+    const errDefs = { offline: ['Потеряли связь с вами', 'Проверьте подключение к интернету и попробуйте ещё раз', 'Попробовать ещё раз'], 'load-error': ['Не получилось загрузить', 'Уже исправляем. Попробуйте ещё раз или зайдите позже', 'Попробовать ещё раз'], forbidden: ['Недостаточно прав', 'Обратитесь к своему руководителю', 'На главную'] };
+    const err = errDefs[scn];
+    const advKind = s.advKind || 'all';
+    const d = s.advDraft || ADV0;
+    const pinMode = !!(d.pin || d.acc);
+    const otherMode = Object.keys(d).some((k) => k !== 'pin' && k !== 'acc' && d[k]);
+    const F = (key, label, ph, hint, mode, extra) => Object.assign({ isField: true, key: key, label: label, ph: ph, hint: hint || '', mode: mode || 'text' }, extra || {});
+    let fields = [F('pin', 'ПИН клиента', PIN_LEN + ' символов', '', 'text', { grp: 'pin' }), F('acc', 'Номер счёта', '20 цифр', 'Могут быть буквы для металлических счетов', 'text', { grp: 'pin' })];
+    if (advKind === 'fl') fields = fields.concat([{ isSec: true, label: 'По физическому лицу' }, F('fio', 'ФИО', 'Только на кириллице', 'Можно указать частично: фамилию и имя'), F('birth', 'Дата рождения', 'ДД.ММ.ГГГГ', '', 'numeric'), F('inn', 'ИНН', '12 цифр', '', 'numeric'), F('pass', 'Серия и номер паспорта', '10 цифр', '', 'numeric'), F('phone', 'Номер телефона', '+7', '', 'tel')]);
+    else fields = fields.concat([{ isSec: true, label: 'По организации' }, F('inn', 'ИНН', advKind === 'ip' ? '12 цифр' : (advKind === 'ul' ? '10 цифр' : '12 цифр для ИП, 10 для ЮЛ'), 'Можно указать частично', 'numeric')].concat(advKind === 'ip' ? [] : [F('okpp', 'КПП', '9 цифр', 'Только при поиске по ИНН, ОГРН или по контактному лицу', 'numeric', { needs: true })]).concat([F('ogrn', advKind === 'ip' ? 'ОГРН ИП' : 'ОГРН', advKind === 'ip' ? '15 цифр' : (advKind === 'ul' ? '13 цифр' : '13 цифр для ЮЛ, 15 для ИП'), '', 'numeric'), { isSec: true, label: 'По контактному лицу' }, F('fio', 'ФИО', 'Только на кириллице'), F('phone', 'Номер телефона', '+7', '', 'tel')]));
+    const advFields = fields.map((f, i) => {
+      if (f.isSec) return { isSec: true, isField: false, label: f.label };
+      let lock = false, why = '';
+      if (f.grp === 'pin' && otherMode) { lock = true; why = 'Очистите остальные поля, чтобы искать по ПИН или счёту'; }
+      if (!f.grp && pinMode) { lock = true; why = 'При поиске по ПИН или номеру счёта остальные поля недоступны'; }
+      if (f.needs && !lock && !(d.inn || d.ogrn || d.fio || d.phone)) { lock = true; why = 'Сначала укажите ИНН, ОГРН или контактное лицо'; }
+      return { isSec: false, isField: true, label: f.label, ph: f.ph, hint: f.hint, hasHint: !!f.hint, hintId: 'cs-h-' + f.key + i, mode: f.mode, value: d[f.key] || '', lock: lock, lockStr: lock ? 'true' : 'false', lockWhy: why,
+        set: (e) => { const n = Object.assign({}, this.st().advDraft || ADV0); n[f.key] = (e && e.target && e.target.value) || ''; this.setState({ advDraft: n }); } };
+    });
+    const advEmpty = !Object.keys(d).some((k) => d[k]);
+    const anyPop = !!s.colMenu || !!s.chipOpen || !!s.setOpen || !!s.dirOpen;
+    const hidden = s.hidden || {};
+    return {
+      cardOpen: !!s.card, listOpen: !s.card, card: s.card || {},
+      closeCard: () => this.setState({ card: null }),
+      cardOpenTask: this.props.onOpenTask ? (id) => this.props.onOpenTask(id) : null,
+      pageErr: !!err,
+      pageOk: !err,
+      errOffline: scn === 'offline', errLoad: scn === 'load-error', errForbidden: scn === 'forbidden',
+      errTitle: err ? err[0] : '', errText: err ? err[1] : '', errBtn: err ? err[2] : '',
+      errAct: () => { if (scn === 'forbidden') { this.toast('Возвращаемся на главную'); return; } this.setState({ scn: 'loading' }); setTimeout(() => this.setState({ scn: 'mine' }), 900); },
+      barCls: 'cs-bar' + (anyPop ? ' is-pop' : '') + (this.props.layout === 'v3' ? ' cs-bar--v3' : ''),
+      v3: true, classic: false,
+      searchPh: this.props.layout === 'v3' ? 'Поиск по всем клиентам' : 'Поиск по клиентам',
+      pinnedLabel: mine.length + ' ' + (mine.length % 10 === 1 && mine.length % 100 !== 11 ? 'закреплённый клиент' : (mine.length % 10 >= 2 && mine.length % 10 <= 4 && (mine.length % 100 < 12 || mine.length % 100 > 14) ? 'закреплённых клиента' : 'закреплённых клиентов')),
+      howTo: () => this.toast('Клиентов за вами закрепляет робот по направлениям. Задачи клиента поступают закреплённому сотруднику'),
+      dirOpen: !!s.dirOpen, dirOpenStr: s.dirOpen ? 'true' : 'false',
+      toggleDir: () => this.setState({ dirOpen: !s.dirOpen, colMenu: null, chipOpen: null, setOpen: false }),
+      dirLabel: (s.dirs || ['Валютный контроль', 'Кредитование ФЛ']).join(', ') || 'не выбрано',
+      dirs: ['Валютный контроль', 'Кредитование ФЛ', 'Расчётное обслуживание'].map((d) => { const sel = s.dirs || ['Валютный контроль', 'Кредитование ФЛ']; const on = sel.indexOf(d) >= 0; return { label: d, on: on ? 'true' : 'false', pick: () => this.setState({ dirs: on ? sel.filter((x) => x !== d) : sel.concat(d) }) }; }),
+      goCurClient: () => { this.setState({ card: { kind: 'ul', name: 'ООО «Даниэль Спаниэльевич Государевич»', pin: 'UDSG901', inn: '7709000901', seg: 'КИБ 100', scn: 'skeleton' } }); clearTimeout(this._cs); this._cs = setTimeout(() => { const cd = this.st().card; if (cd) this.setState({ card: Object.assign({}, cd, { scn: 'normal' }) }); }, 700); },
+      reassign: () => this.toast('Переназначение исполнителя сделаем вместе с закреплением'),
+      moreActs: () => this.toast('Ещё: скопировать ссылку на список, настройки уведомлений'),
+      download: () => this.toast('Скачиваем таблицу: ' + total + ' строк'),
+      kinds: [['all', 'Все'], ['fl', 'ФЛ'], ['ul', 'ЮЛ'], ['ip', 'ИП']].map((k) => ({ label: k[1], on: kind === k[0] ? 'true' : 'false', pick: () => this.setState({ kind: k[0], page: 0 }) })),
+      q: q,
+      hasQ: !!q,
+      setQ: (e) => {
+        const v = (e && e.target && e.target.value) || '';
+        this.setState({ q: v, enterErr: false });
+        clearTimeout(this._d);
+        if (!v.trim()) { this.setState({ applied: '' }); return; }
+        // единый поиск: с 1 символа и сразу (ФИО, ИНН, ПИН — по совпадению)
+        const t = v.trim();
+        this._d = setTimeout(() => this.runSearch(t, false), 250);
+      },
+      qKey: (e) => { if (e && e.key === 'Enter') { e.preventDefault(); const f = viewGroups.length && viewGroups[0].rows[0]; if (applied && f && !s.loading) { f.open(); return; } this.runSearch(null, true); } },
+      clearQ: () => this.setState({ q: '', applied: '', enterErr: false }),
+      fieldErr: s.enterErr && !!bad ? 'true' : 'false',
+      chips: chipDefs.map((cd) => {
+        const on = cd.val.length > 0; const open = s.chipOpen === cd.k;
+        const set = (v) => this.setState(cd.k === 'seg' ? { segF: v, page: 0 } : { typeF: v, page: 0 });
+        return { cls: 'cs-fc' + (on ? ' is-on' : ''), text: on ? cd.label + ': ' + (cd.val.length > 1 ? 'Выбрано ' + cd.val.length : cd.val[0]) : cd.label, on: on, open: open, openStr: open ? 'true' : 'false', label: cd.label, clearLabel: 'Сбросить фильтр «' + cd.label + '»',
+          toggle: () => this.setState({ chipOpen: open ? null : cd.k, colMenu: null, setOpen: false }),
+          clear: () => set([]),
+          opts: cd.opts.map((o) => { const sel = cd.val.indexOf(o) >= 0; return { label: o, on: sel ? 'true' : 'false', pick: () => set(sel ? cd.val.filter((x) => x !== o) : cd.val.concat(o)) }; }) };
+      }),
+      advOn: advCount > 0, advOnStr: advCount > 0 ? 'true' : 'false', advCount: advCount,
+      advLabel: advCount ? 'Расширенный поиск, заполнено полей: ' + advCount : 'Расширенный поиск',
+      openAdv: () => this.setState({ advOpen: true, advDraft: Object.assign({}, adv || ADV0), advKind: s.advKind || 'all', colMenu: null, chipOpen: null }),
+      canReset: !!q || advCount > 0 || kind !== 'all' || segF.length > 0 || typeF.length > 0,
+      resetAll: () => this.setState({ q: '', applied: '', adv: null, kind: 'all', segF: [], typeF: [], enterErr: false, page: 0 }),
+      tableLabel: searching ? 'Результаты поиска клиентов' : 'Мои клиенты',
+      busyStr: s.loading || scn === 'loading' ? 'true' : 'false',
+      cols: COLS.filter((c) => !hidden[c[0]]).map((c) => {
+        const open = s.colMenu === c[0];
+        const sorted = sort.col === c[0] && !!sort.dir;
+        return { label: c[1], open: open, openStr: open ? 'true' : 'false', menuLabel: 'Действия со столбцом «' + c[1] + '»', menuCls: 'cs-menu' + (c[0] === 'seg' || c[0] === 'date' ? ' is-right' : ''),
+          sorted: sorted, sortStyle: sort.dir === 'asc' ? 'transform: scaleY(-1)' : '', ariaSort: sorted ? (sort.dir === 'asc' ? 'ascending' : 'descending') : 'none',
+          pinStr: (s.pinCols || {})[c[0]] ? 'true' : 'false',
+          toggle: () => this.setState({ colMenu: open ? null : c[0], chipOpen: null, setOpen: false }),
+          asc: () => this.setState({ sort: { col: c[0], dir: 'asc' }, colMenu: null }),
+          desc: () => this.setState({ sort: { col: c[0], dir: 'desc' }, colMenu: null }),
+          pin: () => this.setState({ pinCols: Object.assign({}, s.pinCols || {}, { [c[0]]: !(s.pinCols || {})[c[0]] }), colMenu: null }),
+          resetW: () => { this.setState({ colMenu: null }); this.toast('Ширина столбца «' + c[1] + '» сброшена'); },
+          resetAllW: () => { this.setState({ colMenu: null }); this.toast('Ширина всех столбцов сброшена'); } };
+      }),
+      loading: !!s.loading || scn === 'loading',
+      skRows: [1, 2, 3, 4, 5].map((n) => ({ n: n })),
+      showMsg: !!msg && scn !== 'loading',
+      msgTitle: msg ? msg.title : '', msgText1: msg ? msg.t1 : '', msgText2: msg ? msg.t2 : '',
+      msgSearchIco: !!msg && msg.ico === 'search', msgBoxIco: !!msg && msg.ico === 'box',
+      msgHasBtn: !!msg && !!msg.btn, msgBtn: msg && msg.btn ? msg.btn : '', msgAct: () => { if (msg && msg.act) msg.act(); },
+      showRows: !msg && !s.loading && scn !== 'loading',
+      groups: viewGroups,
+      total: scn === 'loading' ? '—' : (msg && (bad || total === 0) ? 0 : total),
+      hasPages: pageCount > 1 && !msg,
+      selN: selN, hasSel: selN > 0, noSel: selN === 0,
+      allSel: pagePins.length && pageSelN === pagePins.length ? 'true' : (pageSelN ? 'mixed' : 'false'),
+      toggleAll: () => { const n = Object.assign({}, this.st().sel || {}); const all = pagePins.length && pagePins.every((x) => n[x]); pagePins.forEach((x) => { if (all) delete n[x]; else n[x] = true; }); this.setState({ sel: n }); },
+      clearSel: () => this.setState({ sel: {} }),
+      pinSel: () => { this.setState({ sel: {} }); this.toast('Закрепляем за вами: ' + plural(selN)); },
+      unpinSel: () => { this.setState({ sel: {} }); this.toast('Открепляем: ' + plural(selN)); },
+      pages: Array.from({ length: pageCount }, (_, i) => ({ n: i + 1, cur: i === page ? 'page' : undefined, go: () => this.setState({ page: i }) })),
+      noPrev: page === 0 ? 'true' : 'false', noNext: page >= pageCount - 1 ? 'true' : 'false',
+      prev: () => { if (page > 0) this.setState({ page: page - 1 }); },
+      next: () => { if (page < pageCount - 1) this.setState({ page: page + 1 }); },
+      setOpen: !!s.setOpen, setOpenStr: s.setOpen ? 'true' : 'false',
+      toggleSet: () => this.setState({ setOpen: !s.setOpen, colMenu: null, chipOpen: null }),
+      colToggles: COLS.map((c) => ({ label: c[1], on: hidden[c[0]] ? 'false' : 'true', lock: c[0] === 'name' ? 'true' : 'false', toggle: () => { if (c[0] === 'name') return; this.setState({ hidden: Object.assign({}, hidden, { [c[0]]: !hidden[c[0]] }) }); } })),
+      anyPop: anyPop,
+      closePops: () => this.setState({ colMenu: null, chipOpen: null, setOpen: false, dirOpen: false }),
+      advOpen: !!s.advOpen,
+      closeAdv: () => this.setState({ advOpen: false }),
+      advKinds: [['all', 'Все'], ['fl', 'ФЛ'], ['ip', 'ИП'], ['ul', 'ЮЛ']].map((k) => ({ label: k[1], on: advKind === k[0] ? 'true' : 'false', pick: () => this.setState({ advKind: k[0] }) })),
+      advFields: advFields,
+      advEmptyStr: advEmpty ? 'true' : 'false',
+      applyAdv: () => {
+        if (advEmpty) return;
+        const a = {}; Object.keys(d).forEach((k) => { if (d[k]) a[k] = d[k].trim(); });
+        if (a.pin && a.pin.length !== PIN_LEN) { this.toast('ПИН состоит из ' + PIN_LEN + ' символов'); return; }
+        clearTimeout(this._s);
+        this.setState({ advOpen: false, adv: a, kind: advKind === 'all' ? kind : advKind, loading: true, page: 0 });
+        this._s = setTimeout(() => this.setState({ loading: false }), 800);
+      },
+      resetAdv: () => { if (!advEmpty) this.setState({ advDraft: Object.assign({}, ADV0) }); },
+      hasToast: !!s.toast, toast: s.toast || '', toastOk: !!s.toastOk, toastPlain: !s.toastOk, closeToast: () => this.setState({ toast: '' })
+    };
+  }
+}
+</script>
+</body>
+</html>

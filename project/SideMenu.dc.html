@@ -34,7 +34,11 @@ body{margin:0;background:var(--bg-base-alt-primary)}
 .sm-nav[data-look="card"] .sm-item{min-height:48px;padding:4px 8px 4px 0;gap:12px;border-radius:16px}
 .sm-nav[data-look="card"] .sm-foot{border-radius:16px}
 .sm-nav[data-look="card"] .sm-ico{width:40px;height:40px;border-radius:99px;box-sizing:border-box}
-.sm-nav[data-look="card"] .sm-item[data-ext="true"] .sm-ico{border:1px dashed var(--color-neutral-translucent-300, var(--border-secondary))}
+/* Внешняя ссылка: пунктирное кольцо как в Figma — 40×40, обводка 2 px внутрь, neutral-translucent/500.
+   Кольцо не тускнеет вместе с иконкой: прозрачность иконки задана цветом, а не opacity */
+.sm-nav[data-look="card"] .sm-item[data-ext="true"] .sm-ico{position:relative;opacity:1;color:color-mix(in srgb,var(--graphic-primary) 60%,transparent);transition:color .15s ease}
+.sm-nav[data-look="card"] .sm-item[data-ext="true"]:hover .sm-ico{color:var(--graphic-primary);transition-delay:.3s}
+.sm-nav[data-look="card"] .sm-item[data-ext="true"] .sm-ico::before{content:"";position:absolute;inset:0;border-radius:50%;pointer-events:none;background:var(--color-neutral-translucent-500, rgba(9,12,37,.28));-webkit-mask:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='40'%20viewBox='0%200%2040%2040'%3E%3Ccircle%20cx='20'%20cy='20'%20r='19'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-dasharray='2.974%202'/%3E%3C/svg%3E") center/40px 40px no-repeat;mask:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='40'%20height='40'%20viewBox='0%200%2040%2040'%3E%3Ccircle%20cx='20'%20cy='20'%20r='19'%20fill='none'%20stroke='%23000'%20stroke-width='2'%20stroke-dasharray='2.974%202'/%3E%3C/svg%3E") center/40px 40px no-repeat}
 .sm-nav[data-look="card"] .sm-ext{display:none}
 .sm-nav[data-look="card"] .sm-letter{width:40px;height:40px;border-radius:99px;font-size:12px}
 .sm-nav[data-look="card"] .sm-item[aria-current="page"]::before{left:-12px;width:3px;height:40px;border-radius:0 99px 99px 0;background:var(--accent-secondary, var(--graphic-primary))}
@@ -113,6 +117,7 @@ body{margin:0;background:var(--bg-base-alt-primary)}
 .sm-cscrim{position:fixed;inset:0;z-index:59;border:0;margin:0;padding:0;background:transparent;cursor:default}
 /* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
 .sm-item,
+.sm-nav[data-look="card"] .sm-item[data-ext="true"] .sm-ico,
 .sm-cta,
 .sm-cta--primary,
 .sm-resize::after,
@@ -123,6 +128,7 @@ body{margin:0;background:var(--bg-base-alt-primary)}
 .sm-mini-btn span,
 .sm-cmenu button{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
 .sm-item:hover,
+.sm-nav[data-look="card"] .sm-item[data-ext="true"]:hover .sm-ico,
 .sm-cta:hover,
 .sm-cta--primary:hover,
 .sm-resize:hover::after,
@@ -133,6 +139,7 @@ body{margin:0;background:var(--bg-base-alt-primary)}
 .sm-mini-btn:hover span,
 .sm-cmenu button:hover{transition-delay:.3s}
 .sm-item:hover:active,
+.sm-nav[data-look="card"] .sm-item[data-ext="true"]:hover .sm-ico:active,
 .sm-cta:hover:active,
 .sm-cta--primary:hover:active,
 .sm-item:hover .sm-ico:active,

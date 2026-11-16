@@ -101,6 +101,12 @@ body{margin:0;background:var(--bg-base-alt-primary)}
 .sm-nav[data-look="card"][data-collapsed="true"]{--sm-fh:146px}
 /* в конце списка последняя ссылка выходит из-под фейда: запас = высота плашки + фейд 40 px */
 .sm-cells{padding-bottom:calc(var(--sm-fh) + 40px)}
+/* полоса прокрутки списка не видна; в развёрнутом меню тонкая полоса появляется только при наведении */
+.sm-cells{scrollbar-width:none}
+.sm-cells::-webkit-scrollbar{width:0;height:0}
+.sm-nav:not([data-collapsed="true"]) .sm-cells:hover{scrollbar-width:thin}
+.sm-nav:not([data-collapsed="true"]) .sm-cells:hover::-webkit-scrollbar{width:6px}
+.sm-nav:not([data-collapsed="true"]) .sm-cells:hover::-webkit-scrollbar-thumb{background:var(--color-neutral-translucent-300);border-radius:99px}
 .sm-fade{display:none}
 .sm-foot-wrap,.sm-mini-wrap{position:absolute !important;left:0;right:0;bottom:0;box-sizing:border-box;z-index:2;background:transparent;isolation:isolate}
 /* один общий слой: подложка + блюр, вверху плавно сходит на нет */

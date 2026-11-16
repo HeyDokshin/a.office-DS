@@ -336,7 +336,7 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 .cc-tbl .cc-pg{position:sticky;bottom:0;z-index:6;margin:0 0 -8px;padding:16px;border-radius:0 0 20px 20px}
 .cc-tbl:not(.cc-tbl--rows) .cc-pg{margin:0 -16px -8px;padding:16px 32px}
 .cc-tbl .cc-pg{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-top:0 !important;isolation:isolate}
-.cc-tbl .cc-pg::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0%,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)) 45%,color-mix(in srgb,var(--bg-base-primary, #fff) 78%,transparent) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 55%);mask-image:linear-gradient(to bottom,transparent 0%,#000 55%)}
+.cc-tbl .cc-pg::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0,color-mix(in srgb,var(--bg-base-primary, #fff) 80%,transparent) 28px,color-mix(in srgb,var(--bg-base-primary, #fff) 92%,transparent) 100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28px);mask-image:linear-gradient(to bottom,transparent 0,#000 28px)}
 
 
 /* «Сейчас на линии»: новые звонки приходят потоком (как SSE в очереди) — въезжают и подсвечиваются */

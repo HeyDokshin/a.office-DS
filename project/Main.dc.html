@@ -260,7 +260,7 @@ a{color:var(--text-link)}a:hover{color:var(--text-primary)}
 .tl-how-d ul{margin:8px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px;color:var(--text-primary)}
 .tl-how-st{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap}
 /* ---------- Панель массовых действий ---------- */
-.tl-bulk{position:sticky;bottom:0;z-index:6;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 32px;border-top:1px solid var(--border-secondary);background:var(--bg-base-primary);border-radius:0 0 24px 24px;box-shadow:0 -8px 24px rgba(0,0,0,.04);animation:tl-row-in .2s ease both}
+.tl-bulk{position:sticky;bottom:0;z-index:6;display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding:16px 32px;border-top:1px solid var(--border-secondary);background:var(--bg-base-primary);border-radius:0 0 24px 24px;box-shadow:0 -8px 24px rgba(0,0,0,.04);animation:tl-row-in .2s ease backwards}
 .tl-bulk-count{display:inline-flex;align-items:center;gap:12px;font:500 16px/24px var(--font-system);min-width:56px}
 .tl-bulk-acts{display:flex;align-items:center;gap:8px;position:relative}
 .tl-bulk-pager{margin-left:auto;display:inline-flex;align-items:center;gap:12px;font:400 14px/20px var(--font-system)}
@@ -500,7 +500,7 @@ a{color:var(--text-link)}a:hover{color:var(--text-primary)}
 .tl-bulk:has(.tl-bulk-more){z-index:25}
 .tl-pager{bottom:0;z-index:7;border-radius:0 0 24px 24px}
 .tl-pager{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-top:0 !important;isolation:isolate}
-.tl-pager::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0%,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)) 45%,color-mix(in srgb,var(--bg-base-primary, #fff) 78%,transparent) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 55%);mask-image:linear-gradient(to bottom,transparent 0%,#000 55%)}
+.tl-pager::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0,color-mix(in srgb,var(--bg-base-primary, #fff) 80%,transparent) 28px,color-mix(in srgb,var(--bg-base-primary, #fff) 92%,transparent) 100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28px);mask-image:linear-gradient(to bottom,transparent 0,#000 28px)}
 
 .tl-group{padding:4px 0;border-top:1px solid var(--border-secondary)}
 .tl-group-b{appearance:none;border:0;margin:0;display:inline-flex;align-items:center;gap:10px;padding:12px 16px;background:transparent;font:500 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer;border-radius:12px;position:sticky;left:0}
@@ -548,7 +548,7 @@ a{color:var(--text-link)}a:hover{color:var(--text-primary)}
 
 /* Закреплённый низ таблицы (пагинация, массовые действия) — тот же прозрачный материал, что и шапка */
 .tl-bulk{background:transparent !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-top:0 !important;isolation:isolate}
-.tl-bulk::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0%,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)) 45%,color-mix(in srgb,var(--bg-base-primary, #fff) 78%,transparent) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 55%);mask-image:linear-gradient(to bottom,transparent 0%,#000 55%)}
+.tl-bulk::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0,color-mix(in srgb,var(--bg-base-primary, #fff) 80%,transparent) 28px,color-mix(in srgb,var(--bg-base-primary, #fff) 92%,transparent) 100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28px);mask-image:linear-gradient(to bottom,transparent 0,#000 28px)}
 
 
 /* Единое правило: любая модалка — шторка справа на всю высоту, выезжает справа (side-in) */

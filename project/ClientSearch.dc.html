@@ -65,13 +65,13 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 .cs-sorti{color:var(--graphic-primary)}
 .cs-grp{grid-column:1 / -1;margin:8px 12px 4px;padding:6px 12px;border-radius:12px;background:var(--bg-base-secondary, #f2f3f5);font:500 14px/20px var(--font-system)}
 .cs-row{display:contents;cursor:pointer}
-.cs-row > .cs-c{position:relative;padding:20px 12px 20px 10px;font:400 14px/20px var(--font-system);min-width:0;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));align-self:stretch;transition:background-color .12s}
+.cs-row > .cs-c{position:relative;padding:20px 12px 20px 12px;font:400 14px/20px var(--font-system);min-width:0;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));align-self:stretch;transition:background-color .12s}
 .cs-row:hover > .cs-c,.cs-row:focus-within > .cs-c{background:color-mix(in srgb,rgb(38,55,88) 4%,var(--bg-base-primary, #fff))}
 .cs-c-sub{color:var(--text-secondary)}
 .cs-c-dim{color:var(--text-tertiary, rgba(5,8,29,.38))}
 .cs-open{appearance:none;border:0;margin:0;padding:0;background:transparent;text-align:left;font:inherit;color:inherit;cursor:pointer;display:block;width:100%}
 .cs-open:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:4px;border-radius:4px}
-.cs-more{appearance:none;border:0;margin:0 0 0 6px;padding:0;background:transparent;font:700 14px/20px var(--font-system);color:var(--text-info, #2a77ef);cursor:pointer}
+.cs-more{appearance:none;border:0;margin:0;padding:0;display:block;text-align:left;background:transparent;font:700 14px/20px var(--font-system);color:var(--text-info, #2a77ef);cursor:pointer}
 .cs-chip{display:inline-flex;padding:2px 8px;border-radius:6px;background:var(--neutral-translucent-200, rgba(30,43,68,.08));font:500 12px/16px var(--font-system);color:var(--text-secondary);letter-spacing:.19px}
 mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding:0}
 .cs-sk{display:block;height:14px;border-radius:7px;background:linear-gradient(90deg,rgba(30,43,68,.06),rgba(30,43,68,.11),rgba(30,43,68,.06));background-size:200% 100%;animation:cs-sk 1.2s linear infinite}
@@ -84,7 +84,7 @@ mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding
 .cs-topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:32px;margin:0 0 -16px}
 .cs-top{display:flex;align-items:center;justify-content:flex-end;gap:16px;padding:16px;position:sticky;bottom:0;z-index:6;border-radius:0 0 20px 20px;isolation:isolate;margin-bottom:-4px}
 /* Футер таблицы прилипает к низу экрана: фейд с прогрессивным блюром, шириной в таблицу */
-.cs-top::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0%,var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2)) 45%,color-mix(in srgb,var(--bg-base-primary, #fff) 78%,transparent) 100%);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);-webkit-mask-image:linear-gradient(to bottom,transparent 0%,#000 55%);mask-image:linear-gradient(to bottom,transparent 0%,#000 55%)}
+.cs-top::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0,color-mix(in srgb,var(--bg-base-primary, #fff) 80%,transparent) 28px,color-mix(in srgb,var(--bg-base-primary, #fff) 92%,transparent) 100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28px);mask-image:linear-gradient(to bottom,transparent 0,#000 28px)}
 /* Чекбокс 24 px: выбор клиентов для закрепления и открепления */
 .cs-ck{appearance:none;border:0;margin:0;padding:0;width:24px;height:24px;border-radius:6px;background:transparent;box-shadow:inset 0 0 0 2px var(--graphic-tertiary, #b8bcc3);display:inline-flex;align-items:center;justify-content:center;color:transparent;cursor:pointer;flex:0 0 auto}
 .cs-ck:hover{box-shadow:inset 0 0 0 2px var(--graphic-secondary, #86868a)}
@@ -94,6 +94,12 @@ mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding
 .cs-hc.cs-ckc{padding:24px 0 12px 16px}
 .cs-hc.cs-ckc + .cs-hc::before{display:none}
 .cs-row[data-sel="true"] > .cs-c{background:color-mix(in srgb,rgb(38,55,88) 6%,var(--bg-base-primary, #fff))}
+/* панель действий с выбранными — как в очереди: чекбокс, число, действия; пагинация справа */
+.cs-foot[data-bulk="true"]{justify-content:space-between}
+.cs-bulk{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cs-bulk-n{font:500 16px/24px var(--font-system);color:var(--text-primary);min-width:24px}
+.cs-btn--dark{background:var(--graphic-primary, #0e0e0e);color:var(--text-primary-inverted, #fff)}
+.cs-btn--dark:hover{background:color-mix(in srgb,var(--graphic-primary, #0e0e0e) 85%,#fff)}
 .cs-sel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font:500 14px/20px var(--font-system)}
 .cs-sel .cs-btn{height:32px;padding:0 12px}
 .cs-total{font:500 14px/20px var(--font-system);color:var(--text-secondary)}
@@ -277,7 +283,7 @@ mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding
 <sc-if value="{{canReset}}" hint-placeholder-val="{{false}}"><button type="button" class="cs-btn" onClick="{{resetAll}}"><svg width="16" height="16" viewBox="0 0 16 16" fill="#747474" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.667A6.667 6.667 0 108 1.333a6.667 6.667 0 000 13.334zm-2.667-5L7.057 8 5.333 6.333l1-1L8 7.057l1.667-1.724 1 1L8.943 8l1.724 1.667-1 1L8 8.943l-1.667 1.724-1-1z"/></svg>Сбросить</button></sc-if>
 </div>
 
-<div class="cs-topbar tb-bar"><div class="tb-l"><sc-if value="{{noSel}}" hint-placeholder-val="{{true}}"><span class="cs-total">Всего<b>{{total}}</b></span></sc-if><sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}"><div class="cs-sel" role="group" aria-label="Действия с выбранными клиентами"><span>Выбрано {{selN}}</span><button type="button" class="cs-btn cs-btn--grey" onClick="{{pinSel}}">Закрепить за мной</button><button type="button" class="cs-btn cs-btn--grey" onClick="{{unpinSel}}">Открепить</button><button type="button" class="cs-btn" style="background: transparent" onClick="{{clearSel}}">Сбросить</button></div></sc-if>
+<div class="cs-topbar tb-bar"><div class="tb-l"><span class="cs-total">Всего<b>{{total}}</b></span>
 <button type="button" class="tb-btn tb-btn--grey" aria-pressed="{{allSelB}}" onClick="{{toggleAll}}">{{tbAllLabel}}</button></div><div class="tb-r"><button type="button" class="tb-btn tb-ico" aria-label="Обновить таблицу" title="Обновить таблицу" data-spin="{{tbSpin}}" onClick="{{tbRefresh}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button><span class="tb-sep" aria-hidden="true"></span><div class="cs-set"><button type="button" class="cs-btn" style="background: transparent; height: 32px; padding: 0 12px" aria-haspopup="menu" aria-expanded="{{setOpenStr}}" onClick="{{toggleSet}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 00.12-.61l-1.92-3.32a.488.488 0 00-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 00-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 00-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6a3.6 3.6 0 110-7.2 3.6 3.6 0 010 7.2z"/></svg>Настройки</button>
 <sc-if value="{{setOpen}}" hint-placeholder-val="{{false}}"><div class="cs-menu is-right" role="menu" aria-label="Столбцы таблицы" style="top: calc(100% + 4px); bottom: auto"><sc-for list="{{colToggles}}" as="ct" hint-placeholder-count="5"><button type="button" class="cs-opt" role="menuitemcheckbox" aria-checked="{{ct.on}}" aria-disabled="{{ct.lock}}" onClick="{{ct.toggle}}"><span class="cs-cb" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>{{ct.label}}</button></sc-for></div></sc-if></div><button type="button" class="tb-btn tb-btn--white" onClick="{{tbDownload}}">Скачать таблицу</button></div>
 </div>
@@ -313,7 +319,7 @@ mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding
 </div></sc-for>
 </sc-for></sc-if>
 </div>
-<sc-if value="{{hasPages}}" hint-placeholder-val="{{false}}"><div class="cs-top cs-foot"><nav class="cs-pg" aria-label="Страницы"><button type="button" aria-label="Предыдущая страница" aria-disabled="{{noPrev}}" onClick="{{prev}}">‹</button><sc-for list="{{pages}}" as="pg" hint-placeholder-count="3"><button type="button" aria-current="{{pg.cur}}" onClick="{{pg.go}}">{{pg.n}}</button></sc-for><button type="button" aria-label="Следующая страница" aria-disabled="{{noNext}}" onClick="{{next}}">›</button></nav></div></sc-if>
+<sc-if value="{{footOn}}" hint-placeholder-val="{{false}}"><div class="cs-top cs-foot" data-bulk="{{hasSelStr}}"><sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}"><div class="cs-bulk" role="region" aria-label="Действия с выбранными клиентами"><button type="button" class="cs-ck" role="checkbox" aria-checked="{{allSel}}" aria-label="Снять выделение" onClick="{{clearSel}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b class="cs-bulk-n">{{selN}}</b><button type="button" class="cs-btn cs-btn--dark" onClick="{{pinSel}}">Закрепить за мной</button><button type="button" class="cs-btn cs-btn--grey" onClick="{{unpinSel}}">Открепить</button></div></sc-if><sc-if value="{{hasPages}}" hint-placeholder-val="{{false}}"><nav class="cs-pg" aria-label="Страницы"><button type="button" aria-label="Предыдущая страница" aria-disabled="{{noPrev}}" onClick="{{prev}}">‹</button><sc-for list="{{pages}}" as="pg" hint-placeholder-count="3"><button type="button" aria-current="{{pg.cur}}" onClick="{{pg.go}}">{{pg.n}}</button></sc-for><button type="button" aria-label="Следующая страница" aria-disabled="{{noNext}}" onClick="{{next}}">›</button></nav></sc-if></div></sc-if>
 </div>
 </div>
 </sc-if>
@@ -613,7 +619,7 @@ class Component extends DCLogic {
       groups: viewGroups,
       total: scn === 'loading' ? '—' : (msg && (bad || total === 0) ? 0 : total),
       hasPages: pageCount > 1 && !msg,
-      selN: selN, hasSel: selN > 0, noSel: selN === 0,
+      selN: selN, hasSel: selN > 0, noSel: selN === 0, hasSelStr: selN > 0 ? 'true' : 'false', footOn: selN > 0 || (pageCount > 1 && !msg),
       allSel: pagePins.length && pageSelN === pagePins.length ? 'true' : (pageSelN ? 'mixed' : 'false'),
       toggleAll: () => { const n = Object.assign({}, this.st().sel || {}); const all = pagePins.length && pagePins.every((x) => n[x]); pagePins.forEach((x) => { if (all) delete n[x]; else n[x] = true; }); this.setState({ sel: n }); },
       clearSel: () => this.setState({ sel: {} }),

@@ -348,9 +348,9 @@ class Component extends DCLogic {
       it['i_' + d[0]] = true;
       return it;
     });
-    // фронт-ревью (сентябрь): цвета ссылок — токены decorative-soft
-    const badge = (c) => 'background: var(--decorative-soft-' + c + ', var(--decorative-muted-alt-' + c + ')); color: var(--decorative-' + c + ')';
-    // 10 цветных ссылок модуля — у каждой свой токен decorative-soft (админка настроит состав позже)
+    // цветные ссылки: фон — decorative-muted-alt, буквы — decorative
+    const badge = (c) => 'background: var(--decorative-muted-alt-' + c + '); color: var(--decorative-' + c + ')';
+    // 10 цветных ссылок модуля — у каждой свой токен decorative-muted-alt (админка настроит состав позже)
     const links = [
       ['cb', 'ЦБ', 'ЦБ РФ', badge('pistachio')],
       ['eg', 'ЕГ', 'ЕГРЮЛ', badge('indigo')],

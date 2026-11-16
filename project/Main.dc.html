@@ -2112,7 +2112,7 @@ class Component extends DCLogic {
         if (key === 'reports' || key === 'search-docs' || key === 'search') { this.setState({ view: 'search', msSection: key === 'reports' ? 'reports' : (key === 'search-docs' ? 'docs' : 'main'), task: null, card: null, create: null, taskDirty: false, moduleSeen: true }); this.afterLeave(); try { window.scrollTo(0, 0); } catch (err) {} return; }
         if (key === 'queue' || key === 'clients' || key === 'book') { this.setState({ view: key === 'book' ? 'refs' : key, task: null, card: null, create: null, taskDirty: false, moduleSeen: !!s.moduleSeen || key === 'search' }); this.afterLeave(); try { window.scrollTo(0, 0); } catch (err) {} return; }
         const names = { admin: 'Администрирование', cap: 'Траектория развития', kb: 'База знаний', money: 'АЗОН ВНТ', archive: 'Электронный архив', sign: 'На подписание' };
-        const links = { cb: 'ЦБ РФ', eg: 'ЕГРЮЛ', ko: 'Консультант +', tr: 'Траектория развития', fns: 'ФНС России', rfm: 'Росфинмониторинг' };
+        const links = { cb: 'ЦБ РФ', eg: 'ЕГРЮЛ', ko: 'Консультант +', fns: 'ФНС России', rfm: 'Росфинмониторинг', gar: 'Гарант', fed: 'Федресурс', fts: 'ФТС России', spk: 'СПАРК', kf: 'Контур.Фокус' };
         if (links[key]) { this.showToast('info', links[key], 'Откроется в новой вкладке'); return; }
         if (names[key]) this.showToast('info', names[key], 'Раздел не входит в этот прототип');
       },

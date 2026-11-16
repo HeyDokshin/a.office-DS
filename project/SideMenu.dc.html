@@ -350,13 +350,18 @@ class Component extends DCLogic {
     });
     // фронт-ревью (сентябрь): цвета ссылок — токены decorative-soft
     const badge = (c) => 'background: var(--decorative-soft-' + c + ', var(--decorative-muted-alt-' + c + ')); color: var(--decorative-' + c + ')';
+    // 10 цветных ссылок модуля — у каждой свой токен decorative-soft (админка настроит состав позже)
     const links = [
       ['cb', 'ЦБ', 'ЦБ РФ', badge('pistachio')],
       ['eg', 'ЕГ', 'ЕГРЮЛ', badge('indigo')],
-      ['ko', 'КО', 'Консультант +', 'background: var(--color-neutral-translucent-100); color: var(--text-secondary)'],
-      ['tr', 'ТР', 'Траектория развития', badge('purple')],
+      ['ko', 'КО', 'Консультант +', badge('blue')],
       ['fns', 'ФН', 'ФНС России', badge('orange')],
-      ['rfm', 'РФ', 'Росфинмониторинг', badge('teal')]
+      ['rfm', 'РФ', 'Росфинмониторинг', badge('teal')],
+      ['gar', 'ГА', 'Гарант', badge('red')],
+      ['fed', 'ФР', 'Федресурс', badge('cyan')],
+      ['fts', 'ФТ', 'ФТС России', badge('jungle')],
+      ['spk', 'СП', 'СПАРК', badge('fuchsia')],
+      ['kf', 'КФ', 'Контур.Фокус', badge('magenta')]
     ].map((l) => ({ short: l[1], label: l[2], style: l[3], current: active === l[0] ? 'page' : undefined, go: go(l[0]), tipIn: this.tipFor(l[2]) }));
     const look = s.look || this.props.look || 'flat';
     const card = look === 'card';

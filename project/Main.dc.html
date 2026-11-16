@@ -2101,7 +2101,7 @@ class Component extends DCLogic {
       showModule: !s.task && s.view === 'search',
       moduleMounted: !!s.moduleSeen || s.view === 'search',
       moduleStyle: !s.task && !s.card && !s.create && s.view === 'search' ? 'display: block' : 'display: none',
-      menuActive: s.view === 'reports' ? 'reports' : s.view === 'search' ? 'search' : (s.view === 'clients' ? 'clients' : (s.view === 'refs' ? 'book' : 'queue')),
+      menuActive: s.view === 'reports' ? 'reports' : s.view === 'search' ? 'vk' : (s.view === 'clients' ? 'clients' : (s.view === 'refs' ? 'book' : 'queue')),
       showClients: !s.task && !s.card && !s.create && s.view === 'clients',
       showRefs: !s.task && !s.card && !s.create && s.view === 'refs',
       showReports: !s.task && !s.card && !s.create && s.view === 'reports', reportsKind: s.reportsKind || 'unk',

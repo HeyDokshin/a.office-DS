@@ -325,7 +325,7 @@ class Component extends DCLogic {
     const defs = [
       ['queue', 'Очередь задач'], ['clients', 'Клиенты'], ['book', 'Справочник'], ['admin', 'Администрирование'],
       ['cap', 'Траектория развития', 'ext'], ['kb', 'База знаний', 'ext'],
-      ['vk', 'Валютный контроль', 'tri'], ['search', 'Поиск', 'sub'], ['reports', 'Отчёты', 'sub'], ['money', 'АЗОН ВНТ', 'ext sub'], ['archive', 'Электронный архив', 'ext sub'], ['sign', 'На подписание', 'ext sub']
+      ['vk', 'Валютный контроль', 'tri'], ['reports', 'Отчёты', 'sub'], ['money', 'АЗОН ВНТ', 'ext sub'], ['archive', 'Электронный архив', 'ext sub'], ['sign', 'На подписание', 'ext sub']
     ].filter((d) => (admin || d[0] !== 'admin') && (vkOpenNow || String(d[2] || '').indexOf('sub') === -1));
     const lastTop = admin ? 'admin' : 'book';
     const icons = ['queue', 'clients', 'book', 'admin', 'cap', 'kb', 'vk', 'search', 'reports', 'money', 'archive', 'sign'];

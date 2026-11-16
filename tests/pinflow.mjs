@@ -1,0 +1,58 @@
+// Проверка сценария закрепления: меню строки → шторка → выбор → готово → строка «в процессе»
+const list = await (await fetch('http://127.0.0.1:9333/json')).json();
+const ws = new WebSocket(list.find(t => t.type === 'page').webSocketDebuggerUrl);
+let id = 0; const pend = {}; ws.onmessage = (m) => { const d = JSON.parse(m.data); if (d.id && pend[d.id]) { pend[d.id](d.result); delete pend[d.id]; } };
+await new Promise(r => ws.onopen = r);
+const send = (method, params = {}) => new Promise(r => { const i = ++id; pend[i] = r; ws.send(JSON.stringify({ id: i, method, params })); });
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const H = `const all=(root,acc=[])=>{for(const el of root.querySelectorAll('*')){acc.push(el); if(el.shadowRoot) all(el.shadowRoot,acc);} return acc;}; const vis=(e)=>{const r=e.getBoundingClientRect(); return r.width>0&&r.height>0};`;
+const ev = async (code) => { const r = await send('Runtime.evaluate', { expression: `(()=>{${H}${code}})()`, returnByValue: true }); return r.exceptionDetails ? 'JSERR ' + JSON.stringify(r.exceptionDetails).slice(0, 200) : r.result.value; };
+const click = (sel, txt = '') => ev(`const e=all(document).filter(e=>e.matches&&e.matches('${sel}')&&vis(e)&&(e.textContent+' '+(e.getAttribute('aria-label')||'')).indexOf('${txt}')!==-1)[0]; if(!e) return 'nf'; e.click(); return 'ok'`);
+const text = (sel) => ev(`return all(document).filter(e=>e.matches&&e.matches('${sel}')&&vis(e)).map(e=>e.textContent.replace(/\\s+/g,' ').trim()).join(' | ')`);
+let fails = 0; const ok = (c, m) => { console.log((c ? 'ok   ' : 'FAIL ') + m); if (!c) fails++; };
+await send('Runtime.enable'); await send('Page.enable'); await send('Network.setCacheDisabled', { cacheDisabled: true });
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+const open = async (b) => { await send('Page.navigate', { url: 'http://127.0.0.1:8792/' + b }); await sleep(2200); };
+await open('Pin-employees.dc.html');
+ok((await click('.pe-more', 'Тисанко')) === 'ok', 'меню строки открылось');
+ok((await click('.pe-mi', 'Заменить сотрудника')) === 'ok', 'пункт «Заменить сотрудника»'); await sleep(300);
+ok((await text('.ps-h h2')) === 'Заменить сотрудника', 'шторка «Заменить сотрудника» (' + (await text('.ps-h h2')) + ')');
+const g = await ev(`const p=all(document).find(e=>e.classList&&e.classList.contains('ps')); const b=p.getBoundingClientRect(); return [Math.round(innerWidth-b.right),Math.round(b.top),Math.round(innerHeight-b.bottom),Math.round(b.width)].join(' ')`);
+ok(g === '8 8 8 500', 'шторка справа 8/8/8, 500 px (' + g + ')');
+await click('.ps-btn', 'Заменить'); await sleep(200);
+ok((await text('.ps-err')) === 'Выберите сотрудника', 'без выбора — «Выберите сотрудника»');
+await click('.ps-sel'); await sleep(200);
+await ev(`const i=all(document).find(e=>e.matches&&e.matches('.ps-q input')); i.value='Вол'; i.dispatchEvent(new Event('input',{bubbles:true})); return 1`); await sleep(200);
+ok((await text('.ps-opt[data-first="true"]')).indexOf('Волков') === 0, 'поиск с первых символов, первый подсвечен');
+await ev(`const i=all(document).find(e=>e.matches&&e.matches('.ps-q input')); i.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true})); return 1`); await sleep(200);
+ok((await text('.ps-sel')).indexOf('Волков Михаил Сергеевич') === 0, 'Enter выбирает первого');
+await click('.ps-btn', 'Заменить'); await sleep(1100);
+ok((await text('.ps-state b')) === 'Готово', 'после отправки — «Готово»');
+await click('.ps-btn', 'Закрыть'); await sleep(300);
+ok((await text('.pe-pend')).indexOf('Закрепление в процессе') === 0, 'строка — «Закрепление в процессе»');
+ok((await text('.pe-row td:nth-child(2)')).indexOf('Волков Михаил Сергеевич') === 0, 'в строке новый сотрудник');
+await sleep(5300);
+ok((await text('.pe-pend')) === '', 'через несколько секунд закрепление завершено');
+// занятый сотрудник
+await click('.pe-more', 'Еличенко'); await click('.pe-mi', 'Заменить сотрудника'); await sleep(200); await click('.ps-sel'); await sleep(150); await click('.ps-opt', 'Бубликов'); await sleep(150);
+ok((await text('.ps-warn')).indexOf('Закрепление уже в процессе') === 0, 'занятый сотрудник — предупреждение');
+ok((await ev(`return all(document).find(e=>e.classList&&e.classList.contains('ps-btn--dark')).getAttribute('aria-disabled')`)) === 'true', 'кнопка «Заменить» недоступна');
+await ev(`document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'})); return 1`); await sleep(200);
+ok((await text('.ps-h h2')) === '', 'Esc закрывает шторку');
+// групповое открепление
+await click('.tb-btn', 'Выбрать все'); await sleep(200);
+ok((await text('.pe-bulk b')) === '4', 'выбраны все 4 клиента, внизу панель действий');
+await click('.pe-bulk .pe-btn', 'Действия'); await click('.pe-mi', 'Открепить сотрудников'); await sleep(300);
+ok((await text('.ps-h h2')) === 'Открепить сотрудников', 'групповое «Открепить сотрудников»');
+await click('.ps-btn', 'Да, открепить'); await sleep(1100);
+ok((await text('.ps-state span')).indexOf('Сотрудники открепятся') !== -1, 'готово — «Сотрудники открепятся…»');
+await click('.ps-btn', 'Закрыть'); await sleep(300);
+ok((await text('.pe-pend')).indexOf('Открепление в процессе') === 0, 'строки — «Открепление в процессе»');
+// из клиентов
+await open('ClientsPage.dc.html');
+await click('.cs-row .cs-ck'); await click('.cs-row .cs-ck', 'ИП Соколов'); await sleep(200);
+await click('.cs-btn', 'Посмотреть сотрудников'); await sleep(900);
+ok((await text('.pe h1')) === 'Закреплённые сотрудники', 'из клиентов — страница закреплённых сотрудников');
+ok((await text('.pe-gl')).split(' | ').length === 2, 'на странице выбранные клиенты (' + (await text('.pe-gl')) + ')');
+ok((await text('.hd-back')).indexOf('К клиентам') !== -1 || (await text('[class*="hd-back"]')).indexOf('К клиентам') !== -1, '«Назад» в шапке — «К клиентам»');
+console.log('RESULT: ' + fails + ' failed'); process.exit(0);

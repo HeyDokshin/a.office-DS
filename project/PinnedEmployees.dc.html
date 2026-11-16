@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Закреплённые сотрудники</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+.pe{box-sizing:border-box;width:100%;padding:16px 40px 40px;display:flex;flex-direction:column;gap:24px;font-family:var(--font-system);color:var(--text-primary)}
+.pe *{box-sizing:border-box}
+.pe h1{margin:0;font:700 40px/48px var(--font-system);letter-spacing:-.4px}
+.pe-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.pe-search{display:flex;align-items:center;gap:8px;width:320px;height:48px;padding:0 14px;border-radius:12px;background:var(--bg-base-primary, #fff);color:var(--text-secondary)}
+.pe-search input{flex:1 1 auto;min-width:0;border:0;outline:0;background:transparent;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.pe-ddw{position:relative}
+.pe-chip{appearance:none;border:0;margin:0;height:48px;padding:0 14px 0 16px;border-radius:12px;background:var(--bg-base-primary, #fff);display:inline-flex;align-items:center;gap:6px;font:500 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer;white-space:nowrap}
+.pe-chip[data-on="true"]{background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.pe-menu{position:absolute;top:calc(100% + 4px);left:0;z-index:30;min-width:260px;max-height:320px;overflow:auto;padding:6px;border-radius:14px;background:var(--bg-base-primary, #fff);box-shadow:0 8px 24px rgba(0,0,0,.16),0 0 0 1px rgba(15,25,55,.06);display:flex;flex-direction:column}
+.pe-menu--r{left:auto;right:0}
+.pe-mi{appearance:none;border:0;margin:0;padding:10px 12px;border-radius:10px;background:transparent;display:flex;align-items:center;gap:10px;text-align:left;font:400 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer;white-space:nowrap}
+.pe-mi:hover,.pe-mi[aria-checked="true"]{background:var(--color-neutral-translucent-100, rgba(30,43,68,.04))}
+.pe-scrim{position:fixed;inset:0;z-index:20;border:0;margin:0;padding:0;background:transparent;cursor:default}
+/* топбар таблицы — общий для всех таблиц */
+.tb-bar{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:40px;margin:0 0 -16px;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.tb-l,.tb-r{display:flex;align-items:center;gap:8px;min-width:0}
+.tb-l b{color:var(--text-primary);font-weight:500;margin-left:4px}
+.tb-btn{appearance:none;border:0;margin:0;height:32px;padding:0 12px;border-radius:10px;display:inline-flex;align-items:center;gap:6px;font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;background:transparent;white-space:nowrap}
+.tb-btn--grey{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.tb-btn--white{background:var(--bg-base-primary, #fff)}
+.tb-ico{width:32px;padding:0;justify-content:center;color:var(--graphic-primary)}
+.tb-btn:hover{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.tb-btn--grey:hover{background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.tb-sep{width:1px;height:24px;background:var(--color-neutral-translucent-300, rgba(15,25,55,.1));flex:0 0 auto}
+.tb-ico[data-spin="true"] svg{animation:pe-spin .6s linear}
+@keyframes pe-spin{to{transform:rotate(360deg)}}
+/* таблица */
+.pe-card{position:relative;background:var(--bg-base-primary, #fff);border-radius:24px;padding:0 16px}
+.pe-tbl{width:100%;border-collapse:separate;border-spacing:0;font:400 14px/20px var(--font-system)}
+.pe-tbl thead th{position:sticky;top:64px;z-index:6;padding:24px 12px 12px;text-align:left;font:500 14px/20px var(--font-system);white-space:nowrap;background:transparent;box-shadow:inset 0 -1px 0 var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.pe-tbl thead th:first-child{width:48px;padding-left:16px}
+.pe-tbl thead th:last-child{width:56px}
+.pe-tbl td{padding:16px 12px;vertical-align:top}
+.pe-tbl td:first-child{padding-left:16px}
+.pe-grp td{padding:4px 0}
+.pe-gh{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 16px;border-radius:12px;background:var(--bg-base-secondary, #f2f3f5);font:500 14px/20px var(--font-system)}
+.pe-gl{appearance:none;border:0;margin:0;padding:0;background:transparent;display:inline-flex;align-items:center;gap:4px;font:inherit;color:inherit;cursor:pointer}
+.pe-gl:hover{text-decoration:underline}
+.pe-gn{font-weight:400;color:var(--text-secondary)}
+.pe-dim{color:var(--text-secondary)}
+.pe-ln{display:flex;align-items:center;gap:6px}
+.pe-pend{display:inline-flex;align-items:center;gap:6px;font:500 14px/20px var(--font-system);color:#d97706}
+.pe-pend i{width:16px;height:16px;border-radius:99px;background:#f59e0b;color:#fff;display:inline-flex;align-items:center;justify-content:center;font:700 11px/1 var(--font-system);font-style:normal}
+.pe-empty{display:flex;align-items:center;gap:16px}
+.pe-ei{width:48px;height:48px;border-radius:14px;background:var(--color-neutral-translucent-100, rgba(30,43,68,.04));display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-secondary);flex:0 0 auto}
+.pe-et{display:block;font:700 18px/24px var(--font-system);color:var(--text-primary)}
+.pe-es{display:block;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.pe-btn{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:12px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;gap:8px;font:500 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer;white-space:nowrap}
+.pe-btn--dark{background:var(--graphic-primary, #0e0e0e);color:var(--text-primary-inverted, #fff)}
+.pe-btn:hover{background:var(--color-neutral-translucent-300, rgba(15,25,55,.1))}
+.pe-btn--dark:hover{background:color-mix(in srgb,var(--graphic-primary, #0e0e0e) 85%,#fff)}
+.pe-ck{appearance:none;border:0;margin:0;padding:0;width:24px;height:24px;border-radius:6px;background:transparent;box-shadow:inset 0 0 0 2px var(--graphic-tertiary, #b8bcc3);display:inline-flex;align-items:center;justify-content:center;color:transparent;cursor:pointer}
+.pe-ck[aria-checked="true"],.pe-ck[aria-checked="mixed"]{background:var(--graphic-primary, #0e0e0e);box-shadow:none;color:#fff}
+.pe-ck[aria-disabled="true"]{opacity:.4;cursor:default}
+.pe-more{appearance:none;border:0;margin:0;width:32px;height:32px;border-radius:10px;background:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary);cursor:pointer}
+.pe-more:hover,.pe-more[aria-expanded="true"]{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.pe-act{position:relative;text-align:right}
+.pe-row[data-sel="true"] td{background:color-mix(in srgb,rgb(38,55,88) 4%,var(--bg-base-primary, #fff))}
+.pe-err{display:flex;flex-direction:column;align-items:center;gap:8px;padding:64px 24px;text-align:center}
+.pe-err b{font:700 18px/24px var(--font-system)}
+.pe-err span{font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.pe-ok{display:inline-flex;width:48px;height:48px;border-radius:14px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));align-items:center;justify-content:center}
+/* низ таблицы: фейд с блюром, при выборе — панель действий */
+.pe-foot{position:sticky;bottom:0;z-index:6;display:flex;align-items:center;justify-content:space-between;gap:16px;margin:0 -16px;padding:16px 32px;border-radius:0 0 24px 24px;isolation:isolate}
+.pe-foot::before{content:"";position:absolute;left:0;right:0;bottom:0;top:-28px;z-index:-1;pointer-events:none;border-radius:inherit;background:linear-gradient(to bottom,transparent 0,color-mix(in srgb,var(--bg-base-primary, #fff) 80%,transparent) 28px,color-mix(in srgb,var(--bg-base-primary, #fff) 92%,transparent) 100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 28px);mask-image:linear-gradient(to bottom,transparent 0,#000 28px)}
+.pe-bulk{display:flex;align-items:center;gap:12px}
+.pe-bulk b{font:500 16px/24px var(--font-system);min-width:24px}
+.pe-pg{display:inline-flex;align-items:center;gap:12px;margin-left:auto;font:400 14px/20px var(--font-system)}
+.pe-chip,.pe-mi,.pe-btn,.pe-more,.tb-btn,.pe-gl{transition:background-color .15s ease}
+.pe-chip:hover,.pe-mi:hover,.pe-btn:hover,.pe-more:hover,.tb-btn:hover{transition-delay:.3s}
+@media (max-width: 1100px){.pe{padding:16px}.pe-card{overflow-x:auto}.pe-tbl{min-width:960px}}
+</style>
+</helmet>
+<main class="pe">
+<h1>Закреплённые сотрудники</h1>
+<div class="pe-bar">
+<label class="pe-search"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg><input type="text" placeholder="Сотрудник или компания" aria-label="Поиск по сотруднику или компании" value="{{q}}" onInput="{{onQ}}"></label>
+<sc-for list="{{chips}}" as="c" hint-placeholder-count="2"><div class="pe-ddw"><button type="button" class="pe-chip" data-on="{{c.on}}" aria-haspopup="menu" aria-expanded="{{c.openStr}}" onClick="{{c.toggle}}">{{c.text}}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></button>
+<sc-if value="{{c.open}}" hint-placeholder-val="{{false}}"><div class="pe-menu" role="menu" aria-label="{{c.label}}"><sc-for list="{{c.opts}}" as="o" hint-placeholder-count="3"><button type="button" class="pe-mi" role="menuitemradio" aria-checked="{{o.on}}" onClick="{{o.pick}}">{{o.t}}</button></sc-for></div></sc-if></div></sc-for>
+</div>
+
+<sc-if value="{{loadErr}}" hint-placeholder-val="{{false}}"><div class="pe-card"><div class="pe-err" role="alert"><span class="pe-ok" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm1.5 7.5V22h-2V9.5h2zM14 2h4v2h-1v3h1v2h-1v13h-2V9h-1V7h1V4h-1V2z"/></svg></span><b>Не получилось загрузить</b><span>Уже исправляем. Попробуйте ещё раз или зайдите позже</span><button type="button" class="pe-btn" style="margin-top: 8px" onClick="{{retryAll}}">Попробовать ещё раз</button></div></div></sc-if>
+
+<sc-if value="{{ok}}" hint-placeholder-val="{{true}}">
+<div class="tb-bar"><div class="tb-l">Всего<b>{{total}}</b><button type="button" class="tb-btn tb-btn--grey" onClick="{{selAll}}">{{selAllLabel}}</button></div><div class="tb-r"><button type="button" class="tb-btn tb-ico" aria-label="Обновить таблицу" title="Обновить таблицу" data-spin="{{spin}}" onClick="{{refresh}}"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg></button><span class="tb-sep" aria-hidden="true"></span><button type="button" class="tb-btn tb-btn--white" onClick="{{download}}">Скачать таблицу</button></div></div>
+<div class="pe-card">
+<table class="pe-tbl" aria-label="Закреплённые сотрудники по клиентам">
+<thead><tr><th scope="col"><button type="button" class="pe-ck" role="checkbox" aria-checked="{{allStr}}" aria-label="Выбрать всех клиентов" onClick="{{selAll}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="{{allIco}}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></th><th scope="col">Сотрудник</th><th scope="col">Роль</th><th scope="col">Закреплён</th><th scope="col">Контакты</th><th scope="col"><span class="pe-dim" style="font-weight: 400">Действия</span></th></tr></thead>
+<sc-for list="{{rows}}" as="r" hint-placeholder-count="4"><tbody>
+<tr class="pe-grp"><td colspan="6"><div class="pe-gh"><button type="button" class="pe-gl" onClick="{{r.openClient}}">{{r.client}}<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 12L8.5 6.5 10 5l7 7-7 7-1.5-1.5L14 12z"/></svg></button><span class="pe-gn">Сотрудников: {{r.count}}</span></div></td></tr>
+<tr class="pe-row" data-sel="{{r.selStr}}">
+<td><button type="button" class="pe-ck" role="checkbox" aria-checked="{{r.selStr}}" aria-disabled="{{r.errStr}}" aria-label="{{r.selLabel}}" onClick="{{r.toggle}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></td>
+<sc-if value="{{r.err}}" hint-placeholder-val="{{false}}"><td colspan="5"><div class="pe-empty" style="justify-content: space-between"><div class="pe-empty"><span class="pe-ei" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm1.5 7.5V22h-2V9.5h2zM14 2h4v2h-1v3h1v2h-1v13h-2V9h-1V7h1V4h-1V2z"/></svg></span><div><span class="pe-et">Не получилось загрузить</span><span class="pe-es">Уже исправляем. Попробуйте ещё раз или зайдите позже</span></div></div><button type="button" class="pe-btn" onClick="{{r.retry}}">Попробовать ещё раз</button></div></td></sc-if>
+<sc-if value="{{r.empty}}" hint-placeholder-val="{{false}}"><td colspan="5"><div class="pe-empty" style="justify-content: space-between"><div class="pe-empty"><span class="pe-ei" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v10h-5a3 3 0 01-6 0H4V4zm0 12h3.5a5 5 0 009 0H20v4H4v-4z"/></svg></span><div><span class="pe-et">{{r.emptyTitle}}</span><span class="pe-es">{{r.emptyText}}</span></div></div><sc-if value="{{r.canAdd}}" hint-placeholder-val="{{true}}"><button type="button" class="pe-btn" onClick="{{r.add}}">Добавить сотрудника</button></sc-if></div></td></sc-if>
+<sc-if value="{{r.has}}" hint-placeholder-val="{{true}}">
+<td>{{r.emp}}</td>
+<td>Валютный контролёр</td>
+<td><sc-if value="{{r.pend}}" hint-placeholder-val="{{false}}"><span class="pe-pend">{{r.pendText}}<i aria-hidden="true">!</i></span></sc-if><sc-if value="{{r.fixed}}" hint-placeholder-val="{{true}}">С {{r.since}}<br><span class="pe-dim">Бессрочно</span></sc-if></td>
+<td><sc-if value="{{r.fixed}}" hint-placeholder-val="{{true}}"><span class="pe-ln"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="color: var(--graphic-secondary)"><path d="M6.6 10.8a15.1 15.1 0 006.6 6.6l2.2-2.2a1 1 0 011-.25 11.4 11.4 0 003.6.57 1 1 0 011 1V20a1 1 0 01-1 1A17 17 0 013 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.25.2 2.45.57 3.57a1 1 0 01-.25 1z"/></svg>{{r.phone}}</span>{{r.mail}}</sc-if></td>
+<td class="pe-act"><button type="button" class="pe-more" aria-label="{{r.moreLabel}}" aria-haspopup="menu" aria-expanded="{{r.menuStr}}" onClick="{{r.toggleMenu}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 10a2 2 0 110 4 2 2 0 010-4zm7 0a2 2 0 110 4 2 2 0 010-4zm7 0a2 2 0 110 4 2 2 0 010-4z"/></svg></button>
+<sc-if value="{{r.menu}}" hint-placeholder-val="{{false}}"><div class="pe-menu pe-menu--r" role="menu" aria-label="Действия с сотрудником"><button type="button" class="pe-mi" role="menuitem" onClick="{{r.replace}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a5 5 0 110 10 5 5 0 010-10zm0 2a3 3 0 100 6 3 3 0 000-6zM4 22c0-4 3-7 8-7 1.2 0 2.3.2 3.2.5l-.8 1.9A8 8 0 0012 17c-3.6 0-6 2-6 5H4zm14.3-6.9l3.4 2.9-3.4 2.9V19H15v-2h3.3v-1.9z"/></svg>Заменить сотрудника</button><button type="button" class="pe-mi" role="menuitem" onClick="{{r.remove}}"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9 3h6l1 2h4v2H4V5h4l1-2zM6 9h12l-1 12H7L6 9zm4 2v8h2v-8h-2zm4 0v8h-2"/></svg>Открепить сотрудника</button></div></sc-if></td>
+</sc-if>
+</tr>
+</tbody></sc-for>
+</table>
+<div class="pe-foot" data-bulk="{{hasSelStr}}">
+<sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}"><div class="pe-bulk" role="region" aria-label="Действия с выбранными"><button type="button" class="pe-ck" role="checkbox" aria-checked="{{allStr}}" aria-label="Снять выделение" onClick="{{clearSel}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="{{allIco}}" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b>{{selN}}</b><div class="pe-ddw"><button type="button" class="pe-btn pe-btn--dark" aria-haspopup="menu" aria-expanded="{{actStr}}" onClick="{{toggleAct}}">Действия<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></button>
+<sc-if value="{{act}}" hint-placeholder-val="{{false}}"><div class="pe-menu" role="menu" aria-label="Действия с выбранными" style="top: auto; bottom: calc(100% + 4px)"><button type="button" class="pe-mi" role="menuitem" onClick="{{groupReplace}}">Заменить сотрудников</button><button type="button" class="pe-mi" role="menuitem" onClick="{{groupAdd}}">Добавить сотрудника</button><button type="button" class="pe-mi" role="menuitem" onClick="{{groupRemove}}">Открепить сотрудников</button></div></sc-if></div></div></sc-if>
+<span class="pe-pg">1 из 1 страницы</span>
+</div>
+</div>
+</sc-if>
+<sc-if value="{{anyMenu}}" hint-placeholder-val="{{false}}"><button type="button" class="pe-scrim" aria-label="Закрыть меню" tabindex="-1" onClick="{{closeMenus}}"></button></sc-if>
+</main>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"clients":{"editor":null},"demo":{"editor":"enum","options":["","load-err","part-err","pending"],"default":""},"onOpenClient":{"editor":null},"$preview":{"width":1376,"height":900}}'>
+const DEF = [
+  { name: 'ЗАО ЛипецкПром', emp: 'Тисанко Олиянна Стефановна' },
+  { name: 'ООО «ПРОСТОКВАШИНО»', emp: 'Еличенко Евстапия Вачагановна' },
+  { name: 'АО «ВЕРТИКАЛЬ»', emp: '' },
+  { name: 'АО «ПУШИСТАЯ ДОЛИНА»', emp: '' }
+];
+const EMPS = ['Тисанко Олиянна Стефановна', 'Еличенко Евстапия Вачагановна', 'Волков Михаил Сергеевич', ''];
+const CK = 'M2 7.5L5.5 11L12 3.5', MINUS = 'M3 7h8';
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  // клиенты, по которым смотрим закрепления: из выбора в списке клиентов или демо-набор
+  base() {
+    const c = Array.isArray(this.props.clients) && this.props.clients.length ? this.props.clients : null;
+    if (!c) return DEF;
+    return c.map((x, i) => ({ name: typeof x === 'string' ? x : (x.name || ''), emp: x && x.emp !== undefined ? x.emp : EMPS[i % EMPS.length], raw: x }));
+  }
+  data() {
+    const s = this.st();
+    if (s.data) return s.data;
+    const dm = this.props.demo || '';
+    return this.base().map((x, i) => ({ name: x.name, emp: x.emp, raw: x.raw, pend: dm === 'pending' && i < 2 ? 'pin' : '', err: dm === 'part-err' && i === 0 }));
+  }
+  componentDidMount() {
+    this._done = (e) => {
+      const d = (e && e.detail) || {};
+      const names = d.clients || [];
+      const data = this.data().map((x) => {
+        if (names.indexOf(x.name) === -1) return x;
+        if (d.mode === 'remove') return Object.assign({}, x, { pend: 'unpin' });
+        return Object.assign({}, x, { emp: d.employee || x.emp, pend: 'pin' });
+      });
+      this.setState({ data: data, sel: {} });
+      // закрепление «в течение нескольких минут» — в прототипе через 5 с
+      clearTimeout(this._fin);
+      this._fin = setTimeout(() => this.setState({ data: this.data().map((x) => x.pend === 'unpin' ? Object.assign({}, x, { emp: '', pend: '' }) : Object.assign({}, x, { pend: '' })) }), 5000);
+    };
+    window.addEventListener('sbo:pin-done', this._done);
+  }
+  componentWillUnmount() { window.removeEventListener('sbo:pin-done', this._done); clearTimeout(this._fin); clearTimeout(this._sp); }
+  pin(mode, list, current) { this.setState({ menu: '', act: false }); try { window.dispatchEvent(new CustomEvent('sbo:pin', { detail: { mode: mode, clients: list, current: current || '' } })); } catch (e) {} }
+  toast(m) { if (window.__sboToast) window.__sboToast(m); }
+  renderVals() {
+    const s = this.st();
+    const dm = this.props.demo || '';
+    const all = this.data();
+    const q = (s.q || '').trim().toLowerCase();
+    const fCo = s.fCo || '', fEmp = s.fEmp || '';
+    const rowsData = all.filter((x) => (!q || (x.name + ' ' + x.emp).toLowerCase().indexOf(q) !== -1) && (!fCo || x.name === fCo) && (!fEmp || x.emp === fEmp));
+    const sel = s.sel || {};
+    const selectable = rowsData.filter((x) => !x.err).map((x) => x.name);
+    const selN = selectable.filter((n) => sel[n]).length;
+    const allStr = selectable.length && selN === selectable.length ? 'true' : (selN ? 'mixed' : 'false');
+    const emps = Array.from(new Set(all.map((x) => x.emp).filter(Boolean)));
+    const chip = (key, label, opts, val, setKey) => ({
+      label: label, text: val || label, on: val ? 'true' : 'false', open: s.chip === key, openStr: s.chip === key ? 'true' : 'false',
+      toggle: () => this.setState({ chip: this.st().chip === key ? '' : key }),
+      opts: [{ t: 'Все', on: !val ? 'true' : 'false', pick: () => this.setState({ [setKey]: '', chip: '' }) }].concat(opts.map((o) => ({ t: o, on: val === o ? 'true' : 'false', pick: () => this.setState({ [setKey]: o, chip: '' }) })))
+    });
+    const selectedNames = selectable.filter((n) => sel[n]);
+    return {
+      q: s.q || '', onQ: (e) => this.setState({ q: e.target.value }),
+      chips: [chip('co', 'Компания', all.map((x) => x.name), fCo, 'fCo'), chip('emp', 'Сотрудник', emps, fEmp, 'fEmp')],
+      loadErr: dm === 'load-err' && !s.retried, ok: !(dm === 'load-err' && !s.retried),
+      retryAll: () => this.setState({ retried: true }),
+      total: rowsData.length,
+      allStr: allStr, allIco: allStr === 'mixed' ? MINUS : CK,
+      selAllLabel: allStr === 'true' ? 'Снять выбор' : 'Выбрать все',
+      selAll: () => { const n = {}; if (allStr !== 'true') selectable.forEach((x) => { n[x] = true; }); this.setState({ sel: n }); },
+      clearSel: () => this.setState({ sel: {}, act: false }),
+      hasSel: selN > 0, hasSelStr: selN > 0 ? 'true' : 'false', selN: selN,
+      act: !!s.act, actStr: s.act ? 'true' : 'false', toggleAct: () => this.setState({ act: !this.st().act }),
+      groupReplace: () => this.pin('replace', selectedNames),
+      groupAdd: () => this.pin('add', selectedNames),
+      groupRemove: () => this.pin('remove', selectedNames),
+      spin: s.spin || 'false',
+      refresh: () => { this.setState({ spin: 'true' }); clearTimeout(this._sp); this._sp = setTimeout(() => this.setState({ spin: 'false' }), 650); this.toast('Таблица обновлена'); },
+      download: () => this.toast('Скачиваем таблицу: ' + rowsData.length + ' строк'),
+      anyMenu: !!(s.menu || s.act || s.chip), closeMenus: () => this.setState({ menu: '', act: false, chip: '' }),
+      rows: rowsData.map((x, i) => {
+        const has = !!x.emp && !x.err;
+        return {
+          client: x.name, count: has ? 1 : 0,
+          openClient: () => { if (this.props.onOpenClient) this.props.onOpenClient(x.raw || { name: x.name }); },
+          selStr: sel[x.name] ? 'true' : 'false', errStr: x.err ? 'true' : 'false', selLabel: 'Выбрать ' + x.name,
+          toggle: () => { if (x.err) return; const n = Object.assign({}, this.st().sel || {}); if (n[x.name]) delete n[x.name]; else n[x.name] = true; this.setState({ sel: n }); },
+          err: !!x.err, retry: () => this.setState({ data: this.data().map((y) => y.name === x.name ? Object.assign({}, y, { err: false }) : y) }),
+          empty: !x.emp && !x.err, emptyTitle: 'Пока пусто', emptyText: 'За клиентом не закреплён Валютный контролёр', canAdd: true,
+          add: () => this.pin('add', [x.name]),
+          has: has, emp: x.emp,
+          pend: has && !!x.pend, fixed: has && !x.pend, pendText: x.pend === 'unpin' ? 'Открепление в процессе' : 'Закрепление в процессе',
+          since: ['22.12.2025', '03.03.2024', '11.11.2023'][i % 3], phone: ['0134036', '0134127', '0135510'][i % 3], mail: ['ostroitskaya@alfabank.ru', 'eelichenko@alfabank.ru', 'mvolkov@alfabank.ru'][i % 3],
+          moreLabel: 'Действия: ' + x.emp, menu: s.menu === x.name, menuStr: s.menu === x.name ? 'true' : 'false',
+          toggleMenu: () => this.setState({ menu: this.st().menu === x.name ? '' : x.name }),
+          replace: () => this.pin('replace', [x.name], x.emp),
+          remove: () => this.pin('remove', [x.name], x.emp)
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

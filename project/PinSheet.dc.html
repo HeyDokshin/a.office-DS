@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Закрепление сотрудника</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="ds/alfa-bank/tokens.css">
+<link rel="stylesheet" href="ds/alfa-bank/components/bundle.css">
+<script src="ds/alfa-bank/components/bundle.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+/* Шторка закрепления: заменить / добавить / открепить сотрудника, одиночно и группой.
+   Открывается из любого места: window.dispatchEvent(new CustomEvent('sbo:pin', { detail: { mode, clients, current } })) */
+@keyframes ps-in{from{transform:translateX(24px);opacity:0}to{transform:none;opacity:1}}
+.ps-back{position:fixed;inset:0;z-index:80;border:0;margin:0;padding:0;background:rgba(0,0,0,.4);cursor:default}
+.ps{position:fixed;top:8px;right:8px;bottom:8px;z-index:81;width:min(500px,calc(100vw - 16px));display:flex;flex-direction:column;background:var(--bg-base-primary, #fff);border-radius:24px;box-shadow:0 20px 40px rgba(0,0,0,.2);font-family:var(--font-system);color:var(--text-primary);animation:ps-in .22s ease}
+@media (prefers-reduced-motion: reduce){.ps{animation:none}}
+.ps-h{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 24px 16px 32px}
+.ps-h h2{margin:0;font:700 24px/30px var(--font-system)}
+.ps-x{appearance:none;border:0;margin:0;width:40px;height:40px;border-radius:12px;background:transparent;display:inline-flex;align-items:center;justify-content:center;color:var(--graphic-primary);cursor:pointer;flex:0 0 auto}
+.ps-x:hover{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.ps-b{flex:1 1 auto;min-height:0;overflow:auto;padding:4px 32px 24px;display:flex;flex-direction:column;gap:20px}
+.ps-sub{margin:0;font:700 16px/24px var(--font-system)}
+.ps-kv{display:flex;flex-direction:column;gap:2px}
+.ps-k{font:400 13px/18px var(--font-system);color:var(--text-secondary)}
+.ps-v{font:500 15px/20px var(--font-system)}
+.ps-who{display:flex;flex-wrap:wrap;gap:6px}
+.ps-who span{padding:2px 8px;border-radius:6px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:500 13px/18px var(--font-system)}
+.ps-text{margin:0;font:400 15px/22px var(--font-system)}
+.ps-f{position:relative;display:flex;flex-direction:column;gap:6px}
+.ps-sel{appearance:none;margin:0;width:100%;height:48px;padding:0 12px 0 16px;border-radius:12px;border:1px solid transparent;background:var(--color-neutral-translucent-100, rgba(30,43,68,.04));display:flex;align-items:center;justify-content:space-between;gap:8px;font:400 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer;text-align:left}
+.ps-sel[data-empty="true"]{color:var(--text-secondary)}
+.ps-sel[aria-expanded="true"]{border-color:var(--graphic-primary, #0e0e0e);background:var(--bg-base-primary, #fff)}
+.ps-sel[data-err="true"]{border-color:var(--status-negative, #d91d0b)}
+.ps-sel:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.ps-err{font:400 13px/18px var(--font-system);color:var(--text-negative, #d91d0b)}
+.ps-dd{position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:5;max-height:360px;display:flex;flex-direction:column;background:var(--bg-base-primary, #fff);border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.16),0 0 0 1px rgba(15,25,55,.06);overflow:hidden}
+.ps-q{flex:0 0 auto;display:flex;align-items:center;gap:8px;margin:8px;height:40px;padding:0 10px;border-radius:10px;background:var(--color-neutral-translucent-100, rgba(30,43,68,.04));color:var(--text-secondary)}
+.ps-q input{flex:1 1 auto;min-width:0;border:0;outline:0;background:transparent;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.ps-qx{appearance:none;border:0;margin:0;padding:0;width:20px;height:20px;border-radius:99px;background:transparent;color:var(--graphic-secondary);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
+.ps-list{overflow:auto;padding:0 0 8px}
+.ps-let{padding:8px 16px 4px;font:500 12px/16px var(--font-system);color:var(--text-secondary)}
+.ps-opt{appearance:none;border:0;margin:0;width:100%;padding:8px 16px;background:transparent;display:flex;flex-direction:column;align-items:flex-start;gap:2px;text-align:left;cursor:pointer;font:400 15px/20px var(--font-system);color:var(--text-primary)}
+.ps-opt small{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.ps-opt:hover,.ps-opt[data-first="true"]{background:var(--color-neutral-translucent-100, rgba(30,43,68,.04))}
+.ps-opt[aria-selected="true"]{background:var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.ps-none{padding:16px;font:400 14px/20px var(--font-system);color:var(--text-secondary);text-align:center}
+.ps-warn{padding:12px 16px;border-radius:12px;background:var(--status-muted-alt-attention, #fde6c8);font:400 14px/20px var(--font-system)}
+.ps-state{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;padding:24px}
+.ps-state b{font:700 18px/24px var(--font-system)}
+.ps-state span{max-width:340px;font:400 14px/20px var(--font-system);color:var(--text-secondary)}
+.ps-ok{width:48px;height:48px;border-radius:14px;background:var(--status-positive, #0cc44d);color:#fff;display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px}
+.ps-oops{width:48px;height:48px;border-radius:14px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px;color:var(--graphic-primary)}
+.ps-ft{display:flex;gap:12px;padding:20px 32px 24px;border-top:1px solid var(--color-neutral-translucent-200, rgba(30,43,68,.08))}
+.ps-btn{appearance:none;border:0;margin:0;height:48px;padding:0 20px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:500 15px/20px var(--font-system);cursor:pointer;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));color:var(--text-primary)}
+.ps-btn--dark{background:var(--graphic-primary, #0e0e0e);color:var(--text-primary-inverted, #fff)}
+.ps-btn[aria-disabled="true"]{background:var(--color-neutral-translucent-100, rgba(30,43,68,.04));color:var(--text-tertiary, rgba(5,8,29,.38));cursor:default}
+.ps-btn:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.ps-btn:not([aria-disabled="true"]):hover{filter:brightness(.96)}
+.ps-btn--dark:not([aria-disabled="true"]):hover{filter:none;background:color-mix(in srgb,var(--graphic-primary, #0e0e0e) 85%,#fff)}
+.ps-spin{width:16px;height:16px;border-radius:99px;border:2px solid currentColor;border-right-color:transparent;animation:ps-sp .7s linear infinite}
+@keyframes ps-sp{to{transform:rotate(360deg)}}
+.ps-x,.ps-opt,.ps-btn{transition:background-color .15s ease,filter .15s ease}
+.ps-x:hover,.ps-opt:hover,.ps-btn:hover{transition-delay:.3s}
+</style>
+</helmet>
+<sc-if value="{{open}}" hint-placeholder-val="{{false}}">
+<button type="button" class="ps-back" aria-label="Закрыть" tabindex="-1" onClick="{{close}}"></button>
+<div class="ps" role="dialog" aria-modal="true" aria-label="{{title}}">
+<div class="ps-h"><h2>{{title}}</h2><button type="button" class="ps-x" aria-label="Закрыть" onClick="{{close}}"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 10.586l5.293-5.293 1.414 1.414L13.414 12l5.293 5.293-1.414 1.414L12 13.414l-5.293 5.293-1.414-1.414L10.586 12 5.293 6.707l1.414-1.414L12 10.586z"/></svg></button></div>
+
+<sc-if value="{{isForm}}" hint-placeholder-val="{{true}}">
+<div class="ps-b">
+<sc-if value="{{isReplace}}" hint-placeholder-val="{{true}}"><p class="ps-sub">На кого заменить</p></sc-if>
+<sc-if value="{{hasWho}}" hint-placeholder-val="{{false}}"><div class="ps-kv"><span class="ps-k">{{whoLabel}}</span><div class="ps-who"><sc-for list="{{who}}" as="w" hint-placeholder-count="2"><span>{{w}}</span></sc-for></div></div></sc-if>
+<div class="ps-kv"><span class="ps-k">Роль</span><span class="ps-v">Валютный контролёр</span></div>
+<sc-if value="{{isRemove}}" hint-placeholder-val="{{false}}"><p class="ps-text">{{removeText}}</p></sc-if>
+<sc-if value="{{isPick}}" hint-placeholder-val="{{true}}">
+<div class="ps-f">
+<span class="ps-k" id="ps-fio">ФИО</span>
+<button type="button" class="ps-sel" aria-labelledby="ps-fio" aria-haspopup="listbox" aria-expanded="{{ddStr}}" data-empty="{{noPickStr}}" data-err="{{errStr}}" onClick="{{toggleDd}}"><span>{{pickLabel}}</span><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="{{chev}}"/></svg></button>
+<sc-if value="{{err}}" hint-placeholder-val="{{false}}"><span class="ps-err" role="alert">Выберите сотрудника</span></sc-if>
+<sc-if value="{{dd}}" hint-placeholder-val="{{false}}"><div class="ps-dd">
+<label class="ps-q"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.5 3a7.5 7.5 0 015.962 12.048l4.245 4.245-1.414 1.414-4.245-4.245A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z"/></svg><input type="text" placeholder="Поиск" aria-label="Поиск сотрудника" value="{{q}}" onInput="{{onQ}}" onKeyDown="{{onQKey}}" autofocus><sc-if value="{{hasQ}}" hint-placeholder-val="{{false}}"><button type="button" class="ps-qx" aria-label="Очистить поиск" onClick="{{clearQ}}"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 110 20 10 10 0 010-20zm3.536 5.05L12 10.586 8.464 7.05 7.05 8.464 10.586 12 7.05 15.536l1.414 1.414L12 13.414l3.536 3.536 1.414-1.414L13.414 12l3.536-3.536-1.414-1.414z"/></svg></button></sc-if></label>
+<sc-if value="{{listErr}}" hint-placeholder-val="{{false}}"><div class="ps-none">Не получилось загрузить. Уже исправляем. Попробуйте обновить или зайдите позже<br><button type="button" class="ps-btn" style="height: 32px; margin-top: 8px; font-size: 14px" onClick="{{retryList}}">Попробовать ещё раз</button></div></sc-if>
+<sc-if value="{{listOk}}" hint-placeholder-val="{{true}}"><div class="ps-list" role="listbox" aria-label="Сотрудники">
+<sc-for list="{{groups}}" as="g" hint-placeholder-count="2"><div class="ps-let" aria-hidden="true">{{g.letter}}</div><sc-for list="{{g.items}}" as="o" hint-placeholder-count="2"><button type="button" class="ps-opt" role="option" aria-selected="{{o.sel}}" data-first="{{o.first}}" onClick="{{o.pick}}">{{o.n}}<small>{{o.l}}</small></button></sc-for></sc-for>
+<sc-if value="{{noMatch}}" hint-placeholder-val="{{false}}"><div class="ps-none">Ничего не нашлось</div></sc-if>
+</div></sc-if>
+</div></sc-if>
+</div>
+<sc-if value="{{busyWarn}}" hint-placeholder-val="{{false}}"><div class="ps-warn" role="status">Закрепление уже в процессе. Подождите немного или выберите другого сотрудника</div></sc-if>
+</sc-if>
+</div>
+<div class="ps-ft">
+<button type="button" class="ps-btn ps-btn--dark" aria-disabled="{{okOff}}" onClick="{{submit}}"><sc-if value="{{sending}}" hint-placeholder-val="{{false}}"><span class="ps-spin" aria-hidden="true"></span></sc-if>{{okLabel}}</button>
+<button type="button" class="ps-btn" onClick="{{close}}">{{cancelLabel}}</button>
+</div>
+</sc-if>
+
+<sc-if value="{{isDone}}" hint-placeholder-val="{{false}}">
+<div class="ps-state" role="status"><span class="ps-ok" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M9.5 16.2L5.3 12l-1.4 1.4 5.6 5.6L20.1 8.4 18.7 7z"/></svg></span><b>Готово</b><span>{{doneText}}</span></div>
+<div class="ps-ft"><button type="button" class="ps-btn" onClick="{{close}}">Закрыть</button></div>
+</sc-if>
+
+<sc-if value="{{isFail}}" hint-placeholder-val="{{false}}">
+<div class="ps-state" role="alert"><span class="ps-oops" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M7 2h3v5.5a1.5 1.5 0 01-3 0V2zm1.5 7.5V22h-2V9.5h2zM14 2h4v2h-1v3h1v2h-1v13h-2V9h-1V7h1V4h-1V2z"/></svg></span><b>Не получилось загрузить</b><span>Уже исправляем. Попробуйте ещё раз или зайдите позже</span><button type="button" class="ps-btn" style="height: 40px; margin-top: 8px" onClick="{{retry}}">Попробовать ещё раз</button></div>
+</sc-if>
+</div>
+</sc-if>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"demo":{"editor":"enum","options":["","replace","replace-open","replace-err","replace-busy","replace-done","replace-fail","group-replace","add","add-list-err","remove","remove-done","group-remove"],"default":""},"$preview":{"width":1440,"height":900}}'>
+const EMP = [
+  { n: 'Абдрашитов Юрий Петрович', l: 'U_PS004@MSK' },
+  { n: 'Аппалаева Юлия Карповна', l: 'U_PS004@MSK' },
+  { n: 'Ананьева Юлия Карловна', l: 'MSK_MOPEK' },
+  { n: 'Бубликов Эрнст Эльдарович', l: 'U_PS004@MSK', busy: true },
+  { n: 'Бубкин Геннадий Викторович', l: 'U_PS004@MSK' },
+  { n: 'Волков Михаил Сергеевич', l: 'U_PS011@MSK' },
+  { n: 'Еличенко Евстапия Вачагановна', l: 'U_PS020@MSK' },
+  { n: 'Константинопольский Константин Константинович', l: 'U_2APWB' },
+  { n: 'Тисанко Олиянна Стефановна', l: 'U_APW12' }
+].sort((a, b) => a.n.localeCompare(b.n, 'ru'));
+const CHEV_D = 'M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z';
+const CHEV_U = 'M12 10l5.5 5.5L19 14l-7-7-7 7 1.5 1.5L12 10z';
+const DEMO_CLIENTS = ['ЗАО ЛипецкПром', 'ООО «ПРОСТОКВАШИНО»', 'АО «ВЕРТИКАЛЬ»'];
+class Component extends DCLogic {
+  st() { return this.state || {}; }
+  openWith(d) {
+    d = d || {};
+    const mode = d.mode === 'add' || d.mode === 'remove' ? d.mode : 'replace';
+    const clients = Array.isArray(d.clients) ? d.clients.filter(Boolean) : [];
+    this.setState({ open: true, mode: mode, clients: clients, current: d.current || '', step: 'form', pick: null, dd: false, q: '', err: false, sending: false, listErr: !!d.listErr, fail: !!d.fail });
+  }
+  componentDidMount() {
+    this._ev = (e) => this.openWith(e && e.detail);
+    window.addEventListener('sbo:pin', this._ev);
+    this._key = (e) => { if (e.key !== 'Escape' || !this.st().open) return; if (this.st().dd) this.setState({ dd: false }); else this.setState({ open: false }); };
+    document.addEventListener('keydown', this._key);
+    const dm = this.props.demo || '';
+    if (dm) {
+      const group = dm.indexOf('group') === 0;
+      const mode = dm.indexOf('remove') !== -1 ? 'remove' : (dm.indexOf('add') === 0 ? 'add' : 'replace');
+      this.openWith({ mode: mode, clients: group ? DEMO_CLIENTS : [DEMO_CLIENTS[0]], current: mode === 'add' ? '' : 'Тисанко Олиянна Стефановна', listErr: dm === 'add-list-err', fail: dm === 'replace-fail' });
+      if (dm === 'replace-open' || dm === 'add-list-err') this.setState({ dd: true });
+      if (dm === 'replace-err') this.setState({ err: true });
+      if (dm === 'replace-busy') this.setState({ pick: EMP.find((x) => x.busy) });
+      if (dm === 'replace-done' || dm === 'remove-done') this.setState({ step: 'done' });
+      if (dm === 'replace-fail') this.setState({ step: 'fail' });
+    }
+  }
+  componentWillUnmount() { window.removeEventListener('sbo:pin', this._ev); document.removeEventListener('keydown', this._key); clearTimeout(this._t); }
+  submit() {
+    const s = this.st();
+    if (s.sending) return;
+    if (s.mode !== 'remove') {
+      if (!s.pick) { this.setState({ err: true }); return; }
+      if (s.pick.busy) return;
+    }
+    this.setState({ sending: true, dd: false });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      const cur = this.st();
+      if (cur.fail) { this.setState({ sending: false, step: 'fail', fail: false }); return; }
+      this.setState({ sending: false, step: 'done' });
+      try { window.dispatchEvent(new CustomEvent('sbo:pin-done', { detail: { mode: cur.mode, clients: cur.clients || [], employee: cur.pick ? cur.pick.n : '' } })); } catch (e) {}
+    }, 700);
+  }
+  renderVals() {
+    const s = this.st();
+    const mode = s.mode || 'replace';
+    const clients = s.clients || [];
+    const group = clients.length > 1;
+    const q = (s.q || '').trim().toLowerCase();
+    const found = q ? EMP.filter((x) => (x.n + ' ' + x.l).toLowerCase().indexOf(q) !== -1) : EMP;
+    const groups = [];
+    found.forEach((x, i) => {
+      const L = x.n.charAt(0).toUpperCase();
+      let g = groups[groups.length - 1];
+      if (!g || g.letter !== L) { g = { letter: L, items: [] }; groups.push(g); }
+      g.items.push({ n: x.n, l: x.l, sel: s.pick && s.pick.n === x.n ? 'true' : 'false', first: q && i === 0 ? 'true' : 'false', pick: () => this.setState({ pick: x, dd: false, q: '', err: false }) });
+    });
+    const T = { replace: group ? 'Заменить сотрудников' : 'Заменить сотрудника', add: 'Добавить сотрудника', remove: group ? 'Открепить сотрудников' : 'Открепить сотрудника' };
+    const busyWarn = mode !== 'remove' && !!(s.pick && s.pick.busy);
+    return {
+      open: !!s.open,
+      title: T[mode],
+      isForm: (s.step || 'form') === 'form', isDone: s.step === 'done', isFail: s.step === 'fail',
+      isReplace: mode === 'replace', isRemove: mode === 'remove', isPick: mode !== 'remove',
+      hasWho: clients.length > 0, who: clients.slice(0, 6).concat(clients.length > 6 ? ['ещё ' + (clients.length - 6)] : []),
+      whoLabel: group ? 'Клиенты · ' + clients.length : 'Клиент',
+      removeText: group ? 'Вы уверены, что хотите открепить сотрудников? Новые задачи клиентов будут обрабатываться в конвейерном режиме' : 'Вы уверены, что хотите открепить сотрудника? Новые задачи клиентов будут обрабатываться в конвейерном режиме',
+      dd: !!s.dd, ddStr: s.dd ? 'true' : 'false', chev: s.dd ? CHEV_U : CHEV_D,
+      toggleDd: () => this.setState({ dd: !this.st().dd, q: '' }),
+      pickLabel: s.pick ? s.pick.n : 'Выберите из списка', noPickStr: s.pick ? 'false' : 'true',
+      err: !!s.err, errStr: s.err ? 'true' : 'false',
+      q: s.q || '', hasQ: !!(s.q || ''),
+      onQ: (e) => this.setState({ q: e.target.value }),
+      onQKey: (e) => { if (e.key === 'Enter' && found.length) { e.preventDefault(); this.setState({ pick: found[0], dd: false, q: '', err: false }); } },
+      clearQ: () => this.setState({ q: '' }),
+      groups: groups, noMatch: !!q && !found.length,
+      listErr: !!s.listErr, listOk: !s.listErr, retryList: () => this.setState({ listErr: false }),
+      busyWarn: busyWarn,
+      sending: !!s.sending,
+      okOff: busyWarn ? 'true' : 'false',
+      okLabel: mode === 'remove' ? 'Да, открепить' : (mode === 'add' ? 'Добавить' : 'Заменить'),
+      cancelLabel: mode === 'remove' ? 'Нет, оставить' : 'Отменить',
+      submit: () => this.submit(),
+      doneText: mode === 'remove' ? (group ? 'Сотрудники открепятся автоматически в течение нескольких минут. Можете продолжать работу' : 'Сотрудник открепится автоматически в течение нескольких минут. Можете продолжать работу') : (group ? 'Сотрудник закрепится за клиентами автоматически в течение нескольких минут. Можете продолжать работу' : 'Сотрудник закрепится автоматически в течение нескольких минут. Можете продолжать работу'),
+      retry: () => this.setState({ step: 'form' }),
+      close: () => { clearTimeout(this._t); this.setState({ open: false, dd: false, sending: false }); }
+    };
+  }
+}
+</script>
+</body>
+</html>

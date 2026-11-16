@@ -252,6 +252,7 @@ mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding
 </style>
 </helmet>
 <sc-if value="{{cardOpen}}" hint-placeholder-val="{{false}}"><dc-import name="ClientCard" kind="{{card.kind}}" client-name="{{card.name}}" pin="{{card.pin}}" inn="{{card.inn}}" seg="{{card.seg}}" scenario="{{card.scn}}" on-open-task="{{cardOpenTask}}" hint-size="100%,1400px"></dc-import></sc-if>
+<sc-if value="{{pinnedOpen}}" hint-placeholder-val="{{false}}"><dc-import name="PinnedEmployees" clients="{{pinnedList}}" demo="{{pinnedDemo}}" on-open-client="{{pinnedOpenClient}}" hint-size="100%,1000px"></dc-import></sc-if>
 <sc-if value="{{listOpen}}" hint-placeholder-val="{{true}}">
 <div class="cs">
 <sc-if value="{{classic}}" hint-placeholder-val="{{true}}"><h1 class="cs-h1">Клиенты</h1></sc-if>
@@ -319,7 +320,7 @@ mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding
 </div></sc-for>
 </sc-for></sc-if>
 </div>
-<sc-if value="{{footOn}}" hint-placeholder-val="{{false}}"><div class="cs-top cs-foot" data-bulk="{{hasSelStr}}"><sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}"><div class="cs-bulk" role="region" aria-label="Действия с выбранными клиентами"><button type="button" class="cs-ck" role="checkbox" aria-checked="{{allSel}}" aria-label="Снять выделение" onClick="{{clearSel}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b class="cs-bulk-n">{{selN}}</b><button type="button" class="cs-btn cs-btn--dark" onClick="{{pinSel}}">Закрепить за мной</button><button type="button" class="cs-btn cs-btn--grey" onClick="{{unpinSel}}">Открепить</button></div></sc-if><sc-if value="{{hasPages}}" hint-placeholder-val="{{false}}"><nav class="cs-pg" aria-label="Страницы"><button type="button" aria-label="Предыдущая страница" aria-disabled="{{noPrev}}" onClick="{{prev}}">‹</button><sc-for list="{{pages}}" as="pg" hint-placeholder-count="3"><button type="button" aria-current="{{pg.cur}}" onClick="{{pg.go}}">{{pg.n}}</button></sc-for><button type="button" aria-label="Следующая страница" aria-disabled="{{noNext}}" onClick="{{next}}">›</button></nav></sc-if></div></sc-if>
+<sc-if value="{{footOn}}" hint-placeholder-val="{{false}}"><div class="cs-top cs-foot" data-bulk="{{hasSelStr}}"><sc-if value="{{hasSel}}" hint-placeholder-val="{{false}}"><div class="cs-bulk" role="region" aria-label="Действия с выбранными клиентами"><button type="button" class="cs-ck" role="checkbox" aria-checked="{{allSel}}" aria-label="Снять выделение" onClick="{{clearSel}}"><svg width="16" height="16" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M2 7.5L5.5 11L12 3.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><b class="cs-bulk-n">{{selN}}</b><button type="button" class="cs-btn cs-btn--dark" onClick="{{viewPinned}}">Посмотреть сотрудников</button><div class="cs-set"><button type="button" class="cs-btn cs-btn--grey" aria-haspopup="menu" aria-expanded="{{bulkMenuStr}}" onClick="{{toggleBulkMenu}}">Действия<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></button><sc-if value="{{bulkMenu}}" hint-placeholder-val="{{false}}"><div class="cs-menu" role="menu" aria-label="Действия с выбранными клиентами" style="top: auto; bottom: calc(100% + 4px); left: 0"><button type="button" class="cs-opt" role="menuitem" onClick="{{pinReplace}}">Заменить сотрудника</button><button type="button" class="cs-opt" role="menuitem" onClick="{{pinAdd}}">Добавить сотрудника</button><button type="button" class="cs-opt" role="menuitem" onClick="{{pinRemove}}">Открепить сотрудника</button></div></sc-if></div></div></sc-if><sc-if value="{{hasPages}}" hint-placeholder-val="{{false}}"><nav class="cs-pg" aria-label="Страницы"><button type="button" aria-label="Предыдущая страница" aria-disabled="{{noPrev}}" onClick="{{prev}}">‹</button><sc-for list="{{pages}}" as="pg" hint-placeholder-count="3"><button type="button" aria-current="{{pg.cur}}" onClick="{{pg.go}}">{{pg.n}}</button></sc-for><button type="button" aria-label="Следующая страница" aria-disabled="{{noNext}}" onClick="{{next}}">›</button></nav></sc-if></div></sc-if>
 </div>
 </div>
 </sc-if>
@@ -346,7 +347,7 @@ mark{background:var(--status-muted-alt-attention, #fde6c8);color:inherit;padding
 </div>
 </sc-if>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"scenario":{"editor":"enum","options":["mine","mine-empty","loading","offline","load-error","forbidden"],"default":"mine"},"demoQ":{"editor":"string","default":""},"demoEnter":{"editor":"boolean","default":false},"demoAdv":{"editor":"enum","options":["","all","fl","ip","ul","pin"],"default":""},"demoMenu":{"editor":"enum","options":["","column","segment"],"default":""},"layout":{"editor":"enum","options":["classic","v3"],"default":"classic"},"onOpenClient":{"editor":null},"$preview":{"width":1180,"height":836}}'>
+<script type="text/x-dc" data-dc-script data-props='{"pinnedDemo":{"editor":"enum","options":["","load-err","part-err","pending"],"default":""},"demoPinned":{"editor":"boolean","default":false},"scenario":{"editor":"enum","options":["mine","mine-empty","loading","offline","load-error","forbidden"],"default":"mine"},"demoQ":{"editor":"string","default":""},"demoEnter":{"editor":"boolean","default":false},"demoAdv":{"editor":"enum","options":["","all","fl","ip","ul","pin"],"default":""},"demoMenu":{"editor":"enum","options":["","column","segment"],"default":""},"layout":{"editor":"enum","options":["classic","v3"],"default":"classic"},"onOpenClient":{"editor":null},"$preview":{"width":1180,"height":836}}'>
 const KIND = { fl: 'ФЛ', ip: 'ИП', ul: 'ЮЛ' };
 const SEGS = ['МАСС100', 'КИБ100', 'СБ500', 'МСБ300', 'ПБ1000'];
 const TYPES = ['Клиент', 'Представитель', 'Третье лицо', 'Банк'];
@@ -395,6 +396,7 @@ class Component extends DCLogic {
   componentWillUnmount() { this.backClear(); document.removeEventListener('keydown', this._key); clearTimeout(this._d); clearTimeout(this._s); clearTimeout(this._t); }
   // «Назад» в шапке: регистрируем уровень, когда он есть, и снимаем, когда его нет
   backSync(id, label, fn) { this._bkFn = this._bkFn || {}; this._bkFn[id] = fn; this._bk = this._bk || {}; const key = label || ''; if (this._bk[id] === key) return; this._bk[id] = key; setTimeout(() => { try { window.dispatchEvent(new CustomEvent('sbo:back', { detail: { id: id, label: label, fn: label ? () => { const f = this._bkFn[id]; if (f) f(); } : null } })); } catch (e) {} }, 0); }
+  pinEv(mode, clients) { try { window.dispatchEvent(new CustomEvent('sbo:pin', { detail: { mode: mode, clients: clients } })); } catch (e) {} }
   backClear() { Object.keys(this._bk || {}).forEach((id) => { try { window.dispatchEvent(new CustomEvent('sbo:back', { detail: { id: id, fn: null } })); } catch (e) {} }); this._bk = {}; }
   toast(m) { if (window.__sboToast) { window.__sboToast(m); return; } clearTimeout(this._t); this.setState({ toast: m, toastOk: false }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
   copy(val, key) {
@@ -422,7 +424,8 @@ class Component extends DCLogic {
   }
   renderVals() {
     const s = this.st();
-    this.backSync('cs-card', s.card ? 'К клиентам' : '', () => this.setState({ card: null }));
+    this.backSync('cs-card', s.card ? (s.pinned ? 'К закреплённым сотрудникам' : 'К клиентам') : '', () => this.setState({ card: null }));
+    this.backSync('cs-pinned', s.pinned && !s.card ? 'К клиентам' : '', () => this.setState({ pinned: null }));
     const scn = s.scn || this.props.scenario || 'mine';
     const q = s.q != null ? s.q : '';
     const qt = q.trim();
@@ -483,6 +486,7 @@ class Component extends DCLogic {
     const pagePins = pageItems.map((it) => it.c.pin);
     const pageSelN = pagePins.filter((x) => sel[x]).length;
     const plural = (n) => n + (n % 10 === 1 && n % 100 !== 11 ? ' клиент' : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14) ? ' клиента' : ' клиентов'));
+    const selClients = () => { const cur = this.st().sel || {}; const seen = {}; return flat.map((it) => it.c).filter((c) => { if (!cur[c.pin] || seen[c.pin]) return false; seen[c.pin] = 1; return true; }); };
     const viewGroups = [];
     pageItems.forEach((it) => {
       let g = viewGroups[viewGroups.length - 1];
@@ -540,7 +544,8 @@ class Component extends DCLogic {
     const anyPop = !!s.colMenu || !!s.chipOpen || !!s.setOpen || !!s.dirOpen;
     const hidden = s.hidden || {};
     return {
-      cardOpen: !!s.card, listOpen: !s.card, card: s.card || {},
+      cardOpen: !!s.card, listOpen: !s.card && !s.pinned, card: s.card || {},
+      pinnedOpen: !s.card && !!s.pinned, pinnedList: s.pinned || [], pinnedDemo: this.props.pinnedDemo || '',
       closeCard: () => this.setState({ card: null }),
       cardOpenTask: this.props.onOpenTask ? (id) => this.props.onOpenTask(id) : null,
       pageErr: !!err,
@@ -623,6 +628,12 @@ class Component extends DCLogic {
       allSel: pagePins.length && pageSelN === pagePins.length ? 'true' : (pageSelN ? 'mixed' : 'false'),
       toggleAll: () => { const n = Object.assign({}, this.st().sel || {}); const all = pagePins.length && pagePins.every((x) => n[x]); pagePins.forEach((x) => { if (all) delete n[x]; else n[x] = true; }); this.setState({ sel: n }); },
       clearSel: () => this.setState({ sel: {} }),
+      bulkMenu: !!s.bulkMenu, bulkMenuStr: s.bulkMenu ? 'true' : 'false', toggleBulkMenu: () => this.setState({ bulkMenu: !this.st().bulkMenu }),
+      viewPinned: () => { const list = selClients(); this.setState({ pinned: list.map((c) => ({ name: c.name, kind: c.kind, pin: c.pin, inn: c.inn, seg: c.seg, city: c.city })), sel: {}, bulkMenu: false }); try { window.scrollTo(0, 0); } catch (e) {} },
+      pinReplace: () => { this.setState({ bulkMenu: false }); this.pinEv('replace', selClients().map((c) => c.name)); },
+      pinAdd: () => { this.setState({ bulkMenu: false }); this.pinEv('add', selClients().map((c) => c.name)); },
+      pinRemove: () => { this.setState({ bulkMenu: false }); this.pinEv('remove', selClients().map((c) => c.name)); },
+      pinnedOpenClient: (c) => { const full = MINE.concat(POOL).find((x) => x.name === (c && c.name)); if (full && this.props.onOpenClient) { this.props.onOpenClient(full); return; } if (full) this.setState({ card: { kind: full.kind, name: full.name, pin: full.pin, inn: full.inn, seg: full.seg.replace(/(\D+)(\d+)/, '$1 $2'), scn: 'normal' } }); },
       pinSel: () => { this.setState({ sel: {} }); this.toast('Закрепляем за вами: ' + plural(selN)); },
       unpinSel: () => { this.setState({ sel: {} }); this.toast('Открепляем: ' + plural(selN)); },
       pages: Array.from({ length: pageCount }, (_, i) => ({ n: i + 1, cur: i === page ? 'page' : undefined, go: () => this.setState({ page: i }) })),

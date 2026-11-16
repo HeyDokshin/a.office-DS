@@ -338,8 +338,9 @@ body{margin:0; background-color: #f2f3f5; }
 </div>
 </sc-if>
 </div>
+<dc-import name="PinSheet" demo="{{pinDemo}}" hint-size="0px,0px"></dc-import>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"mode": {"editor": "enum", "options": ["multi", "single"], "default": "multi"}, "status": {"editor": "enum", "options": ["free", "busy", "pause", "tech", "training", "other", "offline", "call", "chat"], "default": "free"}, "panel": {"editor": "enum", "options": ["none", "profile", "status", "roles", "skills"], "default": "none"}, "locked": {"editor": "boolean", "default": false}, "back": {"editor": "boolean", "default": false}, "backLabel": {"editor": "string", "default": ""}, "searchDemo": {"editor": "enum", "options": ["", "recent", "short", "loading", "results", "empty"], "default": ""}, "callDemo": {"editor": "enum", "options": ["", "panel", "outgoing", "dial", "directory", "transfer", "end", "awp", "load", "info-error"], "default": ""}, "onOpenTask": {"editor": null}, "onOpenClient": {"editor": null}, "onNavigate": {"editor": null}, "onOpenRef": {"editor": null}, "onOpenReport": {"editor": null}, "onModuleSearch": {"editor": null}, "onModeChange": {"editor": null}, "onStatusChange": {"editor": null}, "onBack": {"editor": null}, "$preview": {"width": 1376, "height": 820}}'>
+<script type="text/x-dc" data-dc-script data-props='{"mode": {"editor": "enum", "options": ["multi", "single"], "default": "multi"}, "status": {"editor": "enum", "options": ["free", "busy", "pause", "tech", "training", "other", "offline", "call", "chat"], "default": "free"}, "panel": {"editor": "enum", "options": ["none", "profile", "status", "roles", "skills"], "default": "none"}, "locked": {"editor": "boolean", "default": false}, "back": {"editor": "boolean", "default": false}, "backLabel": {"editor": "string", "default": ""}, "searchDemo": {"editor": "enum", "options": ["", "recent", "short", "loading", "results", "empty"], "default": ""}, "callDemo": {"editor": "enum", "options": ["", "panel", "outgoing", "dial", "directory", "transfer", "end", "awp", "load", "info-error"], "default": ""}, "onOpenTask": {"editor": null}, "onOpenClient": {"editor": null}, "onNavigate": {"editor": null}, "onOpenRef": {"editor": null}, "onOpenReport": {"editor": null}, "pinDemo": {"editor": "enum", "options": ["", "replace", "replace-open", "replace-err", "replace-busy", "replace-done", "replace-fail", "group-replace", "add", "add-list-err", "remove", "remove-done", "group-remove"], "default": ""}, "onModuleSearch": {"editor": null}, "onModeChange": {"editor": null}, "onStatusChange": {"editor": null}, "onBack": {"editor": null}, "$preview": {"width": 1376, "height": 820}}'>
 
 const META = {
   free:     { label: 'Свободен',             color: 'green',  view: 'contrast', tile: 'var(--status-positive)',  fg: '#fff', na: false },
@@ -469,7 +470,7 @@ class Component extends DCLogic {
     };
     document.addEventListener('keydown', this._hk);
     // Следим, прилип ли под шапку заголовок какой-нибудь таблицы (во всех компонентах страницы, включая shadow DOM)
-    const HEAD_SEL = '.tl-head, .cc-tbl thead th, .rf-tbl thead th, .cs-head > *';
+    const HEAD_SEL = '.tl-head, .cc-tbl thead th, .rf-tbl thead th, .cs-head > *, .pe-tbl thead th';
     const collect = (root, acc) => { root.querySelectorAll('*').forEach((el) => { if (el.matches(HEAD_SEL)) acc.push(el); if (el.shadowRoot) collect(el.shadowRoot, acc); }); return acc; };
     this._scanHeads = () => { try { this._heads = collect(document, []); const bars = []; (function f(root) { root.querySelectorAll('*').forEach((el) => { if (el.classList && el.classList.contains('hd-bar')) bars.push(el); if (el.shadowRoot) f(el.shadowRoot); }); })(document); this._bar = bars[0] || null; } catch (e) { this._heads = []; } };
     this._chkStuck = () => { this._sraf = 0; const top = 64; let hit = null; for (const el of this._heads || []) { const r = el.getBoundingClientRect(); if (r.height > 0 && r.bottom > top && Math.abs(r.top - top) < 1.5) { hit = r; break; } } const on = !!hit; if (this._ov) { if (on) { const bar = this._bar && this._bar.getBoundingClientRect(); const ovL = bar ? Math.max(0, bar.left) : 0; this._ov.style.left = ovL + 'px'; this._ov.style.height = Math.round(hit.bottom) + 'px';
@@ -859,6 +860,7 @@ class Component extends DCLogic {
       hdToast: !!s.hdToast,
       hdToastText: s.hdToast || ''
     });
+    vals.pinDemo = this.props.pinDemo || '';
     return vals;
   }
 }

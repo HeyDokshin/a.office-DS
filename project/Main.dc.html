@@ -201,6 +201,11 @@ a{color:var(--text-link)}a:hover{color:var(--text-primary)}
 .tl-toast-b b{font:600 14px/20px var(--font-system);color:#fff}
 .tl-toast-a{appearance:none;border:0;margin:0 0 0 8px;align-self:center;background:transparent;color:#fff;font:600 14px/20px var(--font-system);padding:6px 8px;border-radius:8px;cursor:pointer}
 .tl-toast-a:hover{background:rgba(255,255,255,.12)}
+/* уведомление только с заголовком: иконка, текст и крестик по центру строки */
+.tl-toast:not(:has(.tl-toast-b > span)){align-items:center}
+.tl-toast:not(:has(.tl-toast-b > span)) .tl-toast-i{margin-top:0}
+/* с текстом: крестик на уровне заголовка */
+.tl-toast:has(.tl-toast-b > span) .tl-toast-x{margin-top:-4px}
 .tl-toast-x{appearance:none;border:0;margin:0;background:transparent;color:rgba(255,255,255,.6);width:28px;height:28px;border-radius:8px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto}
 .tl-toast-x:hover{background:rgba(255,255,255,.12);color:#fff}
 .tl-toast-a:focus-visible,.tl-toast-x:focus-visible{outline:2px solid #fff;outline-offset:1px}

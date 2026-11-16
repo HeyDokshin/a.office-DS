@@ -99,7 +99,8 @@ body{margin:0;background:var(--bg-base-alt-primary)}
 .sm-nav[data-collapsed="true"]{--sm-fh:142px}
 .sm-nav[data-look="card"]{--sm-fh:112px}
 .sm-nav[data-look="card"][data-collapsed="true"]{--sm-fh:146px}
-.sm-cells{padding-bottom:var(--sm-fh)}
+/* в конце списка последняя ссылка выходит из-под фейда: запас = высота плашки + фейд 40 px */
+.sm-cells{padding-bottom:calc(var(--sm-fh) + 40px)}
 .sm-fade{display:none}
 .sm-foot-wrap,.sm-mini-wrap{position:absolute !important;left:0;right:0;bottom:0;box-sizing:border-box;z-index:2;background:transparent;isolation:isolate}
 /* один общий слой: подложка + блюр, вверху плавно сходит на нет */

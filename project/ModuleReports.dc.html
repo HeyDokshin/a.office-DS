@@ -14,6 +14,7 @@
 <style>
 body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 .ms{box-sizing:border-box;width:100%;padding:16px 40px 40px;display:flex;flex-direction:column;gap:20px;font-family:var(--font-system);color:var(--text-primary)}
+.ms[data-emb="true"]{padding:0}
 .ms-h1{margin:0;font:700 32px/40px var(--font-system);letter-spacing:-.4px}
 .ms-pills{display:flex;flex-wrap:wrap;gap:8px}
 .ms-pill{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:99px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
@@ -102,12 +103,13 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 /* === /HOVER-DELAY === */
 </style>
 </helmet>
-<div class="ms">
-<h1 class="ms-h1">Отчёты</h1>
+<div class="ms" data-emb="{{embStr}}">
+<sc-if value="{{standalone}}" hint-placeholder-val="{{true}}"><h1 class="ms-h1">Отчёты</h1>
 <div class="ms-pills" role="group" aria-label="Отчёт">
 <sc-for list="{{kinds}}" as="k" hint-placeholder-count="3"><button type="button" class="ms-pill" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for>
-</div>
+</div></sc-if>
 <section class="ms-card" aria-label="{{kindLabel}}">
+<sc-if value="{{embPills}}" hint-placeholder-val="{{false}}"><div class="ms-pills" role="group" aria-label="Отчёт" style="margin-bottom: 16px"><sc-for list="{{kinds}}" as="k" hint-placeholder-count="2"><button type="button" class="ms-pill" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for></div></sc-if>
 <sc-if value="{{isDates}}" hint-placeholder-val="{{true}}">
 <div class="ms-tabs" role="tablist">
 <button type="button" role="tab" class="ms-tab" aria-selected="{{tabFilterOn}}" onClick="{{toFilter}}">Фильтр</button>
@@ -132,7 +134,7 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 <sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}"><div class="ms-toast" role="status">{{toast}}</div></sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["unk","cfa","scans"],"default":"unk"},"demo":{"editor":"enum","options":["","result","files"],"default":""},"$preview":{"width":1376,"height":900}}'>
+<script type="text/x-dc" data-dc-script data-props='{"embedded":{"editor":"boolean","default":false},"only":{"editor":"boolean","default":false},"kind":{"editor":"enum","options":["unk","cfa","scans"],"default":"unk"},"demo":{"editor":"enum","options":["","result","files"],"default":""},"$preview":{"width":1376,"height":900}}'>
 const KINDS = [['unk', 'Отчёт о выгрузке УНК в ТБСВК'], ['cfa', 'Отчёт оператора по ЦФА'], ['scans', 'Скан-копии СПД']];
 const COLS = { unk: ['Дата выгрузки', 'УНК', 'Клиент', 'Статус в ТБСВК'], cfa: ['Дата', 'Оператор', 'Операций', 'Сумма, ₽'] };
 const pad = (n) => (n < 10 ? '0' : '') + n;
@@ -150,7 +152,8 @@ class Component extends DCLogic {
       : [1, 2, 3, 4, 5, 6, 7, 8].map((i) => [pad(i + 1) + '.11.2026', '2607' + (2871 - i * 17) + '/1326/00' + pad(i) + '/1/1', ['ООО «Терем»', 'ООО «ВОСТОК ОИЛ»', 'ИП Иванов И. И.'][i % 3], i % 4 === 3 ? 'Ошибка выгрузки' : 'Выгружен']);
     const both = files.list && files.docs;
     return {
-      kinds: KINDS.map((k) => ({ label: k[1], on: k[0] === kind ? 'true' : 'false', pick: () => this.setState({ kind: k[0], tab: 'filter', done: false, err: '' }) })),
+      embStr: this.props.embedded ? 'true' : 'false', standalone: !this.props.embedded, embPills: !!this.props.embedded && !this.props.only,
+      kinds: KINDS.filter((k) => !this.props.embedded || this.props.only || k[0] !== 'scans').map((k) => ({ label: k[1], on: k[0] === kind ? 'true' : 'false', pick: () => this.setState({ kind: k[0], tab: 'filter', done: false, err: '' }) })),
       kindLabel: (KINDS.find((k) => k[0] === kind) || KINDS[0])[1],
       isDates: kind !== 'scans', isScans: kind === 'scans',
       tabFilterOn: tab === 'filter' ? 'true' : 'false', tabResOn: tab === 'res' ? 'true' : 'false', noResYet: s.done ? 'false' : 'true',

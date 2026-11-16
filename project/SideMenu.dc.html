@@ -316,6 +316,7 @@ class Component extends DCLogic {
     // во время перетаскивания состояние берём из текущей ширины
     const collapsed = s.dragW != null ? s.dragW < MID : baseCollapsed;
     const expanded = !collapsed;
+    // active='none' — ни один пункт не подсвечен (например, «Поиск по модулю» открыт из шапки)
     const active = s.active || this.props.active || 'queue';
     const admin = this.props.admin !== false;
     const action = this.props.action || 'create';
@@ -326,7 +327,7 @@ class Component extends DCLogic {
     const defs = [
       ['queue', 'Очередь задач'], ['clients', 'Клиенты'], ['book', 'Справочник'], ['admin', 'Администрирование'],
       ['cap', 'Траектория развития', 'ext'], ['kb', 'База знаний', 'ext'],
-      ['vk', 'Валютный контроль', 'tri'], ['reports', 'Отчёты', 'sub'], ['money', 'АЗОН ВНТ', 'ext sub'], ['archive', 'Электронный архив', 'ext sub'], ['sign', 'На подписание', 'ext sub']
+      
     ].filter((d) => (admin || d[0] !== 'admin') && (vkOpenNow || String(d[2] || '').indexOf('sub') === -1));
     const lastTop = admin ? 'admin' : 'book';
     const icons = ['queue', 'clients', 'book', 'admin', 'cap', 'kb', 'vk', 'search', 'reports', 'money', 'archive', 'sign'];
@@ -337,7 +338,7 @@ class Component extends DCLogic {
         tipIn: this.tipFor(d[1]),
         current: active === d[0] ? 'page' : undefined,
         go: d[0] === 'vk' ? () => this.setState({ vkOpen: !vkOpenNow }) : go(d[0]),
-        dividerAfter: d[0] === lastTop || d[0] === 'kb',
+        dividerAfter: d[0] === lastTop || (d[0] === 'kb' && !collapsed),
         showTri: expanded && flags.indexOf('tri') !== -1,
         triOpen: vkOpenNow ? 'true' : 'false',
         showExt: expanded && flags.indexOf('ext') !== -1,

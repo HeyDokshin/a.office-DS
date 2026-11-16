@@ -734,7 +734,7 @@ a:hover:active,
 <sc-if value="{{showCreate}}" hint-placeholder-val="{{false}}"><dc-import name="CreateTask" kind="{{createKind}}" on-saved="{{onCreated}}" hint-size="100%,900px"></dc-import></sc-if>
 <sc-if value="{{showRefs}}" hint-placeholder-val="{{false}}"><dc-import name="Refs" hint-size="100%,1000px"></dc-import></sc-if>
 <sc-if value="{{showCard}}" hint-placeholder-val="{{false}}"><dc-import name="ClientCard" client-name="{{cardName}}" kind="{{cardKind}}" tab="{{cardTab}}" on-open-task="{{cardOpenTask}}" hint-size="100%,1400px"></dc-import></sc-if>
-<sc-if value="{{moduleMounted}}" hint-placeholder-val="{{false}}"><div style="{{moduleStyle}}"><dc-import name="ModuleSearch" on-open-task="{{openFromModule}}" hint-size="100%,900px"></dc-import></div></sc-if>
+<sc-if value="{{moduleMounted}}" hint-placeholder-val="{{false}}"><div style="{{moduleStyle}}"><dc-import name="ModuleSearch" section="{{msSection}}" report-kind="{{reportsKind}}" on-open-task="{{openFromModule}}" hint-size="100%,900px"></dc-import></div></sc-if>
 <sc-if value="{{showQueue}}" hint-placeholder-val="{{true}}">
 <main style="box-sizing: border-box; width: 100%; padding: 16px 40px 40px; display: flex; flex-direction: column; gap: 32px">
 
@@ -2101,22 +2101,25 @@ class Component extends DCLogic {
       showModule: !s.task && s.view === 'search',
       moduleMounted: !!s.moduleSeen || s.view === 'search',
       moduleStyle: !s.task && !s.card && !s.create && s.view === 'search' ? 'display: block' : 'display: none',
-      menuActive: s.view === 'reports' ? 'reports' : s.view === 'search' ? 'vk' : (s.view === 'clients' ? 'clients' : (s.view === 'refs' ? 'book' : 'queue')),
+      menuActive: s.view === 'reports' || s.view === 'search' ? 'none' : (s.view === 'clients' ? 'clients' : (s.view === 'refs' ? 'book' : 'queue')),
       showClients: !s.task && !s.card && !s.create && s.view === 'clients',
       showRefs: !s.task && !s.card && !s.create && s.view === 'refs',
       showReports: !s.task && !s.card && !s.create && s.view === 'reports', reportsKind: s.reportsKind || 'unk',
       // «Назад» ведёт на предыдущий раздел (если знаем), иначе — на раздел выше
       backLabel: (s.create && !s.task && !s.card) ? ({ queue: 'К списку задач', clients: 'К клиентам', refs: 'К справочникам', search: 'К поиску по модулю', reports: 'К отчётам' }[s.view || 'queue'] || 'Назад') : s.card ? (s.card.fromTask ? 'К задаче' : ({ queue: 'К списку задач', clients: 'К клиентам', refs: 'К справочникам', search: 'К поиску по модулю', reports: 'К отчётам' }[s.view || 'queue'] || 'К списку задач')) : (s.task && s.task.fromModule ? 'К результатам поиска' : (s.taskFromCard ? 'К карточке клиента' : ({ clients: 'К клиентам', refs: 'К справочникам', search: 'К поиску по модулю', reports: 'К отчётам' }[s.view || 'queue'] || 'К списку задач'))),
       nav: (key) => {
-        if (key === 'queue' || key === 'search' || key === 'clients' || key === 'book' || key === 'reports') { this.setState({ view: key === 'book' ? 'refs' : key, task: null, card: null, create: null, taskDirty: false, moduleSeen: !!s.moduleSeen || key === 'search' }); this.afterLeave(); try { window.scrollTo(0, 0); } catch (err) {} return; }
+        // разделы модуля ВК открываются вкладками страницы «Поиск по модулю»
+        if (key === 'reports' || key === 'search-docs' || key === 'search') { this.setState({ view: 'search', msSection: key === 'reports' ? 'reports' : (key === 'search-docs' ? 'docs' : 'main'), task: null, card: null, create: null, taskDirty: false, moduleSeen: true }); this.afterLeave(); try { window.scrollTo(0, 0); } catch (err) {} return; }
+        if (key === 'queue' || key === 'clients' || key === 'book') { this.setState({ view: key === 'book' ? 'refs' : key, task: null, card: null, create: null, taskDirty: false, moduleSeen: !!s.moduleSeen || key === 'search' }); this.afterLeave(); try { window.scrollTo(0, 0); } catch (err) {} return; }
         const names = { admin: 'Администрирование', cap: 'Траектория развития', kb: 'База знаний', money: 'АЗОН ВНТ', archive: 'Электронный архив', sign: 'На подписание' };
         const links = { cb: 'ЦБ РФ', eg: 'ЕГРЮЛ', ko: 'Консультант +', tr: 'Траектория развития', fns: 'ФНС России', rfm: 'Росфинмониторинг' };
         if (links[key]) { this.showToast('info', links[key], 'Откроется в новой вкладке'); return; }
         if (names[key]) this.showToast('info', names[key], 'Раздел не входит в этот прототип');
       },
-      goModule: () => this.setState({ view: 'search', task: null, card: null, moduleSeen: true }),
+      goModule: () => this.setState({ view: 'search', msSection: 'main', task: null, card: null, moduleSeen: true }),
       openClient: (name, tab) => this.openCard(name, tab, null),
-      openReport: (kind) => { this.setState({ view: 'reports', reportsKind: kind, task: null, card: null, create: null }); try { window.scrollTo(0, 0); } catch (e) {} },
+      openReport: (kind) => { this.setState({ view: 'search', msSection: kind === 'scans' ? 'scans' : 'reports', reportsKind: kind, task: null, card: null, create: null, moduleSeen: true }); try { window.scrollTo(0, 0); } catch (e) {} },
+      msSection: s.msSection || 'main',
       openRef: (id) => { this.setState({ view: 'refs', task: null, card: null }); setTimeout(() => { try { window.dispatchEvent(new CustomEvent('sbo:ref', { detail: { id: id } })); } catch (e) {} }, 60); },
       openFromSearch: (id, title) => {
         const rows = this.rowsWithState().filter((r) => !r.removed);

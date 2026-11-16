@@ -2437,6 +2437,56 @@
       "w": 1440,
       "x": 4680,
       "y": 11420
+    },
+    "Module-reports.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "module",
+      "title": "Поиск по модулю — Отчёты",
+      "w": 1440,
+      "x": 0,
+      "y": 2712
+    },
+    "Module-udo.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "module",
+      "title": "Поиск по модулю — Сделки УДО",
+      "w": 1440,
+      "x": 1560,
+      "y": 2712
+    },
+    "Module-scans.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "module",
+      "title": "Поиск по модулю — Скан-копии СПД",
+      "w": 1440,
+      "x": 3120,
+      "y": 2712
+    },
+    "Module-docs.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "module",
+      "title": "Поиск по модулю — Контроль документов",
+      "w": 1440,
+      "x": 0,
+      "y": 3812
+    },
+    "Module-sign.dc.html": {
+      "expand": "fill",
+      "h": 900,
+      "is_interactive": true,
+      "page": "module",
+      "title": "Поиск по модулю — На подписание",
+      "w": 1440,
+      "x": 1560,
+      "y": 3812
     }
   },
   "createdOnFiles": {
@@ -2947,7 +2997,12 @@
     "Pin-add-list-err.dc.html",
     "Pin-remove.dc.html",
     "Pin-remove-done.dc.html",
-    "Pin-group-remove.dc.html"
+    "Pin-group-remove.dc.html",
+    "Module-reports.dc.html",
+    "Module-udo.dc.html",
+    "Module-scans.dc.html",
+    "Module-docs.dc.html",
+    "Module-sign.dc.html"
   ],
   "pages": [
     {

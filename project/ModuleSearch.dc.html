@@ -15,6 +15,26 @@
 body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 .ms{box-sizing:border-box;width:100%;padding:16px 40px 40px;display:flex;flex-direction:column;gap:20px;font-family:var(--font-system);color:var(--text-primary)}
 .ms-h1{margin:0;font:700 32px/40px var(--font-system);letter-spacing:-.4px}
+.ms-head{display:flex;flex-direction:column;gap:6px}
+.ms-dirw{position:relative;align-self:flex-start}
+.ms-dir{appearance:none;border:0;margin:0;padding:0;background:transparent;display:inline-flex;align-items:center;gap:4px;font:400 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.ms-dir b{font-weight:500}
+.ms-menu{position:absolute;top:calc(100% + 6px);left:0;z-index:30;min-width:240px;padding:6px;border-radius:14px;background:var(--bg-base-primary, #fff);box-shadow:0 8px 24px rgba(0,0,0,.16),0 0 0 1px rgba(15,25,55,.06);display:flex;flex-direction:column}
+.ms-mi{appearance:none;border:0;margin:0;padding:10px 12px;border-radius:10px;background:transparent;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left;font:400 15px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
+.ms-mi small{font:400 12px/16px var(--font-system);color:var(--text-secondary)}
+.ms-mi:hover,.ms-mi[aria-checked="true"]{background:var(--color-neutral-translucent-100, rgba(30,43,68,.04))}
+/* разделы модуля — основные вкладки, как в макете «Поиск в шапке» 3792:74183 */
+.ms-ptabs{display:flex;flex-wrap:wrap;gap:24px;border-bottom:1px solid var(--color-neutral-translucent-300, rgba(15,25,55,.1));margin-top:4px}
+.ms-ptab{appearance:none;border:0;margin:0;background:transparent;padding:0 0 12px;position:relative;font:400 18px/24px var(--font-system);color:var(--text-secondary);cursor:pointer;white-space:nowrap}
+.ms-ptab:hover{color:var(--text-primary)}
+.ms-ptab[aria-selected="true"]{color:var(--text-primary)}
+.ms-ptab[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:2px;border-radius:2px;background:var(--status-negative, #ef3124)}
+.ms-ptab:focus-visible,.ms-dir:focus-visible,.ms-mi:focus-visible{outline:2px solid var(--status-info, #2a77ef);outline-offset:2px}
+.ms-card > .ms-pills{margin-bottom:16px}
+.ms-lgh{display:flex;flex-direction:column;gap:2px;margin-bottom:12px;font:400 12px/16px var(--font-system);color:#777}
+.ms-lgh b{font:700 14px/18px var(--font-system);color:#111}
+.ms-dir,.ms-mi,.ms-ptab{transition:background-color .15s ease,color .15s ease}
+.ms-dir:hover,.ms-mi:hover,.ms-ptab:hover{transition-delay:.3s}
 .ms-pills{display:flex;flex-wrap:wrap;gap:8px}
 .ms-pill{appearance:none;border:0;margin:0;height:40px;padding:0 16px;border-radius:99px;background:var(--color-neutral-translucent-200, rgba(30,43,68,.08));font:400 14px/20px var(--font-system);color:var(--text-primary);cursor:pointer}
 .ms-pill:hover{background:rgba(30,43,68,.14)}
@@ -78,12 +98,21 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 @media (prefers-reduced-motion: reduce){.ms-ovb{animation:none !important}}
 @keyframes sbo-sheet-in{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}}
 /* === HOVER-DELAY (сгенерировано ccw/hover.py): пауза 0,3 с перед реакцией на наведение === */
+.ms-mi,
+.ms-ptab,
+.ms-dir,
 .ms-pill,
 .ms-btn--ghost,
 .ms-t tbody tr{transition:background-color .15s ease,color .15s ease,border-color .15s ease,box-shadow .15s ease,opacity .15s ease,filter .15s ease,text-decoration-color .15s ease,transform .15s ease}
+.ms-mi:hover,
+.ms-ptab:hover,
+.ms-dir:hover,
 .ms-pill:hover,
 .ms-btn--ghost:hover,
 .ms-t tbody tr:hover{transition-delay:.3s}
+.ms-mi:hover:active,
+.ms-ptab:hover:active,
+.ms-dir:hover:active,
 .ms-pill:hover:active,
 .ms-btn--ghost:hover:active,
 .ms-t tbody tr:hover:active{transition-delay:0s}
@@ -91,11 +120,14 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 </style>
 </helmet>
 <div class="ms">
-<h1 class="ms-h1">Поиск по валютному контролю</h1>
-<div class="ms-pills" role="group" aria-label="Объект поиска">
-<sc-for list="{{kinds}}" as="k" hint-placeholder-count="5"><button type="button" class="ms-pill" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for>
-</div>
+<div class="ms-head"><h1 class="ms-h1">Поиск по модулю</h1><div class="ms-dirw"><button type="button" class="ms-dir" aria-haspopup="menu" aria-expanded="{{dirStr}}" onClick="{{tgDir}}">Направление: <b>{{dirLabel}}</b><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 14L6.5 8.5 5 10l7 7 7-7-1.5-1.5L12 14z"/></svg></button><sc-if value="{{dirOpen}}" hint-placeholder-val="{{false}}"><div class="ms-menu" role="menu" aria-label="Направление"><sc-for list="{{dirs}}" as="d" hint-placeholder-count="3"><button type="button" class="ms-mi" role="menuitemradio" aria-checked="{{d.on}}" onClick="{{d.pick}}">{{d.t}}<sc-if value="{{d.soon}}" hint-placeholder-val="{{false}}"><small>скоро</small></sc-if></button></sc-for></div></sc-if></div></div>
+<div class="ms-ptabs" role="tablist" aria-label="Разделы модуля"><sc-for list="{{sections}}" as="sec" hint-placeholder-count="6"><button type="button" role="tab" class="ms-ptab" aria-selected="{{sec.on}}" onClick="{{sec.pick}}">{{sec.t}}</button></sc-for></div>
+<sc-if value="{{secReports}}" hint-placeholder-val="{{false}}"><dc-import name="ModuleReports" embedded="{{yes}}" kind="{{repKind}}" hint-size="100%,700px"></dc-import></sc-if>
+<sc-if value="{{secScans}}" hint-placeholder-val="{{false}}"><dc-import name="ModuleReports" embedded="{{yes}}" only="{{yes}}" kind="scans" hint-size="100%,700px"></dc-import></sc-if>
+<sc-if value="{{secLegacy}}" hint-placeholder-val="{{false}}"><section class="ms-card" aria-label="{{lgTitle}}"><div class="ms-lgh"><b>{{lgTitle}}</b><span>{{lgSub}}</span></div><div class="ms-scroll"><table class="ms-t"><thead><tr><sc-for list="{{lgCols}}" as="c" hint-placeholder-count="6"><th scope="col">{{c}}</th></sc-for></tr></thead><tbody><sc-for list="{{lgRows}}" as="r" hint-placeholder-count="6"><tr><sc-for list="{{r.cells}}" as="cl" hint-placeholder-count="6"><td>{{cl}}</td></sc-for></tr></sc-for></tbody></table></div></section></sc-if>
+<sc-if value="{{secSearch}}" hint-placeholder-val="{{true}}">
 <section class="ms-card" aria-label="{{kindLabel}}">
+<sc-if value="{{showPills}}" hint-placeholder-val="{{true}}"><div class="ms-pills" role="group" aria-label="Объект поиска"><sc-for list="{{kinds}}" as="k" hint-placeholder-count="5"><button type="button" class="ms-pill" aria-pressed="{{k.on}}" onClick="{{k.pick}}">{{k.label}}</button></sc-for></div></sc-if>
 <div class="ms-tabs" role="tablist">
 <button type="button" role="tab" class="ms-tab" aria-selected="{{tabFilterOn}}" onClick="{{toFilter}}">Фильтр</button>
 <button type="button" role="tab" class="ms-tab" aria-selected="{{tabResOn}}" aria-disabled="{{noResYet}}" onClick="{{toRes}}">Результат</button>
@@ -146,11 +178,21 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 
 <sc-if value="{{opening}}" hint-placeholder-val="{{false}}"><div class="ms-ov" role="dialog" aria-modal="true" aria-label="Открываем задачу"><div class="ms-ovb"><span class="ms-spin" aria-hidden="true"></span><b>Открываем задачу ID {{openingId}}</b><span>Открываем — это может занять до 10 секунд.<br>{{openingNote}}</span><button type="button" onClick="{{cancelOpen}}">Отменить</button></div></div></sc-if>
 </section>
+</sc-if>
 <sc-if value="{{hasToast}}" hint-placeholder-val="{{false}}"><div class="ms-toast" role="status">{{toast}}</div></sc-if>
 </div>
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"kind":{"editor":"enum","options":["unk","unk-close","contract","svo","spd"],"default":"spd"},"tab":{"editor":"enum","options":["filter","result"],"default":"filter"},"onOpenTask":{"editor":null},"$preview":{"width":1376,"height":836}}'>
+<script type="text/x-dc" data-dc-script data-props='{"section":{"editor":"enum","options":["main","reports","udo","scans","docs","sign"],"default":"main"},"reportKind":{"editor":"enum","options":["unk","cfa"],"default":"unk"},"kind":{"editor":"enum","options":["unk","unk-close","contract","svo","spd"],"default":"spd"},"tab":{"editor":"enum","options":["filter","result"],"default":"filter"},"onOpenTask":{"editor":null},"$preview":{"width":1376,"height":836}}'>
 const KINDS = [['unk', 'УНК', 'УНК'], ['unk-close', 'УНК для закрытия', 'УНК'], ['contract', 'Контракты', 'ИД контракта'], ['svo', 'СВО', 'ИД СВО'], ['spd', 'СПД', 'ИД СПД'], ['docs', 'Контроль представления документов', 'ИД документа']];
+// разделы модуля ВК: ссылки РК вынесены во вкладки (раньше были пунктами левого меню)
+const SECTIONS = [['main', 'Основное'], ['reports', 'Отчёты'], ['udo', 'Сделки УДО'], ['scans', 'Скан-копии СПД'], ['docs', 'Контроль документов'], ['sign', 'На подписание']];
+const DIRS = [['vk', 'Валютный контроль', false], ['kul', 'Кредитование ЮЛ', true], ['kfl', 'Кредитование ФЛ', true]];
+const LEGACY = {
+  udo: { t: 'Сделки УДО', sub: 'Встроенная страница РК · сделки с уполномоченными дилерами', cols: ['№ сделки', 'Дата', 'Клиент', 'Валюта', 'Сумма', 'Статус'],
+    rows: [['УДО-10458', '14.11.2026', 'ООО «Вектор»', 'USD', '125 000,00', 'Проверка ВК'], ['УДО-10457', '14.11.2026', 'АО «Вертикаль»', 'EUR', '48 300,00', 'Согласована'], ['УДО-10451', '13.11.2026', 'ООО «Терем»', 'CNY', '1 200 000,00', 'Проверка ВК'], ['УДО-10446', '12.11.2026', 'ЗАО ЛипецкПром', 'USD', '9 870,00', 'Отклонена'], ['УДО-10440', '11.11.2026', 'ООО «ВОСТОК ОИЛ»', 'AED', '330 000,00', 'Согласована']] },
+  sign: { t: 'На подписание', sub: 'Встроенная страница РК · документы, ожидающие подписи', cols: ['Документ', 'Тип', 'Клиент', 'Создан', 'Автор', 'Срок'],
+    rows: [['СПД 279452169', 'Справка о подтверждающих документах', 'ООО «Вектор»', '15.11.2026', 'Шеремет О. С.', '17.11.2026'], ['УНК 26072871/1326/0000/1/1', 'Постановка контракта на учёт', 'АО «Пушистая долина»', '15.11.2026', 'Глухих О. Н.', '18.11.2026'], ['СВО 51723', 'Сведения о валютных операциях', 'ООО «Терем»', '14.11.2026', 'Шеремет О. С.', '16.11.2026'], ['Письмо 9000-01', 'Исходящее письмо с ЭЦП', 'ООО «Даниэль»', '14.11.2026', 'Волков М. С.', '16.11.2026']] }
+};
 const DEPTS = ['Полянка ДО', 'Филиал Нижегородский', 'Тверская ДО', 'Филиал Казанский'];
 const FIELDS = [
   ['pin', 'Пин EQ', 'text'], ['cpr', 'ЦПР', 'text'],
@@ -187,7 +229,10 @@ class Component extends DCLogic {
   toast(msg) { clearTimeout(this._t); this.setState({ toast: msg }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
   renderVals() {
     const s = this.st();
-    const kind = s.kind || this.props.kind || 'spd';
+    // раздел: из пропа (переход из шапки или меню) или из клика по вкладке
+    const secProp = this.props.section || 'main';
+    const section = s.secBase === secProp && s.section ? s.section : secProp;
+    const kind = section === 'docs' ? 'docs' : ((s.kind && s.kind !== 'docs') ? s.kind : ((this.props.kind && this.props.kind !== 'docs') ? this.props.kind : 'spd'));
     const kd = KINDS.find((k) => k[0] === kind) || KINDS[4];
     const form = s.form || {};
     const applied = s.applied || (this.props.tab === 'result' ? {} : null);
@@ -228,8 +273,16 @@ class Component extends DCLogic {
       clearTimeout(this._s);
       this._s = setTimeout(() => this.setState({ searching: false, applied: Object.assign({}, this.st().form || {}), tab: 'result', page: 0 }), 700);
     };
+    const lg = LEGACY[section] || LEGACY.udo;
     return {
-      kinds: KINDS.map((k) => ({ label: k[1], on: k[0] === kind ? 'true' : 'false', pick: () => this.setState({ kind: k[0], page: 0 }) })),
+      yes: true,
+      dirLabel: 'Валютный контроль', dirOpen: !!s.dirOpen, dirStr: s.dirOpen ? 'true' : 'false', tgDir: () => this.setState({ dirOpen: !this.st().dirOpen }),
+      dirs: DIRS.map((d) => ({ t: d[1], on: d[0] === 'vk' ? 'true' : 'false', soon: d[2], pick: () => { this.setState({ dirOpen: false }); if (d[2]) this.toast('Поиск по направлению «' + d[1] + '» появится позже'); } })),
+      sections: SECTIONS.map((x) => ({ t: x[1], on: x[0] === section ? 'true' : 'false', pick: () => this.setState({ section: x[0], secBase: secProp, tab: 'filter', page: 0 }) })),
+      secSearch: section === 'main' || section === 'docs', showPills: section === 'main',
+      secReports: section === 'reports', secScans: section === 'scans', repKind: this.props.reportKind && this.props.reportKind !== 'scans' ? this.props.reportKind : 'unk',
+      secLegacy: section === 'udo' || section === 'sign', lgTitle: lg.t, lgSub: lg.sub, lgCols: lg.cols, lgRows: lg.rows.map((r) => ({ cells: r })),
+      kinds: KINDS.filter((k) => k[0] !== 'docs').map((k) => ({ label: k[1], on: k[0] === kind ? 'true' : 'false', pick: () => this.setState({ kind: k[0], page: 0 }) })),
       kindLabel: 'Поиск: ' + kd[1],
       isFilter: tab === 'filter',
       isRes: tab === 'result',

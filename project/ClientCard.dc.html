@@ -46,6 +46,13 @@ body{margin:0;background:var(--bg-base-secondary, #f2f3f5)}
 .cc-foot b{font-weight:500;color:var(--text-primary)}
 /* Правая колонка */
 .cc-side{display:flex;flex-direction:column;gap:16px}
+/* Правая колонка не выше карточки клиента: высоту строки задаёт карточка, колонка скроллится внутри и уходит в фейд снизу */
+@media (min-width: 1181px){
+.cc-top > aside.cc-side{align-self:stretch;contain:size;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:none;border-radius:20px}
+.cc-top > aside.cc-side[data-fade="true"]{-webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 64px),transparent);mask-image:linear-gradient(to bottom,#000 calc(100% - 64px),transparent)}
+.cc-top > aside.cc-side::-webkit-scrollbar{display:none}
+.cc-top > aside.cc-side > *{flex:0 0 auto}
+}
 .cc-box{background:var(--bg-base-primary, #fff);border-radius:20px;padding:20px}
 .cc-box h4{margin:0 0 12px;font:700 18px/24px var(--font-system);display:flex;align-items:center;gap:8px}
 .cc-dot{width:8px;height:8px;border-radius:50%;background:var(--status-positive, #0cc44d)}
@@ -769,7 +776,17 @@ const LC_POOL = [
 ];
 class Component extends DCLogic {
   st() { return this.state || {}; }
+  // фейд снизу правой колонки — только когда ниже есть что прокрутить
+  sideFade() {
+    this._sf = 0;
+    const list = []; const find = (root) => { root.querySelectorAll('aside.cc-side').forEach((e) => list.push(e)); root.querySelectorAll('*').forEach((e) => { if (e.shadowRoot) find(e.shadowRoot); }); };
+    try { find(document); } catch (e) {}
+    list.forEach((a) => { const on = a.scrollHeight > a.clientHeight + 1 && a.scrollTop + a.clientHeight < a.scrollHeight - 2; if ((a.dataset.fade === 'true') !== on) a.dataset.fade = on ? 'true' : 'false'; });
+  }
   componentDidMount() {
+    this._sfq = () => { if (!this._sf) this._sf = requestAnimationFrame(() => this.sideFade()); };
+    document.addEventListener('scroll', this._sfq, true); window.addEventListener('resize', this._sfq);
+    this._sfi = setInterval(this._sfq, 400);
     const m = this.props.demoModal;
     if (m === 'link') this.setState({ modal: 'link', mLink: LINKS[0] });
     if (['addr', 'fcontacts'].indexOf(m) >= 0) this.setState({ modal: m });
@@ -787,7 +804,7 @@ class Component extends DCLogic {
     if (m === 'contact-menu') this.setState({ modal: null, ctMenu: 'c2' });
     document.addEventListener('keydown', this._key);
   }
-  componentWillUnmount() { clearTimeout(this._lcT); this.backClear(); document.removeEventListener('keydown', this._key); clearTimeout(this._t); clearTimeout(this._r); clearTimeout(this._tl); clearTimeout(this._cm); clearTimeout(this._op); }
+  componentWillUnmount() { document.removeEventListener('scroll', this._sfq, true); window.removeEventListener('resize', this._sfq); clearInterval(this._sfi); clearTimeout(this._lcT); this.backClear(); document.removeEventListener('keydown', this._key); clearTimeout(this._t); clearTimeout(this._r); clearTimeout(this._tl); clearTimeout(this._cm); clearTimeout(this._op); }
   // Уведомления идут в общий стек очереди (до 3, разных типов), если он есть на странице
   toast(m, o) { if (window.__sboToast) { window.__sboToast(m, o); return; } clearTimeout(this._t); this.setState({ toast: m }); this._t = setTimeout(() => this.setState({ toast: '' }), 2600); }
   copy(text) { try { navigator.clipboard.writeText(String(text)).catch(() => {}); } catch (e) {} this.toast('Данные скопированы'); }

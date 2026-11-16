@@ -473,10 +473,11 @@ class Component extends DCLogic {
     const collect = (root, acc) => { root.querySelectorAll('*').forEach((el) => { if (el.matches(HEAD_SEL)) acc.push(el); if (el.shadowRoot) collect(el.shadowRoot, acc); }); return acc; };
     this._scanHeads = () => { try { this._heads = collect(document, []); const bars = []; (function f(root) { root.querySelectorAll('*').forEach((el) => { if (el.classList && el.classList.contains('hd-bar')) bars.push(el); if (el.shadowRoot) f(el.shadowRoot); }); })(document); this._bar = bars[0] || null; } catch (e) { this._heads = []; } };
     this._chkStuck = () => { this._sraf = 0; const top = 64; let hit = null; for (const el of this._heads || []) { const r = el.getBoundingClientRect(); if (r.height > 0 && r.bottom > top && Math.abs(r.top - top) < 1.5) { hit = r; break; } } const on = !!hit; if (this._ov) { if (on) { const bar = this._bar && this._bar.getBoundingClientRect(); this._ov.style.left = (bar ? Math.max(0, bar.left) : 0) + 'px'; this._ov.style.height = Math.round(hit.bottom) + 'px'; } this._ov.style.opacity = on ? '1' : '0'; } if (on !== !!(this.state || {}).stuck) this.setState({ stuck: on }); };
-    // Одна общая подложка-блюр на слой выше контента: покрывает шапку и прилипший заголовок таблицы целиком
+    // Одна общая подложка-блюр на слой выше контента: покрывает шапку и прилипший заголовок таблицы целиком.
+    // Градиент: сверху сливается с серым фоном страницы, книзу — белый, как таблица под заголовком
     this._ov = document.createElement('div');
     this._ov.setAttribute('aria-hidden', 'true');
-    this._ov.style.cssText = 'position:fixed;top:0;left:0;right:0;height:64px;z-index:5;pointer-events:none;opacity:0;transition:opacity .25s ease,height .15s ease;background:var(--color-light-neutral-translucent-400-inverted, rgba(222,222,238,.2));backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)';
+    this._ov.style.cssText = 'position:fixed;top:0;left:0;right:0;height:64px;z-index:5;pointer-events:none;opacity:0;transition:opacity .25s ease,height .15s ease;background:linear-gradient(to bottom,color-mix(in srgb,var(--bg-base-secondary, #f2f3f5) 92%,transparent) 0%,color-mix(in srgb,var(--bg-base-secondary, #f2f3f5) 82%,transparent) 42%,color-mix(in srgb,var(--bg-base-primary, #fff) 88%,transparent) 100%);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)';
     document.body.appendChild(this._ov);
     this._onScrollHd = () => { if (!this._sraf) this._sraf = requestAnimationFrame(this._chkStuck); };
     window.addEventListener('scroll', this._onScrollHd, { passive: true });
